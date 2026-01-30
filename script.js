@@ -29,13 +29,65 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update CSS variables for spotlight effect
         document.body.style.setProperty('--mouse-x', `${x}px`);
         document.body.style.setProperty('--mouse-y', `${y}px`);
-
-        // Optional: Parallax effect for patterns
-        // const paramX = (window.innerWidth - x) / 50;
-        // const paramY = (window.innerHeight - y) / 50;
-        // document.body.style.backgroundPosition = `${paramX}px ${paramY}px, 0 0`;
     });
+
+    // 5. Server Status Widget
+    fetchServerStatus();
 });
+
+async function fetchServerStatus() {
+    // Try to find status widgets - if none, return
+    const statusWidgets = document.querySelectorAll('.server-status');
+    if (!statusWidgets.length) return;
+
+    // Use local JSON file containing status
+    const displayIp = 'play.obriyhytale.pp.ua';
+    const statusUrl = 'server-status.json';
+
+    try {
+        // Append timestamp to prevent caching
+        const response = await fetch(`${statusUrl}?t=${new Date().getTime()}`);
+        const data = await response.json();
+
+        statusWidgets.forEach(widget => {
+            const dot = widget.querySelector('.status-dot');
+            const text = widget.querySelector('.status-text');
+
+            // Check if data exists
+            if (data && typeof data.online !== 'undefined') {
+                dot.classList.add('online');
+                dot.classList.remove('offline');
+
+                text.innerHTML = `Online: <span style="color: var(--vp-c-brand);">${data.online}</span> / ${data.maxPlayers}`;
+            } else {
+                dot.classList.add('offline');
+                dot.classList.remove('online');
+                text.textContent = 'Offline';
+            }
+
+            // Copy user friendly IP on click
+            widget.addEventListener('click', () => {
+                navigator.clipboard.writeText(displayIp).then(() => {
+                    const originalText = text.innerHTML;
+                    text.textContent = 'IP Copied!';
+                    setTimeout(() => {
+                        text.innerHTML = originalText;
+                    }, 2000);
+                });
+            });
+        });
+
+    } catch (error) {
+        console.error('Error fetching server status:', error);
+        statusWidgets.forEach(widget => {
+            const dot = widget.querySelector('.status-dot');
+            const text = widget.querySelector('.status-text');
+            dot.classList.add('offline');
+            dot.classList.remove('online');
+            if (text) text.textContent = 'Offline';
+        });
+    }
+}
 
 // --- NEWS LOGIC ---
 function loadNews() {

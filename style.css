@@ -143,6 +143,57 @@ header {
     color: var(--vp-c-brand);
 }
 
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.server-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--vp-c-text-2);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.server-status:hover {
+    background: rgba(252, 165, 13, 0.1);
+    border-color: var(--vp-c-brand);
+    color: var(--vp-c-text-1);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--vp-c-text-3);
+    /* Default/Loading */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.status-dot.online {
+    background-color: #34d399;
+    /* Green */
+    box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
+}
+
+.status-dot.offline {
+    background-color: #f87171;
+    /* Red */
+}
+
+.status-text {
+    white-space: nowrap;
+}
+
 .discord-btn {
     padding: 8px 16px;
     background-color: var(--vp-c-bg-soft);
