@@ -389,6 +389,12 @@ footer {
     margin-top: 40px;
 }
 
+.news-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
 .news-card {
     background: var(--vp-c-bg-soft);
     border: 1px solid var(--vp-c-border);
