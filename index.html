@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ОБРІЙ - Ванільний український сервер Hytale</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+
+    <header>
+        <div class="container nav-container">
+            <div class="logo">ОБРІЙ</div>
+            <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+            <nav>
+                <ul>
+                    <li><a href="index.html" class="active">Головна</a></li>
+                    <li><a href="news.html">Хроніки</a></li>
+                    <li><a href="donate.html">Підтримати</a></li>
+                    <li><a href="https://discord.gg/example" target="_blank" class="btn-outline" style="padding: 5px 15px; border-radius: 20px;"><i class="fab fa-discord"></i> Discord</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero" id="home">
+            <div class="hero-overlay"></div>
+            <div class="container hero-content">
+                <img src="assets/images/logo.png" alt="ОБРІЙ Логотип" class="hero-logo">
+                <h1 class="hero-slogan">Твій простір свободи. <br> Твоя довіра. <br> <span class="highlight">Твій Обрій.</span></h1>
+                <a href="#flow" class="btn btn-primary">Як потрапити на сервер?</a>
+            </div>
+        </section>
+
+        <!-- Philosophy Section -->
+        <section class="philosophy">
+            <div class="container">
+                <h2>Чому ОБРІЙ?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-shield-alt feature-icon"></i>
+                        <h3>Whitelist Only</h3>
+                        <p>Ми будуємо спільноту на довірі. Вхід тільки для перевірених гравців через Discord.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-handshake feature-icon"></i>
+                        <h3>Trust-based</h3>
+                        <p>Жодних приватів та клеймів. Твоя територія — це твоя совість і повага інших.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-globe-europe feature-icon"></i>
+                        <h3>Ukrainian Soul</h3>
+                        <p>100% україномовний простір для своїх. Створюємо атмосферу разом.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Player Flow Section -->
+        <section class="flow" id="flow">
+            <div class="container">
+                <h2>Шлях Гравця</h2>
+                <div class="flow-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3>Долучись в Discord</h3>
+                            <p>Це наш основний хаб спілкування. Ознайомся з правилами.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3>Подай Заявку</h3>
+                            <p>Заповни коротку анкету. Розкажи про себе та свій досвід.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3>Пройди Співбесіду</h3>
+                            <p>Живе спілкування з адміністрацією для доступу до вайтліста.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="cta-center">
+                    <a href="https://discord.gg/example" target="_blank" class="btn btn-primary"><i class="fab fa-discord"></i> Перейти в Discord</a>
+                    <p class="flow-note">⚠️ Сайт відкритий для всіх, сервер — для обраних.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="socials">
+                <a href="#"><i class="fab fa-telegram-plane"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+                <a href="#"><i class="fab fa-tiktok"></i></a>
+            </div>
+            <p>&copy; 2024 ОБРІЙ. Всі права захищено. Hytale є торговою маркою Hypixel Studios.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navUl = document.querySelector('nav ul');
+        
+        menuToggle.addEventListener('click', () => {
+            navUl.classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

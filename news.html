@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новини - ОБРІЙ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+
+    <header>
+        <div class="container nav-container">
+            <div class="logo">ОБРІЙ <span>NEWS</span></div>
+            <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Головна</a></li>
+                    <li><a href="news.html" class="active">Хроніки</a></li>
+                    <li><a href="donate.html">Підтримати</a></li>
+                    <li><a href="https://discord.gg/example" target="_blank" class="btn-outline"
+                            style="padding: 5px 15px; border-radius: 20px;"><i class="fab fa-discord"></i> Discord</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-main">
+        <div class="container news-layout">
+            <section class="news-feed">
+                <h1>Хроніки Обрію</h1>
+                <div id="news-container">
+                    <div class="loader"></div>
+                </div>
+            </section>
+
+            <aside class="sidebar">
+                <div class="widget telegram-widget">
+                    <h3><i class="fab fa-telegram-plane"></i> Telegram</h3>
+                    <p>Підписуйся на наш канал, щоб не пропустити важливі анонси.</p>
+                    <a href="#" class="btn btn-primary" style="width: 100%; text-align: center;">Підписатись</a>
+                </div>
+
+                <div class="widget">
+                    <h3>Корисні посилання</h3>
+                    <ul class="quick-links">
+                        <li><a href="#">Правила Серверу</a></li>
+                        <li><a href="#">Wiki</a></li>
+                        <li><a href="#">Мапа Світу</a></li>
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="socials">
+                <a href="#"><i class="fab fa-telegram-plane"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+                <a href="#"><i class="fab fa-tiktok"></i></a>
+            </div>
+            <p>&copy; 2024 ОБРІЙ. Всі права захищено. Hytale є торговою маркою Hypixel Studios.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navUl = document.querySelector('nav ul');
+        menuToggle.addEventListener('click', () => {
+            navUl.classList.toggle('active');
+        });
+    </script>
+</body>
+
+</html>

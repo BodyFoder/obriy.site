@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Підтримати - ОБРІЙ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+
+    <header>
+        <div class="container nav-container">
+            <div class="logo">ОБРІЙ <span>SUPPORT</span></div>
+            <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Головна</a></li>
+                    <li><a href="news.html">Хроніки</a></li>
+                    <li><a href="donate.html" class="active">Підтримати</a></li>
+                    <li><a href="https://discord.gg/example" target="_blank" class="btn-outline"
+                            style="padding: 5px 15px; border-radius: 20px;"><i class="fab fa-discord"></i> Discord</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-main">
+        <div class="container donate-container">
+            <section class="donate-hero">
+                <h1>Підтримати Проект</h1>
+                <p class="donate-subtitle">Твій внесок допомагає нам існувати та розвиватися.</p>
+
+                <div class="disclaimer-box">
+                    <i class="fas fa-info-circle"></i>
+                    <p><strong>Важливо:</strong> Донат не дає жодних ігрових переваг. Ми принципово проти Pay-to-Win.
+                        Всі зібрані кошти йдуть виключно на оплату хостингу та технічну підтримку.</p>
+                </div>
+            </section>
+
+            <section class="payment-methods">
+                <div class="method-card monobank">
+                    <div class="card-icon"><img
+                            src="https://upload.wikimedia.org/wikipedia/commons/e/e0/Monobank_logo_2017.svg"
+                            alt="Monobank" style="height: 40px;"></div>
+                    <h3>Monobank Банка</h3>
+                    <p>Швидкий та зручний переказ без комісії.</p>
+                    <a href="#" class="btn btn-primary" style="background: black; color: white;">Розбити Банку <i
+                            class="fas fa-hammer"></i></a>
+                </div>
+
+                <div class="method-card coffee">
+                    <div class="card-icon"><i class="fas fa-coffee" style="font-size: 40px; color: #FFDDD0;"></i></div>
+                    <h3>Buy Me A Coffee</h3>
+                    <p>Для підтримки з-за кордону у валюті.</p>
+                    <a href="#" class="btn btn-primary" style="background: #FFDDD0; color: #000;">Пригостити кавою</a>
+                </div>
+            </section>
+
+            <section class="supporters">
+                <h2>Наші Меценати</h2>
+                <div class="supporters-table-wrapper">
+                    <table class="supporters-table">
+                        <thead>
+                            <tr>
+                                <th>Ім'я / Нікнейм</th>
+                                <th>Рівень підтримки</th>
+                                <th>Дата</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td> <i class="fas fa-crown gold-crown"></i> AlexKov</td>
+                                <td>Легенда</td>
+                                <td>28.01.2024</td>
+                            </tr>
+                            <tr>
+                                <td>Dmytro_UA</td>
+                                <td>Спонсор</td>
+                                <td>25.01.2024</td>
+                            </tr>
+                            <tr>
+                                <td>HytalerInUa</td>
+                                <td>Прихильник</td>
+                                <td>20.01.2024</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="socials">
+                <a href="#"><i class="fab fa-telegram-plane"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+                <a href="#"><i class="fab fa-tiktok"></i></a>
+            </div>
+            <p>&copy; 2024 ОБРІЙ. Всі права захищено. Hytale є торговою маркою Hypixel Studios.</p>
+        </div>
+    </footer>
+
+    <script>
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navUl = document.querySelector('nav ul');
+        menuToggle.addEventListener('click', () => {
+            navUl.classList.toggle('active');
+        });
+    </script>
+</body>
+
+</html>
