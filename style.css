@@ -48,7 +48,8 @@ body {
 }
 
 main {
-    padding-top: calc(var(--vp-nav-height) + 40px);
+    padding-top: calc(var(--vp-nav-height) + 20px);
+    /* Reduced from +40px */
 }
 
 a {
