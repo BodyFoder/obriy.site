@@ -92,7 +92,7 @@
             color: var(--vp-c-brand);
         }
 
-        .news-list-item {
+        .list-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -120,12 +120,45 @@
             border-radius: 16px;
             border: 1px solid var(--vp-c-border);
         }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--vp-c-border);
+            padding-bottom: 1px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--vp-c-text-2);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab-btn.active {
+            color: var(--vp-c-brand);
+            border-bottom-color: var(--vp-c-brand);
+        }
+
+        .section-content {
+            display: none;
+        }
+
+        .section-content.active {
+            display: block;
+        }
     </style>
 </head>
 
 <body>
 
-    <!-- Auth Overlay (GitHub Token) -->
+    <!-- Auth Overlay -->
     <div class="login-overlay" id="authOverlay">
         <div class="login-box">
             <div style="text-align: center; margin-bottom: 24px;">
@@ -133,24 +166,9 @@
                 <h2>Вхід в Адмінку</h2>
                 <p style="color: var(--vp-c-text-2); font-size: 14px;">Введіть дані GitHub для доступу</p>
             </div>
-
-            <div class="form-group">
-                <label>GitHub Username (Логін)</label>
-                <input type="text" id="ghUserIn" placeholder="Приклад: bodyapro">
-            </div>
-
-            <div class="form-group">
-                <label>Назва Репозиторію</label>
-                <input type="text" id="ghRepoIn" placeholder="Приклад: obriy-site">
-            </div>
-
-            <div class="form-group">
-                <label>Personal Access Token (Classic)</label>
-                <input type="password" id="ghTokenIn" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
-                <small style="color: var(--vp-c-text-3); display:block; margin-top:4px;">Потрібні права:
-                    <code>repo</code> або <code>public_repo</code></small>
-            </div>
-
+            <div class="form-group"><label>GitHub Username</label><input type="text" id="ghUserIn"></div>
+            <div class="form-group"><label>Repo Name</label><input type="text" id="ghRepoIn"></div>
+            <div class="form-group"><label>Personal Access Token</label><input type="password" id="ghTokenIn"></div>
             <button onclick="authenticateGithub()" class="btn btn-primary" id="loginBtn"
                 style="width: 100%;">Підключитися</button>
             <p id="authError" style="color: #ff4d4d; margin-top: 16px; text-align: center; display: none;"></p>
@@ -176,98 +194,103 @@
                 </div>
             </header>
 
-            <!-- Actions -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('news')">Новини</button>
+                <button class="tab-btn" onclick="switchTab('patrons')">Меценати (Донати)</button>
+            </div>
+
+            <!-- Global Actions -->
             <div
                 style="margin-bottom: 24px; padding: 16px; background: var(--vp-c-bg-soft); border-radius: 12px; display: flex; gap: 16px; align-items: center;">
-                <button onclick="loadFromGitHub()" class="btn btn-outline"><i class="fas fa-sync"></i> Оновити
-                    список</button>
+                <button onclick="loadFromGitHub()" class="btn btn-outline"><i class="fas fa-sync"></i> Оновити поточну
+                    вкладку</button>
                 <div style="flex:1; text-align:center; color: var(--vp-c-text-3); font-size: 14px;" id="statusMsg">
                     Готовий до роботи</div>
                 <button onclick="pushToGitHub()" class="btn btn-primary" style="background: #2ea44f; color: white;"><i
-                        class="fas fa-cloud-upload-alt"></i> Зберегти зміни на сайт</button>
+                        class="fas fa-cloud-upload-alt"></i> Зберегти поточну вкладку</button>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px;">
-                <!-- Editor -->
-                <div>
-                    <h2 style="margin-bottom: 24px;">Редактор</h2>
-                    <input type="hidden" id="editIndex" value="-1">
-
-                    <div class="form-group">
-                        <label>Заголовок новини</label>
-                        <input type="text" id="newsTitle">
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div class="form-group">
-                            <label>ID (URL Slug)</label>
-                            <input type="text" id="newsId">
+            <!-- NEWS SECTION -->
+            <div id="newsSection" class="section-content active">
+                <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px;">
+                    <div>
+                        <h2 style="margin-bottom: 24px;">Редактор Новин</h2>
+                        <input type="hidden" id="editIndex" value="-1">
+                        <div class="form-group"><label>Заголовок</label><input type="text" id="newsTitle"></div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group"><label>ID</label><input type="text" id="newsId"></div>
+                            <div class="form-group"><label>Дата</label><input type="text" id="newsDate"></div>
                         </div>
-                        <div class="form-group">
-                            <label>Дата</label>
-                            <input type="text" id="newsDate">
+                        <div class="form-group"><label>Картинка (URL)</label><input type="text" id="newsImage"></div>
+                        <!-- Image Upload UI -->
+                        <div
+                            style="background: var(--vp-c-bg-soft); padding: 16px; border-radius: 8px; border: 1px dashed var(--vp-c-brand); margin-bottom: 20px;">
+                            <h4 style="margin-bottom: 12px; font-size: 14px; color: var(--vp-c-text-1);">Завантаження
+                                зображень (GitHub)</h4>
+                            <input type="file" id="fileInput" style="display: none;" onchange="uploadFile()">
+                            <button onclick="document.getElementById('fileInput').click()" class="btn btn-outline"
+                                style="width: 100%; font-size: 13px;"><i class="fas fa-camera"></i> Вибрати
+                                файл...</button>
+                            <div id="uploadStatus" style="font-size: 12px; margin-top: 8px; color: var(--vp-c-text-2);">
+                            </div>
+                        </div>
+                        <div class="form-group"><label>Короткий опис</label><textarea id="newsSummary"
+                                rows="3"></textarea></div>
+                        <div class="form-group"><label>Теги</label><input type="text" id="newsTags"></div>
+                        <div class="form-group"><label>Текст</label><textarea id="newsContent" rows="12"></textarea>
+                        </div>
+                        <div style="display: flex; gap: 12px;">
+                            <button onclick="saveLocalNews()" class="btn btn-primary" style="flex: 1;">Застосувати зміни
+                                (Локально)</button>
+                            <button onclick="clearNewsForm()" class="btn btn-outline">Очистити</button>
                         </div>
                     </div>
-
-                    <div class="form-group">
-                        <label>Картинка (URL)</label>
-                        <input type="text" id="newsImage">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Короткий опис</label>
-                        <textarea id="newsSummary" rows="3"></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Теги</label>
-                        <input type="text" id="newsTags">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Повний текст</label>
-                        <div class="editor-toolbar">
-                            <button class="editor-btn" onclick="insertTag('<b>', '</b>')"><i
-                                    class="fas fa-bold"></i></button>
-                            <button class="editor-btn" onclick="insertTag('<i>', '</i>')"><i
-                                    class="fas fa-italic"></i></button>
-                            <button class="editor-btn" onclick="insertTag('<h3>', '</h3>')"><i
-                                    class="fas fa-heading"></i></button>
-                            <button class="editor-btn" onclick="insertTag('<p>', '</p>')"><i
-                                    class="fas fa-paragraph"></i></button>
-                            <button class="editor-btn" onclick="insertTag('<ul>\\n<li>', '</li>\\n</ul>')"><i
-                                    class="fas fa-list-ul"></i></button>
+                    <div>
+                        <h2 style="margin-bottom: 24px;">Список новин</h2>
+                        <div id="newsList"
+                            style="max-height: 500px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
                         </div>
-                        <textarea id="newsContent" rows="12"
-                            style="font-family: monospace; font-size: 13px;"></textarea>
                     </div>
-
-                    <div style="display: flex; gap: 12px;">
-                        <button onclick="saveLocal()" class="btn btn-primary" style="flex: 1;">Застосувати зміни
-                            (Локально)</button>
-                        <button onclick="clearForm()" class="btn btn-outline">Очистити</button>
-                    </div>
-                </div>
-
-                <!-- List -->
-                <div>
-                    <h2 style="margin-bottom: 24px;">Список новин</h2>
-                    <div id="newsList"
-                        style="max-height: 500px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
-                    </div>
-
-                    <h3 style="margin-top: 24px;">Попередній перегляд</h3>
-                    <div id="previewArea" class="preview-box"></div>
                 </div>
             </div>
+
+            <!-- PATRONS SECTION -->
+            <div id="patronsSection" class="section-content">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                    <div>
+                        <h2 style="margin-bottom: 24px;">Додати Мецената</h2>
+                        <input type="hidden" id="pIndex" value="-1">
+                        <div class="form-group"><label>Ім'я / Нікнейм</label><input type="text" id="pName"></div>
+                        <div class="form-group"><label>Сума (наприклад: 500 ₴)</label><input type="text" id="pAmount">
+                        </div>
+                        <div class="form-group"><label>Повідомлення</label><textarea id="pMessage" rows="3"></textarea>
+                        </div>
+                        <div class="form-group"><label>Дата</label><input type="text" id="pDate"></div>
+                        <div style="display: flex; gap: 12px;">
+                            <button onclick="saveLocalPatron()" class="btn btn-primary" style="flex: 1;">Додати /
+                                Оновити</button>
+                            <button onclick="clearPatronForm()" class="btn btn-outline">Очистити</button>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 style="margin-bottom: 24px;">Список Меценатів</h2>
+                        <div id="patronsList"
+                            style="max-height: 500px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script>
         // STATE
         let newsData = [];
-        let currentSha = null;
-        const TARGET_FILE = 'news.json';
+        let patronsData = [];
+        let newsSha = null;
+        let patronsSha = null;
+        let currentTab = 'news';
 
         // INIT
         document.addEventListener('DOMContentLoaded', () => {
@@ -278,230 +301,205 @@
                 document.getElementById('ghUserIn').value = u;
                 document.getElementById('ghRepoIn').value = r;
                 document.getElementById('ghTokenIn').value = t;
-                // Auto-login attempt
-                // authenticateGithub(); // Optional: Don't auto-click to let user verify
             }
             document.getElementById('newsDate').value = new Date().toLocaleDateString('uk-UA');
+            document.getElementById('pDate').value = new Date().toLocaleDateString('uk-UA');
         });
+
+        // TABS
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Section').classList.add('active');
+
+            // Auto reload data for tab if empty
+            if (tab === 'news' && newsData.length === 0) loadTabFile('news.json');
+            if (tab === 'patrons' && patronsData.length === 0) loadTabFile('patrons.json');
+        }
 
         // AUTH
         async function authenticateGithub() {
-            const btn = document.getElementById('loginBtn');
-            const err = document.getElementById('authError');
-
             const user = document.getElementById('ghUserIn').value.trim();
             const repo = document.getElementById('ghRepoIn').value.trim();
             const token = document.getElementById('ghTokenIn').value.trim();
+            if (!user || !repo || !token) return alert('Fill all fields');
 
-            if (!user || !repo || !token) {
-                err.style.display = 'block';
-                err.innerText = 'Будь ласка, заповніть всі поля';
-                return;
-            }
-
-            btn.innerText = 'Перевірка...';
-            btn.disabled = true;
-            err.style.display = 'none';
-
-            // Verify by trying to fetch the file (or simple user fetch)
-            const url = `https://api.github.com/repos/${user}/${repo}/contents/${TARGET_FILE}`;
-
-            try {
-                const res = await fetch(url, {
-                    headers: {
-                        'Authorization': `token ${token}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
-
-                if (res.status === 404) {
-                    // File might not exist yet, that's okay if repo exists, but let's assume 404 means wrong repo for simplicity or empty repo
-                    // Better check: fetch user
-                } else if (!res.ok) {
-                    throw new Error('Невірний токен або репозиторій не знайдено (401/404)');
-                }
-
-                // If OK:
-                localStorage.setItem('gh_user', user);
-                localStorage.setItem('gh_repo', repo);
-                localStorage.setItem('gh_token', token);
-
-                showAdminPanel(user, repo);
-
-                // Parse existing data
-                if (res.ok) {
-                    const json = await res.json();
-                    currentSha = json.sha;
-                    const content = decodeURIComponent(escape(window.atob(json.content)));
-                    newsData = JSON.parse(content);
-                    renderList();
-                    setStatus(`Завантажено ${newsData.length} новин`);
-                } else {
-                    newsData = []; // New file
-                    setStatus('Файл news.json не знайдено, буде створено новий.');
-                }
-
-            } catch (e) {
-                err.style.display = 'block';
-                err.innerText = 'Помилка: ' + e.message;
-                btn.innerText = 'Підключитися';
-                btn.disabled = false;
-            }
-        }
-
-        function showAdminPanel(user, repo) {
+            localStorage.setItem('gh_user', user);
+            localStorage.setItem('gh_repo', repo);
+            localStorage.setItem('gh_token', token);
             document.getElementById('authOverlay').style.display = 'none';
             document.getElementById('adminPanel').style.display = 'block';
             document.getElementById('displayUser').innerText = user;
-            document.getElementById('displayRepo').innerText = repo;
+            loadFromGitHub();
         }
+        function logout() { localStorage.removeItem('gh_token'); location.reload(); }
 
-        function logout() {
-            if (confirm('Вийти і забути токен з цього браузера?')) {
-                localStorage.removeItem('gh_token');
-                location.reload();
+        // API
+        async function loadFromGitHub() {
+            const file = currentTab === 'news' ? 'news.json' : 'patrons.json';
+            const status = document.getElementById('statusMsg');
+            status.innerText = `Завантаження ${file}...`;
+
+            try {
+                const data = await fetchFile(file);
+                if (currentTab === 'news') {
+                    newsData = JSON.parse(data.content);
+                    newsSha = data.sha;
+                    renderNews();
+                } else {
+                    patronsData = JSON.parse(data.content);
+                    patronsSha = data.sha;
+                    renderPatrons();
+                }
+                status.innerText = `✅ ${file} завантажено`;
+            } catch (e) {
+                status.innerText = `❌ Помилка: ${e.message}`;
+                // If 404, assume new
+                if (e.message.includes('404')) {
+                    if (currentTab === 'news') newsData = [];
+                    else patronsData = [];
+                    status.innerText = 'Створіть новий файл...';
+                }
             }
         }
 
-        // LOGIC
-        async function loadFromGitHub() {
-            authenticateGithub(); // Re-use auth logic to reload
+        async function fetchFile(path) {
+            const user = localStorage.getItem('gh_user');
+            const repo = localStorage.getItem('gh_repo');
+            const token = localStorage.getItem('gh_token');
+            const url = `https://api.github.com/repos/${user}/${repo}/contents/${path}`;
+            const res = await fetch(url, { headers: { 'Authorization': `token ${token}` } });
+            if (!res.ok) throw new Error(res.status);
+            const json = await res.json();
+            return {
+                sha: json.sha,
+                content: decodeURIComponent(escape(window.atob(json.content)))
+            };
         }
 
         async function pushToGitHub() {
+            const file = currentTab === 'news' ? 'news.json' : 'patrons.json';
+            const data = currentTab === 'news' ? newsData : patronsData;
+            const sha = currentTab === 'news' ? newsSha : patronsSha;
+
+            const status = document.getElementById('statusMsg');
+            status.innerText = `Збереження ${file}...`;
+
             const user = localStorage.getItem('gh_user');
             const repo = localStorage.getItem('gh_repo');
             const token = localStorage.getItem('gh_token');
 
-            setStatus('Збереження...');
-
-            const contentStr = JSON.stringify(newsData, null, 4);
+            const contentStr = JSON.stringify(data, null, 4);
             const contentBase64 = window.btoa(unescape(encodeURIComponent(contentStr)));
-            const url = `https://api.github.com/repos/${user}/${repo}/contents/${TARGET_FILE}`;
-
-            const body = {
-                message: `Update news via Admin (${new Date().toLocaleString()})`,
-                content: contentBase64,
-                sha: currentSha
-            };
 
             try {
-                const res = await fetch(url, {
+                const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file}`, {
                     method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(body)
+                    headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: `Update ${file}`,
+                        content: contentBase64,
+                        sha: sha
+                    })
                 });
-
-                if (!res.ok) throw new Error('Failed to save');
-
+                if (!res.ok) throw new Error('Save failed');
                 const json = await res.json();
-                currentSha = json.content.sha;
-                setStatus('✅ Успішно збережено на GitHub!');
-                setTimeout(() => setStatus('Готовий'), 3000);
-            } catch (e) {
-                setStatus('❌ Помилка: ' + e.message);
-            }
+
+                if (currentTab === 'news') newsSha = json.content.sha;
+                else patronsSha = json.content.sha;
+
+                status.innerText = `✅ ${file} збережено!`;
+            } catch (e) { status.innerText = `Error: ${e.message}`; }
         }
 
-        // CRUD
-        function saveLocal() {
-            const title = document.getElementById('newsTitle').value;
-            if (!title) return alert('Потрібен заголовок');
-
+        // NEWS CRUD
+        function saveLocalNews() {
             const item = {
                 id: document.getElementById('newsId').value || `post-${Date.now()}`,
-                title: title,
+                title: document.getElementById('newsTitle').value,
                 date: document.getElementById('newsDate').value,
                 image: document.getElementById('newsImage').value || 'assets/images/logo.png',
                 summary: document.getElementById('newsSummary').value,
                 fullContent: document.getElementById('newsContent').value,
-                tags: document.getElementById('newsTags').value.split(',').map(s => s.trim()).filter(Boolean)
+                tags: document.getElementById('newsTags').value.split(',')
             };
-
-            const index = parseInt(document.getElementById('editIndex').value);
-            if (index >= 0) newsData[index] = item;
-            else newsData.push(item);
-
-            renderList();
-            clearForm();
-            setStatus('Зміни застосовано локально. Натисніть "Зберегти на сайт" щоб опублікувати.');
+            const idx = parseInt(document.getElementById('editIndex').value);
+            if (idx >= 0) newsData[idx] = item; else newsData.push(item);
+            renderNews(); clearNewsForm();
         }
-
-        function renderList() {
-            const list = document.getElementById('newsList');
-            list.innerHTML = '';
-            // Display newest first usually? But array logic is push. Let's just map generic.
-            newsData.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = 'news-list-item';
-                div.innerHTML = `
-                    <div style="overflow:hidden">
-                        <strong>${item.title}</strong>
-                        <div style="font-size:12px; color:var(--vp-c-text-3)">${item.date}</div>
-                    </div>
-                    <div style="display:flex; gap:8px;">
-                        <button onclick="editItem(${index})" class="editor-btn"><i class="fas fa-edit"></i></button>
-                        <button onclick="deleteItem(${index})" class="editor-btn" style="color:#ff6666"><i class="fas fa-trash"></i></button>
-                    </div>
-                `;
-                list.appendChild(div);
+        function renderNews() {
+            const l = document.getElementById('newsList'); l.innerHTML = '';
+            newsData.forEach((i, idx) => {
+                l.innerHTML += `<div class="list-item"><b>${i.title}</b> <div><button onclick="editNews(${idx})">✏️</button> <button onclick="delNews(${idx})">🗑️</button></div></div>`;
             });
         }
-
-        function editItem(index) {
-            const item = newsData[index];
-            document.getElementById('newsTitle').value = item.title;
-            document.getElementById('newsId').value = item.id || '';
-            document.getElementById('newsDate').value = item.date;
-            document.getElementById('newsImage').value = item.image;
-            document.getElementById('newsSummary').value = item.summary || '';
-            document.getElementById('newsContent').value = item.fullContent || item.content || '';
-            document.getElementById('newsTags').value = (item.tags || []).join(', ');
-            document.getElementById('editIndex').value = index;
-            updatePreview();
+        function editNews(i) {
+            const d = newsData[i];
+            document.getElementById('newsTitle').value = d.title; document.getElementById('newsId').value = d.id;
+            document.getElementById('newsContent').value = d.fullContent; document.getElementById('editIndex').value = i;
+            document.getElementById('newsImage').value = d.image;
         }
+        function delNews(i) { newsData.splice(i, 1); renderNews(); }
+        function clearNewsForm() { document.getElementById('newsTitle').value = ''; document.getElementById('editIndex').value = '-1'; }
 
-        function deleteItem(index) {
-            if (confirm('Видалити?')) {
-                newsData.splice(index, 1);
-                renderList();
-            }
+        // PATRONS CRUD
+        function saveLocalPatron() {
+            const item = {
+                name: document.getElementById('pName').value,
+                amount: document.getElementById('pAmount').value,
+                message: document.getElementById('pMessage').value,
+                date: document.getElementById('pDate').value
+            };
+            const idx = parseInt(document.getElementById('pIndex').value);
+            if (idx >= 0) patronsData[idx] = item; else patronsData.push(item);
+            renderPatrons(); clearPatronForm();
         }
-
-        function clearForm() {
-            document.getElementById('newsTitle').value = '';
-            document.getElementById('newsId').value = '';
-            document.getElementById('newsSummary').value = '';
-            document.getElementById('newsContent').value = '';
-            document.getElementById('newsTags').value = '';
-            document.getElementById('editIndex').value = '-1';
+        function renderPatrons() {
+            const l = document.getElementById('patronsList'); l.innerHTML = '';
+            patronsData.forEach((i, idx) => {
+                l.innerHTML += `<div class="list-item"><div><b>${i.name}</b> (${i.amount})</div> <div><button onclick="editPatron(${idx})">✏️</button> <button onclick="delPatron(${idx})">🗑️</button></div></div>`;
+            });
         }
-
-        function setStatus(msg) {
-            document.getElementById('statusMsg').innerText = msg;
+        function editPatron(i) {
+            const d = patronsData[i];
+            document.getElementById('pName').value = d.name; document.getElementById('pAmount').value = d.amount;
+            document.getElementById('pMessage').value = d.message; document.getElementById('pDate').value = d.date;
+            document.getElementById('pIndex').value = i;
         }
+        function delPatron(i) { patronsData.splice(i, 1); renderPatrons(); }
+        function clearPatronForm() { document.getElementById('pName').value = ''; document.getElementById('pAmount').value = ''; document.getElementById('pMessage').value = ''; document.getElementById('pIndex').value = '-1'; }
+        async function loadTabFile(f) { loadFromGitHub(); }
 
-        // Helpers
-        function insertTag(start, end) {
-            const el = document.getElementById('newsContent');
-            const s = el.selectionStart; const e = el.selectionEnd;
-            el.value = el.value.substring(0, s) + start + el.value.substring(s, e) + end + el.value.substring(e);
-            updatePreview();
+        // Upload (Same as before)
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (!file) return;
+            const user = localStorage.getItem('gh_user');
+            const repo = localStorage.getItem('gh_repo');
+            const token = localStorage.getItem('gh_token');
+            const status = document.getElementById('uploadStatus');
+            status.innerHTML = 'Uploading...';
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = async function () {
+                const contentBase64 = reader.result.split(',')[1];
+                const cleanName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+                const path = `assets/images/uploads/${Date.now()}_${cleanName}`;
+                try {
+                    await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${path}`, {
+                        method: 'PUT',
+                        headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: 'upload', content: contentBase64 })
+                    });
+                    status.innerHTML = `Done! Path: ${path}`;
+                    document.getElementById('newsImage').value = path;
+                } catch (e) { status.innerHTML = 'Error'; }
+            };
         }
-
-        ['newsTitle', 'newsContent'].forEach(id => {
-            document.getElementById(id).addEventListener('input', updatePreview);
-        });
-
-        function updatePreview() {
-            const title = document.getElementById('newsTitle').value;
-            const content = document.getElementById('newsContent').value;
-            document.getElementById('previewArea').innerHTML = `<h1>${title}</h1><div>${content}</div>`;
-        }
-
     </script>
 </body>
 
