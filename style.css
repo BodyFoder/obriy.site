@@ -238,41 +238,85 @@ main {
     opacity: 0.9;
 }
 
-/* Features Grid (Philosophy) */
-.features {
+html {
+    scroll-behavior: smooth;
+}
+
+/* Guide Section (Merged Features & Flow) */
+.guide-section {
+    padding: 80px 0;
+}
+
+.info-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 24px;
-    margin-top: 80px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
 }
 
-.feature-card {
-    background-color: var(--vp-c-bg-soft);
+.guide-card {
+    background: var(--vp-c-bg-soft);
     border: 1px solid var(--vp-c-border);
-    border-radius: 12px;
-    padding: 24px;
-    transition: border-color 0.2s;
+    border-radius: 16px;
+    padding: 32px 24px;
+    text-align: center;
+    /* Center content in cards */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.2s;
 }
 
-.feature-card:hover {
+.guide-card:hover {
     border-color: var(--vp-c-brand);
+    transform: translateY(-5px);
 }
 
-.icon {
-    font-size: 24px;
-    margin-bottom: 16px;
-    display: block;
+.guide-icon {
+    font-size: 32px;
+    margin-bottom: 20px;
+    color: var(--vp-c-text-1);
 }
 
-.feature-card h3 {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 12px;
-}
-
-.feature-card p {
+.guide-step-number {
     font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--vp-c-brand);
+    margin-bottom: 16px;
+    font-weight: 800;
+}
+
+.guide-card h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--vp-c-text-1);
+}
+
+.guide-card p {
+    font-size: 15px;
     color: var(--vp-c-text-2);
+    line-height: 1.6;
+}
+
+.section-divider {
+    text-align: center;
+    margin: 80px 0;
+    /* Symmetrical spacing */
+}
+
+.section-divider h2 {
+    font-size: 40px;
+    font-weight: 800;
+    color: #fff;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+@media (max-width: 960px) {
+    .info-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
 }
 
 /* Footer */
@@ -703,61 +747,6 @@ footer {
 }
 
 /* Restored Styles for Index & News */
-
-/* Flow Steps (How to Start) */
-.flow {
-    margin-top: 60px;
-    margin-bottom: 80px;
-}
-
-.section-title {
-    text-align: center;
-    font-size: 40px;
-    font-weight: 800;
-    margin-bottom: 48px;
-    color: #fff;
-    letter-spacing: -0.5px;
-}
-
-.flow-steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 32px;
-}
-
-.step {
-    background: var(--vp-c-bg-soft);
-    border: 1px solid var(--vp-c-border);
-    border-radius: 16px;
-    padding: 32px 24px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.step:hover {
-    border-color: var(--vp-c-brand);
-}
-
-.step-number {
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--vp-c-brand);
-    margin-bottom: 16px;
-    font-weight: 800;
-}
-
-.step h3 {
-    font-size: 20px;
-    margin-bottom: 12px;
-    color: var(--vp-c-text-1);
-}
-
-.step p {
-    color: var(--vp-c-text-2);
-    font-size: 15px;
-}
 
 /* Sidebar & News Layout Fix */
 .news-layout {
