@@ -22,16 +22,5 @@
             "Discord",
             "Правила"
         ]
-    },
-    {
-        "id": "1241241",
-        "title": "test",
-        "date": "30.01.2026",
-        "image": "assets/images/logo.png",
-        "summary": "test test",
-        "fullContent": "testtesttesttesttesttesttesttesttest",
-        "tags": [
-            "tetst"
-        ]
     }
 ]

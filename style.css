@@ -134,8 +134,12 @@ nav a.active {
 
 /* Hero Section */
 .hero {
-    /* Padding is already handled by main, but adjusting for specific hero spacing if needed */
-    padding-bottom: 80px;
+    /* Full viewport height minus header and padding */
+    min-height: calc(100vh - var(--vp-nav-height) - 20px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     text-align: center;
 }
 
