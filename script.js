@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // News loading logic
     const newsContainer = document.getElementById('news-container');
 
     if (newsContainer) {
@@ -15,14 +16,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderNews(newsData) {
         newsContainer.innerHTML = '';
-        
-        // Sort by id descending (assuming newer IDs are newer news) or date parsing
-        // For simplicity, showing as is, or can reverse
+
         newsData.reverse().forEach(newsItem => {
             const article = document.createElement('article');
-            article.className = 'news-card';
-            
-            const tagsHtml = newsItem.tags 
+            article.className = 'news-card fade-in-item'; // Clean class
+
+            const tagsHtml = newsItem.tags
                 ? `<div class="news-tags">${newsItem.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>`
                 : '';
 
@@ -40,8 +39,37 @@ document.addEventListener('DOMContentLoaded', () => {
                     <a href="#" class="read-more">Читати далі <i class="fas fa-arrow-right"></i></a>
                 </div>
             `;
-            
+
             newsContainer.appendChild(article);
         });
+
+        // Trigger observer for new elements
+        observeAnimations();
     }
+
+    // Animation Intersect Observer
+    function observeAnimations() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        // Select all elements to animate
+        const animatedElements = document.querySelectorAll('.animate, .fade-in-item');
+        animatedElements.forEach(el => {
+            // Set initial state via JS to ensure graceful degradation if JS fails
+            el.style.opacity = 0;
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(el);
+        });
+    }
+
+    // Initial call
+    observeAnimations();
 });
