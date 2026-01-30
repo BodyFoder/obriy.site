@@ -1,4 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('Script initialized v1.1');
+
+    // 0. Mobile Menu Logic
+    const menuToggle = document.querySelector('.menu-toggle');
+    const nav = document.querySelector('.desktop-nav');
+    if (menuToggle && nav) {
+        menuToggle.addEventListener('click', () => {
+            nav.classList.toggle('active');
+        });
+    }
+
     // 1. Logic for News Feed (Home / News Page)
     if (document.getElementById('news-container')) {
         loadNews();
@@ -32,11 +43,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 5. Server Status Widget
-    fetchServerStatus();
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        fetchServerStatus();
+    } else {
+        // Already inside DOMContentLoaded, so this is just a fallback or double-call safegaurd
+        fetchServerStatus();
+    }
 });
 
 async function fetchServerStatus() {
-    // Try to find status widgets - if none, return
+    console.log('Starting Server Status Fetch...');
     const statusWidgets = document.querySelectorAll('.server-status');
     if (!statusWidgets.length) return;
 
@@ -45,19 +61,30 @@ async function fetchServerStatus() {
     const statusUrl = 'server-status.json';
 
     try {
-        // Append timestamp to prevent caching
-        const response = await fetch(`${statusUrl}?t=${new Date().getTime()}`);
+        // 5 second timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+        const response = await fetch(`${statusUrl}?t=${new Date().getTime()}`, {
+            signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
+        console.log('Server Status Data:', data);
 
         statusWidgets.forEach(widget => {
             const dot = widget.querySelector('.status-dot');
             const text = widget.querySelector('.status-text');
 
-            // Check if data exists
             if (data && typeof data.online !== 'undefined') {
                 dot.classList.add('online');
                 dot.classList.remove('offline');
-
                 text.innerHTML = `Online: <span style="color: var(--vp-c-brand);">${data.online}</span> / ${data.maxPlayers}`;
             } else {
                 dot.classList.add('offline');
@@ -65,16 +92,17 @@ async function fetchServerStatus() {
                 text.textContent = 'Offline';
             }
 
-            // Copy user friendly IP on click
-            widget.addEventListener('click', () => {
+            // Copy click handler
+            widget.onclick = () => {
                 navigator.clipboard.writeText(displayIp).then(() => {
                     const originalText = text.innerHTML;
-                    text.textContent = 'IP Copied!';
-                    setTimeout(() => {
-                        text.innerHTML = originalText;
-                    }, 2000);
+                    if (!text.textContent.includes('Copied')) {
+                        const oldContent = text.innerHTML;
+                        text.textContent = 'IP Copied!';
+                        setTimeout(() => text.innerHTML = oldContent, 2000);
+                    }
                 });
-            });
+            };
         });
 
     } catch (error) {
@@ -84,6 +112,7 @@ async function fetchServerStatus() {
             const text = widget.querySelector('.status-text');
             dot.classList.add('offline');
             dot.classList.remove('online');
+            // If error, show Offline instead of Loading
             if (text) text.textContent = 'Offline';
         });
     }
