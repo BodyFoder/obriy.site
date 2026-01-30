@@ -90,10 +90,25 @@ header {
 }
 
 .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+}
+
+.logo img {
+    height: 40px;
+    width: auto;
+}
+
+.logo span {
     font-weight: 700;
     font-size: 20px;
     letter-spacing: 0.5px;
     color: var(--vp-c-text-1);
+    position: relative;
+    top: 1px;
+    /* Optical alignment */
 }
 
 .logo:hover {
