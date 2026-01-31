@@ -142,7 +142,7 @@ function loadNews() {
 
                 article.innerHTML = `
                     <div class="news-image">
-                        <img src="${newsItem.image}" alt="${newsItem.title}" onerror="this.src='assets/images/logo.png'">
+                        <img src="${newsItem.image}" alt="${newsItem.title}" onerror="this.src='assets/images/logo_new.png'">
                     </div>
                     <div class="news-content">
                         <div class="news-meta">
