@@ -62,7 +62,7 @@ async function fetchServerStatus() {
     if (!statusWidgets.length) return;
 
     // Use local JSON file containing status
-    const displayIp = 'play.obriyhytale.pp.ua';
+    const displayIp = 'play.obriyhytale.pp.ua:25504';
     const statusUrl = 'server-status.json';
 
     try {
@@ -98,9 +98,8 @@ async function fetchServerStatus() {
             }
 
             // Copy click handler
-            // Copy click handler
             widget.onclick = () => {
-                navigator.clipboard.writeText('play.obriyhytale.pp.ua:25680').then(() => {
+                navigator.clipboard.writeText('play.obriyhytale.pp.ua:25504').then(() => {
                     const originalText = text.innerHTML;
                     if (!text.textContent.includes('Copied')) {
                         const oldContent = text.innerHTML;
