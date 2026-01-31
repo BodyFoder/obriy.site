@@ -237,8 +237,9 @@
                             <h4 style="margin-bottom: 12px; font-size: 14px; color: var(--vp-c-text-1);">Завантаження
                                 зображень (GitHub)</h4>
                             <input type="file" id="fileInput" style="display: none;" onchange="uploadFile()">
-                            <button onclick="document.getElementById('fileInput').click()" class="btn btn-outline"
-                                style="width: 100%; font-size: 13px;"><i class="fas fa-camera"></i> Вибрати
+                            <button onclick="uploadTarget='cover'; document.getElementById('fileInput').click()"
+                                class="btn btn-outline" style="width: 100%; font-size: 13px;"><i
+                                    class="fas fa-camera"></i> Вибрати
                                 файл...</button>
                             <div id="uploadStatus" style="font-size: 12px; margin-top: 8px; color: var(--vp-c-text-2);">
                             </div>
@@ -246,7 +247,28 @@
                         <div class="form-group"><label>Короткий опис</label><textarea id="newsSummary"
                                 rows="3"></textarea></div>
                         <div class="form-group"><label>Теги</label><input type="text" id="newsTags"></div>
-                        <div class="form-group"><label>Текст</label><textarea id="newsContent" rows="12"></textarea>
+                        <div class="form-group"><label>Теги</label><input type="text" id="newsTags"></div>
+                        <div class="form-group">
+                            <label>Текст</label>
+                            <div class="editor-toolbar">
+                                <button class="editor-btn" onclick="insertTag('<b>', '</b>')"><i
+                                        class="fas fa-bold"></i></button>
+                                <button class="editor-btn" onclick="insertTag('<i>', '</i>')"><i
+                                        class="fas fa-italic"></i></button>
+                                <button class="editor-btn" onclick="insertTag('<u>', '</u>')"><i
+                                        class="fas fa-underline"></i></button>
+                                <button class="editor-btn" onclick="insertTag('<h2>', '</h2>')">H2</button>
+                                <button class="editor-btn" onclick="insertTag('<h3>', '</h3>')">H3</button>
+                                <button class="editor-btn" onclick="insertTag('<p>', '</p>')">P</button>
+                                <button class="editor-btn" onclick="insertTag('<br>', '')">BR</button>
+                                <button class="editor-btn" onclick="createLink()"><i class="fas fa-link"></i></button>
+                                <button class="editor-btn"
+                                    onclick="uploadTarget='content'; document.getElementById('fileInput').click()"><i
+                                        class="fas fa-image"></i></button>
+                                <button class="editor-btn" onclick="insertTag('<ul>\n<li>', '</li>\n</ul>')"><i
+                                        class="fas fa-list-ul"></i></button>
+                            </div>
+                            <textarea id="newsContent" rows="12"></textarea>
                         </div>
                         <div style="display: flex; gap: 12px;">
                             <button onclick="saveLocalNews()" class="btn btn-primary" style="flex: 1;">Застосувати зміни
@@ -300,6 +322,7 @@
         let newsSha = null;
         let patronsSha = null;
         let currentTab = 'news';
+        let uploadTarget = 'cover';
 
         // INIT
         document.addEventListener('DOMContentLoaded', () => {
@@ -426,10 +449,25 @@
         }
 
         // NEWS CRUD
+        function insertTag(start, end) {
+            const textarea = document.getElementById('newsContent');
+            const s = textarea.selectionStart;
+            const e = textarea.selectionEnd;
+            const text = textarea.value;
+            textarea.value = text.substring(0, s) + start + text.substring(s, e) + end + text.substring(e);
+        }
+        function createLink() {
+            const url = prompt('Enter URL:');
+            if (url) insertTag(`<a href="${url}">`, '</a>');
+        }
+
         function saveLocalNews() {
+            const title = document.getElementById('newsTitle').value.trim();
+            if (!title) return alert('Введіть заголовок!');
+
             const item = {
                 id: document.getElementById('newsId').value || `post-${Date.now()}`,
-                title: document.getElementById('newsTitle').value,
+                title: title,
                 date: document.getElementById('newsDate').value,
                 image: document.getElementById('newsImage').value || 'assets/images/logo_new.png',
                 summary: document.getElementById('newsSummary').value,
@@ -506,7 +544,13 @@
                         body: JSON.stringify({ message: 'upload', content: contentBase64 })
                     });
                     status.innerHTML = `Done! Path: ${path}`;
-                    document.getElementById('newsImage').value = path;
+
+                    if (uploadTarget === 'cover') {
+                        document.getElementById('newsImage').value = path;
+                    } else {
+                        const imgTag = `<img src="${path}" alt="Image" style="width:100%; border-radius:8px; margin: 16px 0;">`;
+                        insertTag(imgTag, '');
+                    }
                 } catch (e) { status.innerHTML = 'Error'; }
             };
         }
