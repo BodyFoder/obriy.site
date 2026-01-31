@@ -46,9 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
         fetchServerStatus();
     } else {
-        // Already inside DOMContentLoaded, so this is just a fallback or double-call safegaurd
         fetchServerStatus();
     }
+    // Auto-update every 60 seconds
+    setInterval(fetchServerStatus, 60000);
 });
 
 async function fetchServerStatus() {

@@ -778,6 +778,9 @@ footer {
     display: none;
     color: var(--vp-c-text-1);
     font-size: 24px;
+    cursor: pointer;
+    z-index: 101;
+    /* Above nav */
 }
 
 @media (max-width: 768px) {
@@ -788,14 +791,16 @@ footer {
     .desktop-nav {
         display: none;
         position: absolute;
-        top: 100%;
+        top: var(--vp-nav-height);
         left: 0;
         right: 0;
+        flex-direction: column;
         background: var(--vp-c-bg);
         border-bottom: 1px solid var(--vp-c-border);
-        flex-direction: column;
-        padding: 20px;
+        padding: 24px;
         gap: 16px;
+        align-items: flex-start;
+        z-index: 100;
     }
 
     .desktop-nav.active {
