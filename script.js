@@ -14,6 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('news-container')) {
         loadNews();
     }
+    // Logic for Home Latest News
+    if (document.getElementById('home-news-grid')) {
+        loadHomeNews();
+    }
 
     // 2. Logic for Single Article (Article Page)
     if (window.location.pathname.endsWith('article.html') || document.getElementById('article-content')) {
@@ -159,6 +163,56 @@ function loadNews() {
             });
         })
         .catch(error => console.error('Error loading news:', error));
+}
+
+function loadHomeNews() {
+    fetch('news.json?t=' + Date.now())
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('home-news-grid');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const newsWithIds = data.map((item, index) => ({
+                ...item,
+                id: item.id || `post-${index}`
+            }));
+
+            // Take last 3 items (latest) and reverse them to show newest first
+            const latest = newsWithIds.slice(-3).reverse();
+
+            latest.forEach(newsItem => {
+                const article = document.createElement('a'); // Make the whole card a link
+                article.href = `article.html?id=${newsItem.id}`;
+                article.className = 'news-card';
+                article.style.textDecoration = 'none';
+                article.style.color = 'inherit';
+
+                const tagsHtml = newsItem.tags
+                    ? `<div class="news-tags" style="margin-bottom:8px;">${newsItem.tags.map(tag => `<span class="tag" style="font-size:11px; color:var(--vp-c-brand); margin-right:8px;">#${tag}</span>`).join('')}</div>`
+                    : '';
+
+                // Shorter summary for home cards
+                const summaryText = newsItem.summary || (newsItem.fullContent ? newsItem.fullContent.substring(0, 80) + '...' : '');
+
+                article.innerHTML = `
+                    <div class="news-image" style="height: 180px;">
+                         <img src="${newsItem.image}" alt="${newsItem.title}" onerror="this.src='assets/images/logo_new.png'">
+                    </div>
+                    <div class="news-content" style="padding: 20px;">
+                        <div class="news-meta" style="margin-bottom: 8px;">
+                            <span class="news-date" style="font-size: 12px;"><i class="far fa-calendar-alt"></i> ${newsItem.date}</span>
+                        </div>
+                        ${tagsHtml}
+                        <h3 style="font-size: 18px; margin-bottom: 8px;">${newsItem.title}</h3>
+                        <p style="font-size: 14px; margin-bottom: 16px; color: var(--vp-c-text-2); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">${summaryText}</p>
+                        <span class="read-more" style="margin-top:auto;">Читати далі <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                `;
+                container.appendChild(article);
+            });
+        })
+        .catch(error => console.error('Error loading home news:', error));
 }
 
 function loadFullArticle(newsData) {
