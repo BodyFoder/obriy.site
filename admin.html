@@ -153,6 +153,15 @@
         .section-content.active {
             display: block;
         }
+
+        /* Override global header styles for Admin to prevent overlap */
+        .admin-panel header {
+            position: static;
+            height: auto;
+            background: transparent;
+            border-bottom: none;
+            backdrop-filter: none;
+        }
     </style>
 </head>
 
@@ -370,7 +379,8 @@
             const user = localStorage.getItem('gh_user');
             const repo = localStorage.getItem('gh_repo');
             const token = localStorage.getItem('gh_token');
-            const url = `https://api.github.com/repos/${user}/${repo}/contents/${path}`;
+            // Add cache buster to prevent loading stale deleted data
+            const url = `https://api.github.com/repos/${user}/${repo}/contents/${path}?t=${Date.now()}`;
             const res = await fetch(url, { headers: { 'Authorization': `token ${token}` } });
             if (!res.ok) throw new Error(res.status);
             const json = await res.json();

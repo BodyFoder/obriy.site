@@ -779,8 +779,8 @@ footer {
     color: var(--vp-c-text-1);
     font-size: 24px;
     cursor: pointer;
-    z-index: 101;
-    /* Above nav */
+    z-index: 1001;
+    /* Above nav and everything else */
 }
 
 @media (max-width: 768px) {
