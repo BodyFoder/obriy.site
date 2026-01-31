@@ -884,4 +884,63 @@ footer {
         position: static;
         margin-top: 40px;
     }
+}/* --- New How to Start Elements --- */
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 8px;
+}
+
+.btn-link {
+    color: var(--vp-c-brand);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.btn-link:hover {
+    color: var(--vp-c-brand-light);
+}
+
+.server-ip-copy {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--vp-c-border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 12px;
+    font-family: monospace;
+    font-size: 14px;
+    position: relative;
+    overflow: hidden;
+}
+
+.server-ip-copy:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--vp-c-brand);
+}
+
+.server-ip-copy:active {
+    transform: scale(0.98);
+}
+
+.server-ip-copy i.fa-network-wired {
+    color: var(--vp-c-text-2);
+}
+
+.server-ip-copy .ip-text {
+    flex-grow: 1;
+    text-align: center;
+    color: var(--vp-c-brand-light);
+    font-weight: 700;
+}
+
+.server-ip-copy .copy-hint {
+    color: var(--vp-c-text-2);
+    font-size: 12px;
 }

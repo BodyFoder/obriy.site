@@ -98,8 +98,9 @@ async function fetchServerStatus() {
             }
 
             // Copy click handler
+            // Copy click handler
             widget.onclick = () => {
-                navigator.clipboard.writeText(displayIp).then(() => {
+                navigator.clipboard.writeText('play.obriyhytale.pp.ua:25680').then(() => {
                     const originalText = text.innerHTML;
                     if (!text.textContent.includes('Copied')) {
                         const oldContent = text.innerHTML;
@@ -286,4 +287,26 @@ async function loadPatrons() {
         console.error(error);
         grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #ff4d4d;">Не вдалося завантажити список меценатів :(</div>';
     }
+}
+
+// Helper for Copy IP in How to Start
+function copyIp(element) {
+    const ip = element.getAttribute('data-ip');
+    if (!ip) return;
+
+    navigator.clipboard.writeText(ip).then(() => {
+        const originalHtml = element.innerHTML;
+        const icon = element.querySelector('.copy-hint i');
+        const textElement = element.querySelector('.ip-text');
+
+        if (icon) icon.className = 'fas fa-check';
+        if (textElement) textElement.innerText = 'Скопійовано!';
+
+        element.style.borderColor = 'var(--vp-c-success, #10b981)';
+
+        setTimeout(() => {
+            element.innerHTML = originalHtml;
+            element.style.borderColor = 'var(--vp-c-border)';
+        }, 2000);
+    }).catch(err => console.error('Failed to copy: ', err));
 }
