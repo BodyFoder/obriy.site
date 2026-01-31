@@ -444,7 +444,7 @@
                 if (currentTab === 'news') newsSha = json.content.sha;
                 else patronsSha = json.content.sha;
 
-                status.innerText = `✅ ${file} збережено!`;
+                status.innerText = `✅ ${file} збережено! (Зачекайте 1-2 хв для оновлення сайту)`;
             } catch (e) { status.innerText = `Error: ${e.message}`; }
         }
 

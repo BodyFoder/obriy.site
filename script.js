@@ -17,41 +17,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2. Logic for Single Article (Article Page)
     if (window.location.pathname.endsWith('article.html') || document.getElementById('article-content')) {
-        if (window.location.pathname.endsWith('article.html') || document.getElementById('article-content')) {
-            // Load data first, then find article
-            fetch('news.json?t=' + Date.now())
-                .then(res => res.json())
-                .then(data => {
-                    const newsData = data.map((item, index) => ({ ...item, id: item.id || `post-${index}` }));
-                    loadFullArticle(newsData);
-                })
-                .catch(e => console.error(e));
-        }
+        // Load data first, then find article
+        fetch('news.json?t=' + Date.now())
+            .then(res => res.json())
+            .then(data => {
+                const newsData = data.map((item, index) => ({ ...item, id: item.id || `post-${index}` }));
+                loadFullArticle(newsData);
+            })
+            .catch(e => console.error(e));
+    }
 
-        // 3. Logic for Patrons (Donate Page)
-        if (document.getElementById('patrons-grid')) {
-            loadPatrons();
-        }
+    // 3. Logic for Patrons (Donate Page)
+    if (document.getElementById('patrons-grid')) {
+        loadPatrons();
+    }
 
-        // 4. Interactive Background (Parallax/Glow)
-        document.addEventListener('mousemove', (e) => {
-            const x = e.clientX;
-            const y = e.clientY;
+    // 4. Interactive Background (Parallax/Glow)
+    document.addEventListener('mousemove', (e) => {
+        const x = e.clientX;
+        const y = e.clientY;
 
-            // Update CSS variables for spotlight effect
-            document.body.style.setProperty('--mouse-x', `${x}px`);
-            document.body.style.setProperty('--mouse-y', `${y}px`);
-        });
-
-        // 5. Server Status Widget
-        if (document.readyState === 'complete' || document.readyState === 'interactive') {
-            fetchServerStatus();
-        } else {
-            fetchServerStatus();
-        }
-        // Auto-update every 60 seconds
-        setInterval(fetchServerStatus, 60000);
+        // Update CSS variables for spotlight effect
+        document.body.style.setProperty('--mouse-x', `${x}px`);
+        document.body.style.setProperty('--mouse-y', `${y}px`);
     });
+
+    // 5. Server Status Widget
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        fetchServerStatus();
+    } else {
+        fetchServerStatus();
+    }
+    // Auto-update every 60 seconds
+    setInterval(fetchServerStatus, 60000);
+});
 
 async function fetchServerStatus() {
     console.log('Starting Server Status Fetch...');
