@@ -472,7 +472,7 @@
                 image: document.getElementById('newsImage').value || 'assets/images/logo_new.png',
                 summary: document.getElementById('newsSummary').value,
                 fullContent: document.getElementById('newsContent').value,
-                tags: document.getElementById('newsTags').value.split(',')
+                tags: document.getElementById('newsTags').value.split(',').map(t => t.trim()).filter(t => t.length > 0)
             };
             const idx = parseInt(document.getElementById('editIndex').value);
             if (idx >= 0) newsData[idx] = item; else newsData.push(item);

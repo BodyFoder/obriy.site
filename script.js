@@ -141,8 +141,8 @@ function loadNews() {
                 const article = document.createElement('article');
                 article.className = 'news-card fade-in-item';
 
-                const tagsHtml = newsItem.tags
-                    ? `<div class="news-tags">${newsItem.tags.map(tag => `<span class="tag" style="font-size:11px; color:var(--vp-c-brand); margin-right:8px;">#${tag}</span>`).join('')}</div>`
+                const tagsHtml = newsItem.tags && newsItem.tags.length > 0 && newsItem.tags[0] !== ""
+                    ? `<div class="news-tags">${newsItem.tags.filter(t => t.trim()).map(tag => `<span class="tag" style="font-size:11px; color:var(--vp-c-brand); margin-right:8px;">#${tag.trim()}</span>`).join('')}</div>`
                     : '';
 
                 article.innerHTML = `
@@ -188,8 +188,8 @@ function loadHomeNews() {
                 article.style.textDecoration = 'none';
                 article.style.color = 'inherit';
 
-                const tagsHtml = newsItem.tags
-                    ? `<div class="news-tags" style="margin-bottom:8px;">${newsItem.tags.map(tag => `<span class="tag" style="font-size:11px; color:var(--vp-c-brand); margin-right:8px;">#${tag}</span>`).join('')}</div>`
+                const tagsHtml = newsItem.tags && newsItem.tags.length > 0 && newsItem.tags[0] !== ""
+                    ? `<div class="news-tags" style="margin-bottom:8px;">${newsItem.tags.filter(t => t.trim()).map(tag => `<span class="tag" style="font-size:11px; color:var(--vp-c-brand); margin-right:8px;">#${tag.trim()}</span>`).join('')}</div>`
                     : '';
 
                 // Shorter summary for home cards
