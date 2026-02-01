@@ -5,4 +5,4 @@ Allow: /
 Sitemap: https://obriyhytale.pp.ua/sitemap.xml
 
 # Allow all crawlers to index everything
-Disallow: /assets/
+# Allow all crawlers to index everything
