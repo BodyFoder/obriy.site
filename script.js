@@ -155,7 +155,7 @@ function loadNews() {
                         </div>
                         ${tagsHtml}
                         <h3>${newsItem.title}</h3>
-                        <p style="margin-bottom: 16px;">${newsItem.summary || (newsItem.fullContent ? newsItem.fullContent.substring(0, 300) + '...' : '')}</p>
+                        <p style="margin-bottom: 16px;">${newsItem.summary || (stripHtml(newsItem.fullContent || '').substring(0, 300) + '...')}</p>
                         <a href="article.html?id=${newsItem.id}" class="read-more">Читати далі <i class="fas fa-arrow-right"></i></a>
                     </div>
                 `;
@@ -163,6 +163,14 @@ function loadNews() {
             });
         })
         .catch(error => console.error('Error loading news:', error));
+}
+
+// Helper to strip HTML tags
+function stripHtml(html) {
+    if (!html) return '';
+    const tmp = document.createElement("DIV");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
 }
 
 function loadHomeNews() {
@@ -192,8 +200,11 @@ function loadHomeNews() {
                     ? `<div class="news-tags" style="margin-bottom:8px;">${newsItem.tags.filter(t => t.trim()).map(tag => `<span class="tag" style="font-size:11px; color:var(--vp-c-brand); margin-right:8px;">#${tag.trim()}</span>`).join('')}</div>`
                     : '';
 
-                // Enforce character limit (max 120 chars)
-                let summaryText = newsItem.summary || (newsItem.fullContent ? newsItem.fullContent : '');
+                // Enforce character limit (max 120 chars) AND STRIP HTML
+                let rawContent = newsItem.summary || newsItem.fullContent || '';
+                let plainText = stripHtml(rawContent);
+                
+                let summaryText = plainText;
                 if (summaryText.length > 120) {
                     summaryText = summaryText.substring(0, 120) + '...';
                 }
