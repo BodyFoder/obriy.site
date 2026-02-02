@@ -670,7 +670,7 @@
             let tagsHtml = tags.map(t => `<span class="tag" style="margin-left:12px; color: var(--vp-c-brand); font-weight:600;">#${t.trim()}</span>`).join('');
             
             let html = `
-                <div class="full-article" style="border:none; background: transparent;"> <!-- Styling from style.css should apply -->
+                <div class="full-article"> <!-- Use CSS class styling -->
                     <div class="article-header" style="margin-bottom: 32px;">
                         <h1 style="font-size: 36px; margin-top:16px; margin-bottom:16px;">${title}</h1>
                         <div class="news-meta" style="margin-bottom: 16px; color: var(--vp-c-text-2);">

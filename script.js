@@ -237,19 +237,21 @@ function loadFullArticle(newsData) {
         document.title = `${article.title} - ОБРІЙ`;
 
         container.innerHTML = `
-            <div class="article-header" style="margin-bottom: 32px;">
-                 <a href="news.html" class="back-link"><i class="fas fa-arrow-left"></i> До списку новин</a>
-                 <h1 style="font-size: 36px; margin-top:16px; margin-bottom:16px;">${article.title}</h1>
-                 <div class="news-meta" style="margin-bottom: 16px; color: var(--vp-c-text-2);">
-                    <span><i class="far fa-calendar-alt"></i> ${article.date}</span>
-                    ${article.tags ? article.tags.map(tag => `<span class="tag" style="margin-left:12px; color: var(--vp-c-brand); font-weight:600;">#${tag}</span>`).join('') : ''}
+            <div class="full-article"> <!-- WRAPPER ADDED FOR STYLING -->
+                <div class="article-header" style="margin-bottom: 32px;">
+                     <a href="news.html" class="back-link"><i class="fas fa-arrow-left"></i> До списку новин</a>
+                     <h1 style="font-size: 36px; margin-top:16px; margin-bottom:16px;">${article.title}</h1>
+                     <div class="news-meta" style="margin-bottom: 16px; color: var(--vp-c-text-2);">
+                        <span><i class="far fa-calendar-alt"></i> ${article.date}</span>
+                        ${article.tags ? article.tags.map(tag => `<span class="tag" style="margin-left:12px; color: var(--vp-c-brand); font-weight:600;">#${tag}</span>`).join('') : ''}
+                    </div>
+                     <div class="news-image" style="height: 400px; border-radius: 12px; margin-bottom: 24px; overflow:hidden;">
+                        <img src="${article.image}" alt="${article.title}" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
                 </div>
-                 <div class="news-image" style="height: 400px; border-radius: 12px; margin-bottom: 24px; overflow:hidden;">
-                    <img src="${article.image}" alt="${article.title}" style="width: 100%; height: 100%; object-fit: cover;">
+                <div class="article-content" style="font-size: 18px; line-height: 1.8; color: var(--vp-c-text-1);">
+                    ${article.fullContent || article.summary}
                 </div>
-            </div>
-            <div class="article-body" style="font-size: 18px; line-height: 1.8; color: var(--vp-c-text-1);">
-                ${article.fullContent || article.content}
             </div>
         `;
     } else {

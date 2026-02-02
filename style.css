@@ -571,10 +571,13 @@ footer {
 .full-article {
     max-width: 800px;
     margin: 0 auto;
-    background: var(--vp-c-bg-soft);
+    /* Glassmorphism Background for Readability */
+    background: rgba(23, 25, 30, 0.85); /* Semi-transparent dark bg */
+    backdrop-filter: blur(12px); /* Blur the stars behind */
     padding: 40px;
     border-radius: 20px;
-    border: 1px solid var(--vp-c-border);
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Lighter border */
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
 }
 
 .article-header h1 {
@@ -616,6 +619,27 @@ footer {
 
 .article-content img:hover {
     transform: scale(1.02); /* Slight zoom on hover */
+}
+
+/* Auto-styling for lists inside articles */
+.article-content ul,
+.article-content ol {
+    margin-bottom: 24px;
+    padding-left: 24px; /* Ensure 24px indentation */
+    color: var(--vp-c-text-2);
+}
+
+.article-content ul {
+    list-style-type: disc;
+}
+
+.article-content ol {
+    list-style-type: decimal;
+}
+
+.article-content li {
+    margin-bottom: 8px; /* Spacing between items */
+    padding-left: 4px; /* Space between bullet/number and text */
 }
 
 .article-content h2,
