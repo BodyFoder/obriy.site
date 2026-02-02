@@ -29,6 +29,7 @@ body {
     padding-top: var(--vp-nav-height);
 
     /* Interactive Background */
+    /* Interactive Background */
     /* Layered Background: Spotlight + 3 layers of drifting stars */
     background-image:
         radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(252, 165, 13, 0.15) 0%, transparent 50%),
@@ -39,7 +40,7 @@ body {
     background-size: 100% 100%, 50px 50px, 100px 100px, 150px 150px;
     background-position: 0 0, 0 0, 0 0, 0 0;
     
-    background-attachment: fixed;
+    /* background-attachment: fixed; <-- REMOVED so background scrolls with page */
     animation: chaotic-drift 60s linear infinite;
 }
 

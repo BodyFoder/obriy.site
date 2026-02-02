@@ -37,9 +37,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 4. Interactive Background (Parallax/Glow)
+    // 4. Interactive Background (Parallax/Glow)
     document.addEventListener('mousemove', (e) => {
-        const x = e.clientX;
-        const y = e.clientY;
+        // Use pageX/pageY to account for scroll position since background is not fixed
+        const x = e.pageX;
+        const y = e.pageY;
 
         // Update CSS variables for spotlight effect
         document.body.style.setProperty('--mouse-x', `${x}px`);
