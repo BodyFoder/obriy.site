@@ -38,15 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 4. Interactive Background (Parallax/Glow)
     // 4. Interactive Background (Parallax/Glow)
-    document.addEventListener('mousemove', (e) => {
-        // Use pageX/pageY to account for scroll position since background is not fixed
-        const x = e.pageX;
-        const y = e.pageY;
-
-        // Update CSS variables for spotlight effect
-        document.body.style.setProperty('--mouse-x', `${x}px`);
-        document.body.style.setProperty('--mouse-y', `${y}px`);
-    });
+    // 4. Interactive Background (Canvas Starfield) - High Performance
+    initStarfield();
 
     // 5. Server Status Widget
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
@@ -353,4 +346,126 @@ function copyIp(element) {
             element.style.borderColor = 'var(--vp-c-border)';
         }, 2000);
     }).catch(err => console.error('Failed to copy: ', err));
+}
+
+// Add this function to the end of script.js
+
+function initStarfield() {
+    const canvas = document.createElement('canvas');
+    canvas.id = 'starfield';
+    canvas.style.position = 'fixed';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+    canvas.style.zIndex = '-1';
+    canvas.style.pointerEvents = 'none';
+    document.body.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let stars = [];
+    
+    // Mouse state
+    let mouse = { x: -1000, y: -1000 };
+    document.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+    });
+
+    // Resize handler
+    function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+        initStars();
+    }
+    window.addEventListener('resize', resize);
+
+    // Star Class
+    class Star {
+        constructor() {
+            this.reset();
+            // Start at random positions
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+        }
+
+        reset() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.size = Math.random() * 2 + 0.5; // 0.5 to 2.5px
+            this.speedX = (Math.random() - 0.5) * 0.5; // Slow drift
+            this.speedY = (Math.random() - 0.5) * 0.5;
+            this.opacity = Math.random() * 0.5 + 0.1;
+        }
+
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+
+            // Optional: Parallax Scroll Effect
+            // Move stars up slightly when scrolling down to simulate depth?
+            // Or just act as a fixed window looking out (User preferred fixed spotlight + moving stars)
+            // Let's keep stars drifting naturally.
+
+            // Wrap around screen
+            if (this.x < 0) this.x = width;
+            if (this.x > width) this.x = 0;
+            if (this.y < 0) this.y = height;
+            if (this.y > height) this.y = 0;
+        }
+
+        draw() {
+            ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    function initStars() {
+        stars = [];
+        const starCount = Math.floor((width * height) / 4000); // Density
+        for (let i = 0; i < starCount; i++) {
+            stars.push(new Star());
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+
+        // 1. Draw Spotlight (Radial Gradient)
+        if (mouse.x > -100) {
+            const gradient = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 400); // 400px radius
+            gradient.addColorStop(0, 'rgba(252, 165, 13, 0.15)'); // Brand color
+            gradient.addColorStop(1, 'transparent');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height);
+        }
+
+        // 2. Update and Draw Stars
+        stars.forEach(star => {
+            // Apply scroll offset visually for "moving with scroll" effect if needed
+            // But fixing canvas is better performance. 
+            // If user wants background to scroll, we can subtract scrollY from star.y during draw.
+            // Let's try pure fixed first (smoothest).
+            
+            star.update();
+            
+            // Simulating scroll:
+            // let screenY = star.y - (window.scrollY * 0.2); // Parallax factor
+            // if (screenY < 0) screenY += height; // Wrap logic gets complex with scroll
+            
+            // Standard draw (Fixed background, chaotic drift)
+            star.draw();
+        });
+
+        requestAnimationFrame(animate);
+    }
+
+    resize();
+    initStars();
+    animate();
 }
