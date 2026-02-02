@@ -530,11 +530,27 @@
         }
         function editNews(i) {
             const d = newsData[i];
-            document.getElementById('newsTitle').value = d.title; document.getElementById('newsId').value = d.id;
-            // document.getElementById('newsContent').value = d.fullContent; // Old textarea
-            quill.root.innerHTML = d.fullContent || ''; // SET CONTENT TO QUILL
+            console.log('Editing post:', d); // Debugging
+            
+            document.getElementById('newsTitle').value = d.title || '';
+            document.getElementById('newsId').value = d.id || '';
+            
+            // Try different keys for content, just in case
+            // script.js uses: item.fullContent || item.summary
+            let contentToLoad = d.fullContent || d.content || d.body || d.text || '';
+            
+            // If main content is empty but summary exists and seems long, maybe that's it?
+            if (!contentToLoad && d.summary && d.summary.length > 100) {
+                contentToLoad = d.summary;
+            }
+
+            if (quill) {
+                // Use clipboard for safer HTML insertion
+                quill.clipboard.dangerouslyPasteHTML(contentToLoad);
+            }
+            
             document.getElementById('editIndex').value = i;
-            document.getElementById('newsImage').value = d.image;
+            document.getElementById('newsImage').value = d.image || '';
         }
         function delNews(i) { newsData.splice(i, 1); renderNews(); }
         function clearNewsForm() { 
@@ -581,32 +597,47 @@
             const token = localStorage.getItem('gh_token');
             const status = document.getElementById('uploadStatus');
             status.innerHTML = 'Uploading...';
+            
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = async function () {
                 const contentBase64 = reader.result.split(',')[1];
                 const cleanName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
                 const path = `assets/images/uploads/${Date.now()}_${cleanName}`;
+                
                 try {
+                    // 1. Upload to GitHub
                     await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${path}`, {
                         method: 'PUT',
                         headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
                         body: JSON.stringify({ message: 'upload', content: contentBase64 })
                     });
-                    status.innerHTML = `Done! Path: ${path}`;
+                    
+                    // 2. Get Default Branch (for Raw URL)
+                    let branch = 'main';
+                    try {
+                        const repoRes = await fetch(`https://api.github.com/repos/${user}/${repo}`, {
+                             headers: { 'Authorization': `token ${token}` }
+                        });
+                        const repoJson = await repoRes.json();
+                        if (repoJson.default_branch) branch = repoJson.default_branch;
+                    } catch (e) { console.warn('Could not detect branch, defaulting to main'); }
+
+                    // 3. Construct Raw URL (Works immediately-ish)
+                    const rawUrl = `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${path}`;
+                    status.innerHTML = `Done!`;
 
                     if (uploadTarget === 'cover') {
-                        document.getElementById('newsImage').value = path;
+                        document.getElementById('newsImage').value = rawUrl;
                     } else if (uploadTarget === 'content-quill') {
                         // Insert image into Quill cursor position
                         const range = quill.getSelection();
-                        quill.insertEmbed(range ? range.index : 0, 'image', path);
+                        quill.insertEmbed(range ? range.index : 0, 'image', rawUrl);
                     } else {
                         // Fallback
-                        const imgTag = `<img src="${path}" alt="Image" style="width:100%; border-radius:8px; margin: 16px 0;">`;
-                        // insertTag(imgTag, ''); // No longer used for main content
+                        // const imgTag = `<img src="${rawUrl}" alt="Image" style="width:100%; border-radius:8px; margin: 16px 0;">`;
                     }
-                } catch (e) { status.innerHTML = 'Error'; }
+                } catch (e) { status.innerHTML = 'Error: ' + e.message; }
             };
         }
     </script>
