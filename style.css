@@ -449,7 +449,7 @@ footer {
     display: grid;
     grid-template-columns: 1fr;
     gap: 32px;
-    padding-top: 40px;
+    padding-top: 25px;
 }
 
 .home-news-grid {
