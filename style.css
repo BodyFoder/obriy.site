@@ -29,12 +29,27 @@ body {
     padding-top: var(--vp-nav-height);
 
     /* Interactive Background */
+    /* Layered Background: Spotlight + 3 layers of drifting stars */
     background-image:
         radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(252, 165, 13, 0.15) 0%, transparent 50%),
-        radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-    background-size: 100% 100%, 40px 40px;
-    background-position: 0 0, 0 0;
-    transition: background-position 0.1s ease-out;
+        radial-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px),
+        radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px),
+        radial-gradient(rgba(255, 255, 255, 0.1) 2px, transparent 2px);
+    
+    background-size: 100% 100%, 50px 50px, 100px 100px, 150px 150px;
+    background-position: 0 0, 0 0, 0 0, 0 0;
+    
+    background-attachment: fixed;
+    animation: chaotic-drift 60s linear infinite;
+}
+
+@keyframes chaotic-drift {
+    0% {
+        background-position: 0 0, 0 0, 0 0, 0 0;
+    }
+    100% {
+        background-position: 0 0, 100px 150px, -50px 80px, 20px -60px;
+    }
 }
 
 /* H1 Gradient Text Restoration */
