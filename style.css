@@ -1037,3 +1037,195 @@ footer {
     color: var(--vp-c-text-2);
     font-size: 12px;
 }
+/* DONATELLO REDESIGN */
+.donatello-container {
+    background: var(--vp-c-bg-soft);
+    border: 1px solid var(--vp-c-border);
+    border-radius: 12px;
+    padding: 32px;
+    margin-top: 32px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.donatello-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--vp-c-divider);
+}
+
+.donatello-logo-area {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.donatello-logo-area h2 {
+    margin: 0;
+    font-size: 24px;
+    color: var(--vp-c-text-1);
+}
+
+.donatello-stats {
+    display: flex;
+    gap: 32px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* right align stats */
+}
+
+.stat-label {
+    font-size: 14px;
+    color: var(--vp-c-text-2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--vp-c-brand); /* Hytale Green/Brand color */
+}
+
+.donatello-action {
+    text-align: center;
+    margin-bottom: 48px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%);
+    padding: 32px;
+    border-radius: 12px;
+    border: 1px solid var(--vp-c-divider);
+}
+
+.donate-description {
+    max-width: 600px;
+    margin: 0 auto 24px;
+    color: var(--vp-c-text-2);
+    font-size: 16px;
+}
+
+.donatello-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #F5A623; /* Donatello-ish Yellow/Orange or use Brand Color */
+    background: linear-gradient(135deg, #F5A623 0%, #d48806 100%);
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    padding: 16px 48px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(245, 166, 35, 0.4);
+}
+
+.donatello-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(245, 166, 35, 0.6);
+}
+
+/* Updated Patrons Grid */
+.patrons-list-section h3 {
+    margin-bottom: 24px;
+    font-size: 20px;
+    color: var(--vp-c-text-1);
+}
+
+.patrons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.patron-card {
+    background: var(--vp-c-bg);
+    border: 1px solid var(--vp-c-divider);
+    border-radius: 8px;
+    padding: 16px;
+    transition: transform 0.2s;
+}
+
+.patron-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--vp-c-brand);
+}
+
+.patron-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--vp-c-divider);
+}
+
+.patron-name {
+    font-weight: 700;
+    color: var(--vp-c-text-1);
+    font-size: 16px;
+}
+
+.patron-amount {
+    background: rgba(var(--vp-c-brand-rgb), 0.1);
+    color: var(--vp-c-brand);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.patron-message {
+    font-style: italic;
+    color: var(--vp-c-text-2);
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Other Methods */
+.other-methods {
+    margin-top: 48px;
+    text-align: center;
+    opacity: 0.8;
+}
+
+.other-methods h3 {
+    font-size: 16px;
+    margin-bottom: 16px;
+    color: var(--vp-c-text-3);
+    text-transform: uppercase;
+}
+
+.method-link {
+    color: var(--vp-c-text-2);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 16px;
+    border: 1px solid var(--vp-c-divider);
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.method-link:hover {
+    background: var(--vp-c-bg-soft);
+    color: var(--vp-c-text-1);
+}
+
+@media (max-width: 600px) {
+    .donatello-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .donatello-stats {
+        width: 100%;
+        justify-content: space-between;
+    }
+}

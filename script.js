@@ -31,9 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(e => console.error(e));
     }
 
-    // 3. Logic for Patrons (Donate Page)
+    // 3. Logic for Donatello Donations
     if (document.getElementById('patrons-grid')) {
-        loadPatrons();
+        loadDonations();
     }
 
     // 4. Interactive Background (Parallax/Glow)
@@ -262,33 +262,62 @@ function loadFullArticle(newsData) {
     }
 }
 
-// --- PATRONS LOGIC ---
-async function loadPatrons() {
+// --- DONATELLO INTEGRATION ---
+async function loadDonations() {
     const grid = document.getElementById('patrons-grid');
+    const totalAmountEl = document.getElementById('total-amount');
+    const totalCountEl = document.getElementById('total-count');
+    
+    // ⚠️ ВАЖЛИВО: Замініть це посилання на URL вашого Cloudflare Worker
+    const WORKER_URL = 'https://solitary-sunset-f786.bodyagavril.workers.dev'; 
+
     if (!grid) return;
 
+    if (WORKER_URL === 'INSERT_YOUR_WORKER_URL_HERE') {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #ffeb3b; padding: 20px; background: rgba(0,0,0,0.5); border-radius: 8px;">⚠️ Потрібно налаштувати Cloudflare Worker (оновіть script.js)</div>';
+        return;
+    }
+
     try {
-        const response = await fetch('patrons.json?t=' + Date.now());
-        if (!response.ok) throw new Error('Failed to load patrons');
-        const patrons = await response.json();
+        const response = await fetch(`${WORKER_URL}?t=${Date.now()}`);
+        if (!response.ok) throw new Error('Помилка отримання даних: ' + response.status);
+        
+        const data = await response.json();
+        
+        // Новий формат відповіді воркера: { stats: {...}, list: {...} }
+        // Старий формат (якщо воркер не оновлено): { content: [...] }
+        
+        const donations = data.list ? (data.list.content || []) : (data.content || []);
+        const stats = data.stats || null;
+
+        // Оновлюємо статистику
+        if (stats) {
+            if (totalAmountEl) totalAmountEl.textContent = `${stats.totalAmount} UAH`;
+            if (totalCountEl) totalCountEl.textContent = stats.totalCount;
+        } else {
+             // Fallback якщо немає статистики
+             if (totalAmountEl) totalAmountEl.textContent = '---';
+             if (totalCountEl) totalCountEl.textContent = '---';
+        }
 
         grid.innerHTML = '';
 
-        if (patrons.length === 0) {
+        if (donations.length === 0) {
             grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--vp-c-text-2);">Поки що тут пусто. Станьте першим!</div>';
             return;
         }
 
-        patrons.reverse().forEach(p => {
+        donations.forEach(d => {
             const card = document.createElement('div');
             card.className = 'patron-card';
 
-            const amountHtml = p.amount ? `<span class="patron-amount">${p.amount}</span>` : '';
-            const msgHtml = p.message ? `<p class="patron-message">"${p.message}"</p>` : '';
+            const amountHtml = d.amount ? `<span class="patron-amount">${d.amount} ${d.currency || 'UAH'}</span>` : '';
+            const safeMessage = d.message ? stripHtml(d.message) : '';
+            const msgHtml = safeMessage ? `<p class="patron-message">"${safeMessage}"</p>` : '';
 
             card.innerHTML = `
                 <div class="patron-header">
-                    <span class="patron-name">${p.name}</span>
+                    <span class="patron-name">${stripHtml(d.clientName || 'Анонім')}</span>
                     ${amountHtml}
                 </div>
                 ${msgHtml}
@@ -297,8 +326,8 @@ async function loadPatrons() {
         });
 
     } catch (error) {
-        console.error(error);
-        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #ff4d4d;">Не вдалося завантажити список меценатів :(</div>';
+        console.error('Donatello Error:', error);
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #ff4d4d;">Не вдалося завантажити список донатів.</div>';
     }
 }
 
