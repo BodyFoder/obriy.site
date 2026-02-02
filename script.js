@@ -204,7 +204,7 @@ function loadHomeNews() {
                             <span class="news-date" style="font-size: 12px;"><i class="far fa-calendar-alt"></i> ${newsItem.date}</span>
                         </div>
                         ${tagsHtml}
-                        <h3 style="font-size: 18px; margin-bottom: 8px;">${newsItem.title}</h3>
+                        <h3 class="home-news-title">${newsItem.title}</h3>
                         <p style="font-size: 14px; margin-bottom: 16px; color: var(--vp-c-text-2); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">${summaryText}</p>
                         <span class="read-more" style="margin-top:auto;">Читати далі <i class="fas fa-arrow-right"></i></span>
                     </div>
