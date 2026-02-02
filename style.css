@@ -128,7 +128,7 @@ header {
 
 .desktop-nav {
     display: flex;
-    gap: 32px;
+    gap: 24px;
     align-items: center;
 }
 
@@ -205,6 +205,69 @@ header {
 .discord-btn:hover {
     border-color: var(--vp-c-brand);
     color: var(--vp-c-brand);
+}
+
+/* WIP Nav Item */
+.nav-item-wip {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--vp-c-text-3); /* Dimmed color */
+    cursor: not-allowed;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.nav-item-wip:hover {
+    opacity: 1;
+}
+
+.wip-icon {
+    height: 38px;
+    width: auto;
+    border-radius: 4px; /* Optional rounded corners */
+}
+
+/* Tooltip */
+.wip-tooltip {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 10px;
+    background-color: var(--vp-c-bg-soft);
+    color: var(--vp-c-text-1);
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--vp-c-border);
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s;
+    pointer-events: none;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.wip-tooltip::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 0 5px 5px 5px;
+    border-style: solid;
+    border-color: transparent transparent var(--vp-c-border) transparent;
+}
+
+.nav-item-wip:hover .wip-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
 }
 
 /* Main Content */
@@ -458,6 +521,12 @@ footer {
     font-size: 24px;
     margin-bottom: 12px;
     line-height: 1.3;
+    /* Limit to 2 lines and set min-height for alignment */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.6em; /* 1.3 * 2 lines */
 }
 
 .news-content p {
