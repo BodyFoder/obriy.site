@@ -192,8 +192,11 @@ function loadHomeNews() {
                     ? `<div class="news-tags" style="margin-bottom:8px;">${newsItem.tags.filter(t => t.trim()).map(tag => `<span class="tag" style="font-size:11px; color:var(--vp-c-brand); margin-right:8px;">#${tag.trim()}</span>`).join('')}</div>`
                     : '';
 
-                // Shorter summary for home cards
-                const summaryText = newsItem.summary || (newsItem.fullContent ? newsItem.fullContent.substring(0, 80) + '...' : '');
+                // Enforce character limit (max 120 chars)
+                let summaryText = newsItem.summary || (newsItem.fullContent ? newsItem.fullContent : '');
+                if (summaryText.length > 120) {
+                    summaryText = summaryText.substring(0, 120) + '...';
+                }
 
                 article.innerHTML = `
                     <div class="news-image" style="height: 180px;">
@@ -205,7 +208,7 @@ function loadHomeNews() {
                         </div>
                         ${tagsHtml}
                         <h3 class="home-news-title">${newsItem.title}</h3>
-                        <p style="font-size: 14px; margin-bottom: 16px; color: var(--vp-c-text-2); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">${summaryText}</p>
+                        <p class="home-news-desc">${summaryText}</p>
                         <span class="read-more" style="margin-top:auto;">Читати далі <i class="fas fa-arrow-right"></i></span>
                     </div>
                 `;

@@ -472,7 +472,7 @@ footer {
 
 .home-news-title {
     font-size: 18px;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     line-height: 1.35; /* Slightly increased for readability */
     height: 2.7em;     /* 1.35 * 2 lines = 2.7em fixed height */
     display: -webkit-box;
@@ -480,6 +480,18 @@ footer {
     -webkit-box-orient: vertical;
     overflow: hidden;
     color: var(--vp-c-text-1);
+}
+
+.home-news-desc {
+    font-size: 14px;
+    margin-bottom: 16px;
+    color: var(--vp-c-text-2);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    line-height: 1.5;
+    height: 4.5em; /* 1.5 * 3 lines = 4.5em fixed height to align "Read more" buttons */
 }
 
 .news-card {
