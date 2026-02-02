@@ -155,7 +155,7 @@ function loadNews() {
                         </div>
                         ${tagsHtml}
                         <h3>${newsItem.title}</h3>
-                        <p style="margin-bottom: 16px;">${newsItem.summary || (newsItem.fullContent ? newsItem.fullContent.substring(0, 100) + '...' : '')}</p>
+                        <p style="margin-bottom: 16px;">${newsItem.summary || (newsItem.fullContent ? newsItem.fullContent.substring(0, 300) + '...' : '')}</p>
                         <a href="article.html?id=${newsItem.id}" class="read-more">Читати далі <i class="fas fa-arrow-right"></i></a>
                     </div>
                 `;
