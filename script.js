@@ -205,8 +205,8 @@ function loadHomeNews() {
                 let plainText = stripHtml(rawContent);
                 
                 let summaryText = plainText;
-                if (summaryText.length > 120) {
-                    summaryText = summaryText.substring(0, 120) + '...';
+                if (summaryText.length > 500) {
+                    summaryText = summaryText.substring(0, 500) + '...';
                 }
 
                 article.innerHTML = `
