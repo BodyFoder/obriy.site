@@ -603,6 +603,21 @@ footer {
     margin-bottom: 24px;
 }
 
+/* Auto-styling for images inside articles */
+.article-content img {
+    max-width: 100%; /* Ensure responsiveness */
+    display: block;
+    margin: 32px auto; /* Centered with vertical space */
+    border-radius: 12px; /* Smooth corners */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3); /* Depth */
+    border: 1px solid var(--vp-c-border); /* Subtle border */
+    transition: transform 0.3s;
+}
+
+.article-content img:hover {
+    transform: scale(1.02); /* Slight zoom on hover */
+}
+
 .article-content h2,
 .article-content h3 {
     margin-top: 40px;
