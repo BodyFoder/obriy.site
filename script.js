@@ -1,14 +1,52 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Script initialized v1.1');
-
-    // 0. Mobile Menu Logic
+    // Mobile Menu Toggle
     const menuToggle = document.querySelector('.menu-toggle');
     const nav = document.querySelector('.desktop-nav');
     if (menuToggle && nav) {
-        menuToggle.addEventListener('click', () => {
+        menuToggle.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent immediate closing if we add outside click listener later
             nav.classList.toggle('active');
+            
+            // Toggle icon between bars and times (X)
+            const icon = menuToggle.querySelector('i');
+            if (icon) {
+                if (nav.classList.contains('active')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                } else {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
+        });
+
+        // Close menu when clicking a link
+        nav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                nav.classList.remove('active');
+                const icon = menuToggle.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (nav.classList.contains('active') && !nav.contains(e.target) && !menuToggle.contains(e.target)) {
+                nav.classList.remove('active');
+                const icon = menuToggle.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
         });
     }
+    console.log('Script initialized v1.1');
+
+
 
     // 1. Logic for News Feed (Home / News Page)
     if (document.getElementById('news-container')) {
