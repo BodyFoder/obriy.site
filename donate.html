@@ -70,15 +70,21 @@
                 </div>
             </div>
 
-            <!-- Donatello Section -->
-            <div class="donatello-container">
-                <div class="donatello-header">
-                    <div class="donatello-logo-area">
-                        <i class="fas fa-hand-holding-heart fa-3x" style="color: #F5A623;"></i>
-                        <h2>Збір на розвиток</h2>
+            <!-- Support Columns -->
+            <div class="donate-columns">
+                
+                <!-- COLUMN 1: FINANCIAL -->
+                <div class="support-card">
+                    <div class="support-header">
+                        <i class="fas fa-hand-holding-heart" style="color: #F5A623;"></i>
+                        <div>
+                            <h2 style="margin:0; font-size: 24px;">Фінансова підтримка</h2>
+                            <p style="margin:4px 0 0 0; color: var(--vp-c-text-2); font-size: 14px;">Оплата хостингу</p>
+                        </div>
                     </div>
-                    
-                    <div class="donatello-stats">
+
+                    <!-- Donatello Stats -->
+                    <div class="donatello-stats" style="margin-bottom: 24px; background: var(--vp-c-bg); padding: 16px; border-radius: 12px;">
                         <div class="stat-item">
                             <span class="stat-label">Всього зібрано</span>
                             <span class="stat-value" id="total-amount">Loading...</span>
@@ -88,32 +94,91 @@
                             <span class="stat-value" id="total-count">...</span>
                         </div>
                     </div>
-                </div>
 
-                <div class="donatello-action">
-                    <p class="donate-description">
-                         Донат не дає ігрових переваг. Всі кошти йдуть на оплату хостингу.
+                    <p class="donate-description" style="margin-bottom: 24px;">
+                        Всі кошти йдуть виключно на оплату оренди сервера. Донат добровільний і не дає ігрових переваг.
                     </p>
-                    <a href="https://donatello.to/obriyhytale" target="_blank" class="donatello-btn">
-                        <span class="btn-icon">⚡</span> Підтримати зараз
-                    </a>
-                </div>
 
-                <div class="patrons-list-section">
-                    <h3>Останні підтримки</h3>
-                    <div id="patrons-grid" class="patrons-grid">
-                        <div class="loading-spinner"><i class="fas fa-circle-notch fa-spin"></i> Завантаження...</div>
+                    <a href="https://donatello.to/obriyhytale" target="_blank" class="donatello-btn" style="text-align: center; margin-top: auto;">
+                        <span class="btn-icon">⚡</span> Підтримати через Donatello
+                    </a>
+
+                    <div style="margin-top: 16px; text-align: center;">
+                        <a href="https://send.monobank.ua/jar/sxanqYGca" target="_blank" class="method-link" style="display: inline-block; font-size: 14px;">
+                             Або Monobank Банка
+                        </a>
                     </div>
                 </div>
+
+                <!-- COLUMN 2: VOTING -->
+                <div class="support-card">
+                    <div class="support-header">
+                        <i class="fas fa-vote-yea" style="color: var(--vp-c-brand);"></i>
+                        <div>
+                            <h2 style="margin:0; font-size: 24px;">Голосування</h2>
+                            <p style="margin:4px 0 0 0; color: var(--vp-c-text-2); font-size: 14px;">Просувайте сервер у топи</p>
+                        </div>
+                    </div>
+
+                    <p style="margin-bottom: 24px; color: var(--vp-c-text-1);">
+                        Ваші голоси допомагають новим гравцям дізнатися про ОБРІЙ. Це безкоштовно і займає 1 хвилину!
+                    </p>
+
+                    <div class="vote-list">
+                        <!-- Monicore -->
+                        <a href="https://monicore.com.ua/server/469/%D0%BE%D0%B1%D1%80%D1%96%D0%B9-hytale" target="_blank" class="vote-item">
+                            <div class="vote-info">
+                                <h4>Monicore.com.ua</h4>
+                                <p>Український моніторинг</p>
+                            </div>
+                            <i class="fas fa-external-link-alt" style="color: var(--vp-c-text-2);"></i>
+                        </a>
+
+                        <!-- HytaleRating -->
+                         <a href="https://hytalerating.com/74-play-obriyhytale-pp-ua" target="_blank" class="vote-item">
+                            <div class="vote-info">
+                                <h4>HytaleRating.com</h4>
+                                <p>Міжнародний рейтинг</p>
+                            </div>
+                            <i class="fas fa-external-link-alt" style="color: var(--vp-c-text-2);"></i>
+                        </a>
+
+                        <!-- Orbis -->
+                        <a href="https://orbis.in.ua/servers/8/" target="_blank" class="vote-item">
+                            <div class="vote-info">
+                                <h4>Orbis.in.ua</h4>
+                                <p>Український каталог</p>
+                            </div>
+                            <i class="fas fa-external-link-alt" style="color: var(--vp-c-text-2);"></i>
+                        </a>
+
+                        <!-- Placeholder for future -->
+                        <!-- 
+                        <a href="#" class="vote-item" style="opacity: 0.5; cursor: default;">
+                            <div class="vote-info">
+                                <h4>Minecraft-UA (Скоро)</h4>
+                                <p>Інший моніторинг</p>
+                            </div>
+                        </a>
+                        -->
+                    </div>
+
+                    <div style="margin-top: auto; padding-top: 24px; color: var(--vp-c-text-2); font-size: 13px; text-align: center;">
+                        <i class="fas fa-heart" style="color: #ff4d4d;"></i> Дякуємо кожному, хто голосує!
+                    </div>
+                </div>
+
             </div>
 
-            <!-- Monobank Backup (Minimal) -->
-            <div class="other-methods">
-                <h3>Інші способи</h3>
-                <a href="https://send.monobank.ua/jar/sxanqYGca" target="_blank" class="method-link">
-                    <i class="fas fa-university"></i> Monobank Банка
-                </a>
+             <!-- Patrons List -->
+             <div class="patrons-list-section">
+                <h3><i class="fas fa-history"></i> Останні підтримки</h3>
+                <div id="patrons-grid" class="patrons-grid">
+                    <div class="loading-spinner"><i class="fas fa-circle-notch fa-spin"></i> Завантаження...</div>
+                </div>
             </div>
+
+
 
         </div>
     </main>

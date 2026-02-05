@@ -142,6 +142,90 @@ header {
     color: var(--vp-c-brand);
 }
 
+/* Mobile Nav Toggle - Hidden on desktop */
+.menu-toggle {
+    display: none;
+    color: var(--vp-c-text-1);
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+    }
+}
+
+/* Sidebar & Widgets (Restored) */
+.sidebar {
+    position: sticky;
+    top: 100px;
+}
+
+.widget {
+    background: var(--vp-c-bg-soft);
+    border: 1px solid var(--vp-c-border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.widget h3 {
+    font-size: 18px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--vp-c-border);
+}
+
+.quick-links {
+    list-style: none;
+    padding: 0;
+}
+
+.quick-links li {
+    margin-bottom: 12px;
+}
+
+.quick-links a {
+    color: var(--vp-c-text-2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.quick-links a:hover {
+    color: var(--vp-c-brand);
+    transform: translateX(4px);
+    display: inline-block;
+}
+
+@media (max-width: 960px) {
+    .sidebar {
+        position: static;
+        margin-top: 40px;
+    }
+}
+
+
+/* Loader */
+.loader {
+    border: 4px solid var(--vp-c-bg-soft);
+    border-top: 4px solid var(--vp-c-brand);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 40px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+
 .header-left {
     display: flex;
     align-items: center;
@@ -444,12 +528,21 @@ footer {
 
 
 /* News Layout */
+/* News Layout */
 .news-layout {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 32px;
+    grid-template-columns: 1fr 340px; /* Main content + Sidebar */
+    gap: 40px;
     padding-top: 25px;
+    align-items: start;
 }
+
+@media (max-width: 960px) {
+    .news-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
 
 .home-news-grid {
     display: grid;
@@ -664,8 +757,8 @@ footer {
 
 /* Donate Page & Monobank */
 .donate-header {
-    text-align: center;
-    margin-bottom: 60px;
+    text-align: center; /* Reverted to center for better balance */
+    margin-bottom: 40px;
 }
 
 .donate-header h1 {
@@ -798,361 +891,122 @@ footer {
     background: linear-gradient(to bottom, #333, #111);
     border: 1px solid #444;
     color: #fff;
-    padding: 14px 32px;
-    border-radius: 16px;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 14px;
     font-weight: 600;
     text-decoration: none;
-    font-size: 16px;
-    width: 100%;
-    margin-bottom: 16px;
     transition: all 0.2s;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .mono-btn:hover {
     background: linear-gradient(to bottom, #444, #222);
     border-color: #666;
-    transform: scale(1.02);
-}
-
-.mono-footer {
-    font-size: 12px;
-    color: #666;
-}
-
-/* Patrons Grid */
-.patrons-section {
-    text-align: center;
-}
-
-.patrons-section .subtitle {
-    font-size: 16px;
-    color: var(--vp-c-text-2);
-    margin-bottom: 40px;
-}
-
-.patrons-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 20px;
-    text-align: left;
-}
-
-.patron-card {
-    background: var(--vp-c-bg-soft);
-    border: 1px solid var(--vp-c-border);
-    border-radius: 16px;
-    padding: 20px;
-    transition: all 0.2s;
-}
-
-.patron-card:hover {
-    border-color: var(--vp-c-brand);
-    background: var(--vp-c-bg-alt);
     transform: translateY(-2px);
 }
 
-.patron-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-}
-
-.patron-name {
-    font-weight: 700;
-    color: var(--vp-c-text-1);
-    font-size: 16px;
-}
-
-.patron-amount {
-    background: rgba(var(--vp-c-brand-rgb), 0.1);
-    color: var(--vp-c-brand);
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.patron-message {
-    font-size: 14px;
-    color: var(--vp-c-text-2);
-    line-height: 1.5;
-    font-style: italic;
-}
-
-/* Animations */
-.animate {
-    opacity: 0;
-    animation: fadeUp 0.8s forwards;
-}
-
-@keyframes fadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@media (max-width: 960px) {
-
-    .flow-steps,
-    .news-layout {
-        grid-template-columns: 1fr;
-    }
-
-    .hero-content h1 {
-        font-size: 40px;
-    }
-
-    .payment-methods {
-        flex-direction: column;
-        align-items: center;
-    }
-}
-
-/* Mobile Nav */
-.menu-toggle {
-    display: none;
-    color: var(--vp-c-text-1);
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 1001;
-    /* Above nav and everything else */
+/* Donate Page Refactor */
+.donate-columns {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr; /* Wider left column */
+    gap: 32px;
+    margin-bottom: 40px;
 }
 
 @media (max-width: 768px) {
-    .menu-toggle {
-        display: block;
-    }
-
-    .desktop-nav {
-        display: none;
-        position: fixed; /* Fixed to cover screen securely */
-        top: var(--vp-nav-height);
-        left: 0;
-        right: 0;
-        bottom: 0; /* Full height */
-        flex-direction: column;
-        
-        /* Mobile Menu - Solid Background */
-        background: #0f1115 !important;
-        background-color: #0f1115 !important;
-        /* backdrop-filter removed to ensure opacity */
-        
-        border-top: 1px solid var(--vp-c-border);
-        padding: 40px 24px;
-        gap: 24px; /* More spacing */
-        align-items: center; /* Center items */
-        text-align: center;
-        z-index: 999; /* Just below header */
-        
-        /* Animation */
-        opacity: 0;
-        transform: translateY(-20px);
-        transition: opacity 0.3s, transform 0.3s;
-        pointer-events: none; /* Prevent clicks when hidden */
-    }
-
-    .desktop-nav.active {
-        display: flex;
-        opacity: 1;
-        transform: translateY(0);
-        pointer-events: auto;
-    }
-
-    .desktop-nav a {
-        font-size: 20px; /* Larger text for mobile */
-        width: 100%;
-        padding: 12px 0;
-        border-bottom: 1px solid rgba(255,255,255,0.05); /* Separators */
-    }
-    
-    .desktop-nav a:last-child {
-        border-bottom: none;
-    }
-    
-    .desktop-nav .discord-btn {
-        margin-top: 16px;
-        width: auto;
-        min-width: 200px;
-        background: var(--vp-c-brand);
-        color: #000;
-        border: none;
-    }
-}
-
-/* Restored Styles for Index & News */
-
-/* Sidebar & News Layout Fix */
-.news-layout {
-    display: grid;
-    grid-template-columns: 1fr 300px;
-    gap: 40px;
-    margin-top: 40px;
-    align-items: start;
-}
-
-.sidebar {
-    position: sticky;
-    top: 100px;
-}
-
-.widget {
-    background: var(--vp-c-bg-soft);
-    border: 1px solid var(--vp-c-border);
-    border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 24px;
-}
-
-.widget h3 {
-    font-size: 18px;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--vp-c-border);
-}
-
-.quick-links {
-    list-style: none;
-    padding: 0;
-}
-
-.quick-links li {
-    margin-bottom: 12px;
-}
-
-.quick-links a {
-    color: var(--vp-c-text-2);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.quick-links a:hover {
-    color: var(--vp-c-brand);
-    transform: translateX(4px);
-    display: inline-block;
-    /* for transform */
-}
-
-/* Responsive fixes for restored items */
-@media (max-width: 960px) {
-    .news-layout {
+    .donate-columns {
         grid-template-columns: 1fr;
     }
-
-    .sidebar {
-        position: static;
-        margin-top: 40px;
-    }
-}/* --- New How to Start Elements --- */
-.btn-sm {
-    padding: 8px 16px;
-    font-size: 14px;
-    border-radius: 8px;
 }
 
-.btn-link {
-    color: var(--vp-c-brand);
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.2s;
-}
-
-.btn-link:hover {
-    color: var(--vp-c-brand-light);
-}
-
-.server-ip-copy {
-    background: rgba(0, 0, 0, 0.3);
+.support-card {
+    background: var(--vp-c-bg-alt);
     border: 1px solid var(--vp-c-border);
-    border-radius: 8px;
-    padding: 10px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 12px;
-    font-family: monospace;
-    font-size: 14px;
-    position: relative;
-    overflow: hidden;
-}
-
-.server-ip-copy:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: var(--vp-c-brand);
-}
-
-.server-ip-copy:active {
-    transform: scale(0.98);
-}
-
-.server-ip-copy i.fa-network-wired {
-    color: var(--vp-c-text-2);
-}
-
-.server-ip-copy .ip-text {
-    flex-grow: 1;
-    text-align: center;
-    color: var(--vp-c-brand-light);
-    font-weight: 700;
-}
-
-.server-ip-copy .copy-hint {
-    color: var(--vp-c-text-2);
-    font-size: 12px;
-}
-/* DONATELLO REDESIGN */
-.donatello-container {
-    background: var(--vp-c-bg-soft);
-    border: 1px solid var(--vp-c-border);
-    border-radius: 12px;
+    border-radius: 16px;
     padding: 32px;
-    margin-top: 32px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-}
-
-.donatello-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 24px;
-    margin-bottom: 32px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid var(--vp-c-divider);
+    flex-direction: column;
+    height: 100%;
 }
 
-.donatello-logo-area {
+.support-header {
     display: flex;
     align-items: center;
     gap: 16px;
+    margin-bottom: 24px;
 }
 
-.donatello-logo-area h2 {
-    margin: 0;
-    font-size: 24px;
+.support-header i {
+    font-size: 2.5em;
+}
+
+/* Donatello Specifics (Legacy Adapter) */
+.donatello-container {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+}
+
+/* Voting Specifics */
+.vote-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.vote-item {
+    background: var(--vp-c-bg);
+    border: 1px solid var(--vp-c-border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s;
+    text-decoration: none;
     color: var(--vp-c-text-1);
 }
 
-.donatello-stats {
-    display: flex;
-    gap: 32px;
+.vote-item:hover {
+    border-color: var(--vp-c-brand);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
+.vote-info h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.vote-info p {
+    margin: 4px 0 0 0;
+    font-size: 13px;
+    color: var(--vp-c-text-2);
+}
+
+/* Patrons List specific fix */
+.patrons-list-section {
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 1px solid var(--vp-c-border);
+}
+
+@media (max-width: 768px) {
+    .support-card {
+        padding: 24px;
+    }
+}
+
+
+/* --- RESTORED MISSING STYLES --- */
+
+/* Donatello Button & Stats */
 .stat-item {
     display: flex;
     flex-direction: column;
-    align-items: flex-end; /* right align stats */
+    align-items: flex-end;
 }
 
 .stat-label {
@@ -1165,23 +1019,7 @@ footer {
 .stat-value {
     font-size: 28px;
     font-weight: 800;
-    color: var(--vp-c-brand); /* Hytale Green/Brand color */
-}
-
-.donatello-action {
-    text-align: center;
-    margin-bottom: 48px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%);
-    padding: 32px;
-    border-radius: 12px;
-    border: 1px solid var(--vp-c-divider);
-}
-
-.donate-description {
-    max-width: 600px;
-    margin: 0 auto 24px;
-    color: var(--vp-c-text-2);
-    font-size: 16px;
+    color: var(--vp-c-brand);
 }
 
 .donatello-btn {
@@ -1189,7 +1027,6 @@ footer {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    background: #F5A623; /* Donatello-ish Yellow/Orange or use Brand Color */
     background: linear-gradient(135deg, #F5A623 0%, #d48806 100%);
     color: #fff;
     font-size: 18px;
@@ -1199,6 +1036,7 @@ footer {
     text-decoration: none;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(245, 166, 35, 0.4);
+    width: 100%; /* Full width in card */
 }
 
 .donatello-btn:hover {
@@ -1206,13 +1044,7 @@ footer {
     box-shadow: 0 8px 25px rgba(245, 166, 35, 0.6);
 }
 
-/* Updated Patrons Grid */
-.patrons-list-section h3 {
-    margin-bottom: 24px;
-    font-size: 20px;
-    color: var(--vp-c-text-1);
-}
-
+/* Patrons Grid Restored */
 .patrons-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -1264,42 +1096,38 @@ footer {
     line-height: 1.5;
 }
 
-/* Other Methods */
-.other-methods {
-    margin-top: 48px;
-    text-align: center;
-    opacity: 0.8;
-}
-
-.other-methods h3 {
-    font-size: 16px;
-    margin-bottom: 16px;
-    color: var(--vp-c-text-3);
-    text-transform: uppercase;
-}
-
-.method-link {
-    color: var(--vp-c-text-2);
-    text-decoration: none;
-    font-weight: 500;
-    padding: 8px 16px;
-    border: 1px solid var(--vp-c-divider);
-    border-radius: 6px;
+/* Server IP Copy (from Footer/Guide) */
+.server-ip-copy {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--vp-c-border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    cursor: pointer;
     transition: all 0.2s;
+    margin-top: 12px;
+    font-family: monospace;
+    font-size: 14px;
+    position: relative;
+    overflow: hidden;
 }
 
-.method-link:hover {
-    background: var(--vp-c-bg-soft);
-    color: var(--vp-c-text-1);
+.server-ip-copy:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--vp-c-brand);
 }
 
-@media (max-width: 600px) {
-    .donatello-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .donatello-stats {
-        width: 100%;
-        justify-content: space-between;
-    }
+.server-ip-copy .ip-text {
+    flex-grow: 1;
+    text-align: center;
+    color: var(--vp-c-brand-light);
+    font-weight: 700;
+}
+
+.server-ip-copy .copy-hint {
+    color: var(--vp-c-text-2);
+    font-size: 12px;
 }
