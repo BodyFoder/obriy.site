@@ -219,13 +219,17 @@
             <div style="text-align: center; margin-bottom: 24px;">
                 <img src="assets/images/logo_new.png" alt="Logo" style="height: 50px; margin-bottom: 16px;">
                 <h2>Вхід в Адмінку</h2>
-                <p style="color: var(--vp-c-text-2); font-size: 14px;">Введіть дані GitHub для доступу</p>
+                <p style="color: var(--vp-c-text-2); font-size: 14px;">Введіть пароль адміністратора</p>
             </div>
-            <div class="form-group"><label>GitHub Username</label><input type="text" id="ghUserIn"></div>
-            <div class="form-group"><label>Repo Name</label><input type="text" id="ghRepoIn"></div>
-            <div class="form-group"><label>Personal Access Token</label><input type="password" id="ghTokenIn"></div>
-            <button onclick="authenticateGithub()" class="btn btn-primary" id="loginBtn"
-                style="width: 100%;">Підключитися</button>
+            
+            <div class="form-group">
+                <label>Admin Password</label>
+                <input type="password" id="adminPass" placeholder="••••••••">
+            </div>
+            
+
+
+            <button onclick="authenticateGithub()" class="btn btn-primary" id="loginBtn" style="width: 100%;">Увійти</button>
             <p id="authError" style="color: #ff4d4d; margin-top: 16px; text-align: center; display: none;"></p>
         </div>
     </div>
@@ -379,13 +383,9 @@
                 document.getElementById('fileInput').click();
             });
 
-            const u = localStorage.getItem('gh_user');
-            const r = localStorage.getItem('gh_repo');
-            const t = localStorage.getItem('gh_token');
-            if (u && r && t) {
-                document.getElementById('ghUserIn').value = u;
-                document.getElementById('ghRepoIn').value = r;
-                document.getElementById('ghTokenIn').value = t;
+            const u = localStorage.getItem('admin_pass');
+            if (u) {
+                document.getElementById('adminPass').value = u;
             }
             document.getElementById('newsDate').value = new Date().toLocaleDateString('uk-UA');
             document.getElementById('pDate').value = new Date().toLocaleDateString('uk-UA');
@@ -408,93 +408,127 @@
             if (tab === 'patrons' && patronsData.length === 0) loadTabFile('patrons.json');
         }
         // ... existing AUTH ...
-        async function authenticateGithub() {
-            const user = document.getElementById('ghUserIn').value.trim();
-            const repo = document.getElementById('ghRepoIn').value.trim();
-            const token = document.getElementById('ghTokenIn').value.trim();
-            if (!user || !repo || !token) return alert('Fill all fields');
+        // CONSTANTS
+        const WORKER_URL = 'https://adminpanel.bodyagavril.workers.dev';
 
-            localStorage.setItem('gh_user', user);
-            localStorage.setItem('gh_repo', repo);
-            localStorage.setItem('gh_token', token);
-            document.getElementById('authOverlay').style.display = 'none';
-            document.getElementById('adminPanel').style.display = 'block';
-            document.getElementById('displayUser').innerText = user;
-            loadFromGitHub();
+        // AUTH
+        async function authenticateGithub() {
+            const pass = document.getElementById('adminPass').value.trim();
+            const btn = document.getElementById('loginBtn');
+            const errorMsg = document.getElementById('authError');
+            
+            if (!pass) return alert('Введіть пароль');
+
+            // UI Loading state
+            btn.disabled = true;
+            btn.innerText = 'Перевірка...';
+            errorMsg.style.display = 'none';
+
+            try {
+                // Try to fetch news.json just to validate password/IP
+                const res = await fetch(`${WORKER_URL}?path=news.json`, {
+                    headers: { 'x-admin-password': pass }
+                });
+
+                if (res.status === 401) {
+                    throw new Error('Неправильний пароль');
+                }
+                if (res.status === 403) {
+                    throw new Error('Забагато спроб. Спробуйте через 20 хв.');
+                }
+                if (!res.ok) {
+                    throw new Error('Помилка з\'єднання');
+                }
+
+                // Success
+                localStorage.setItem('admin_pass', pass);
+                
+                document.getElementById('authOverlay').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                document.getElementById('displayUser').innerText = 'Admin';
+                document.getElementById('displayRepo').innerText = 'Secure Mode';
+                
+                loadFromGitHub();
+
+            } catch (e) {
+                errorMsg.innerText = e.message;
+                errorMsg.style.display = 'block';
+                btn.disabled = false;
+                btn.innerText = 'Увійти';
+            }
         }
-        function logout() { localStorage.removeItem('gh_token'); location.reload(); }
+
+        function logout() { 
+            localStorage.removeItem('admin_pass'); 
+            location.reload(); 
+        }
 
         // API
         async function loadFromGitHub() {
-            // ... same as before ...
             const file = currentTab === 'news' ? 'news.json' : 'patrons.json';
             const status = document.getElementById('statusMsg');
             status.innerText = `Завантаження ${file}...`;
 
+            const pass = localStorage.getItem('admin_pass');
+
             try {
-                const data = await fetchFile(file);
+                const res = await fetch(`${WORKER_URL}?path=${file}`, {
+                    headers: { 'x-admin-password': pass }
+                });
+
+                if (!res.ok) throw new Error(await res.text());
+                const json = await res.json(); 
+                
+                // Decode content
+                const content = decodeURIComponent(escape(window.atob(json.content)));
+                
                 if (currentTab === 'news') {
-                    newsData = JSON.parse(data.content);
-                    newsSha = data.sha;
+                    newsData = JSON.parse(content);
+                    newsSha = json.sha;
                     renderNews();
                 } else {
-                    patronsData = JSON.parse(data.content);
-                    patronsSha = data.sha;
+                    patronsData = JSON.parse(content);
+                    patronsSha = json.sha;
                     renderPatrons();
                 }
                 status.innerText = `✅ ${file} завантажено`;
             } catch (e) {
+                console.error(e);
                 status.innerText = `❌ Помилка: ${e.message}`;
-                if (e.message.includes('404')) {
-                    if (currentTab === 'news') newsData = [];
-                    else patronsData = [];
-                    status.innerText = 'Створіть новий файл...';
-                }
+                // If 404/Empty, init empty
+                if (currentTab === 'news' && !newsData.length) newsData = [];
+                if (currentTab === 'patrons' && !patronsData.length) patronsData = [];
             }
         }
 
-        async function fetchFile(path) {
-             // ... same as before
-             const user = localStorage.getItem('gh_user');
-            const repo = localStorage.getItem('gh_repo');
-            const token = localStorage.getItem('gh_token');
-            const url = `https://api.github.com/repos/${user}/${repo}/contents/${path}?t=${Date.now()}`;
-            const res = await fetch(url, { headers: { 'Authorization': `token ${token}` } });
-            if (!res.ok) throw new Error(res.status);
-            const json = await res.json();
-            return {
-                sha: json.sha,
-                content: decodeURIComponent(escape(window.atob(json.content)))
-            };
-        }
-
         async function pushToGitHub() {
-             // ... same as before
-             const file = currentTab === 'news' ? 'news.json' : 'patrons.json';
+            const file = currentTab === 'news' ? 'news.json' : 'patrons.json';
             const data = currentTab === 'news' ? newsData : patronsData;
             const sha = currentTab === 'news' ? newsSha : patronsSha;
 
             const status = document.getElementById('statusMsg');
             status.innerText = `Збереження ${file}...`;
 
-            const user = localStorage.getItem('gh_user');
-            const repo = localStorage.getItem('gh_repo');
-            const token = localStorage.getItem('gh_token');
+            const pass = localStorage.getItem('admin_pass');
 
             const contentStr = JSON.stringify(data, null, 4);
             const contentBase64 = window.btoa(unescape(encodeURIComponent(contentStr)));
 
             try {
-                const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file}`, {
+                const res = await fetch(`${WORKER_URL}?path=${file}`, {
                     method: 'PUT',
-                    headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'x-admin-password': pass
+                    },
                     body: JSON.stringify({
-                        message: `Update ${file}`,
+                        message: `Update ${file} via Admin Panel`,
                         content: contentBase64,
                         sha: sha
                     })
                 });
-                if (!res.ok) throw new Error('Save failed');
+
+                if (!res.ok) throw new Error(await res.text());
                 const json = await res.json();
 
                 if (currentTab === 'news') newsSha = json.content.sha;
