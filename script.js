@@ -391,6 +391,12 @@ function copyIp(element) {
 // Add this function to the end of script.js
 
 function initStarfield() {
+    // Disable starfield on Map page for performance
+    if (document.querySelector('.map-container') || window.location.pathname.includes('map.html')) {
+        console.log('Starfield disabled on Map page');
+        return;
+    }
+
     const canvas = document.createElement('canvas');
     canvas.id = 'starfield';
     canvas.style.position = 'fixed';

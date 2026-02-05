@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Primary Meta Tags -->
+    <title>Мапа Світу - ОБРІЙ Hytale (Хайтейл) сервер</title>
+    <meta name="description"
+        content="Інтерактивна мапа світу сервера ОБРІЙ. Досліджуй території, знаходь друзів та плануй пригоди!">
+    <meta name="keywords" content="hytale map, hytale мапа, обрій мапа, minecraft map">
+
+    <link rel="icon" type="image/png" href="assets/images/logo_new.png">
+    <link rel="canonical" href="https://obriyhytale.pp.ua/map.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=2.3">
+
+    <!-- SEO & Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://obriyhytale.pp.ua/map.html">
+    <meta property="og:title" content="Мапа Світу - ОБРІЙ Hytale">
+    <meta property="og:description" content="Інтерактивна мапа світу сервера ОБРІЙ.">
+    <meta property="og:image" content="https://obriyhytale.pp.ua/assets/images/logo_new.png">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Specific page styles to ensure full height */
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Hide scrollbars on the main page */
+            height: 100%;
+            background-color: #0f1115; /* Fallback bg */
+        }
+        main.map-container {
+            position: absolute;
+            top: 64px; /* Hardcoded nav height matches CSS var */
+            left: 0;
+            width: 100%;
+            height: calc(100% - 64px);
+            z-index: 1;
+            padding: 0 !important; /* Override global main padding */
+            margin: 0 !important;
+        }
+        iframe.map-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="header-inner">
+            <div class="header-left">
+                <a href="index.html" class="logo">
+                    <img src="assets/images/logo_new.png" alt="ОБРІЙ">
+                    <span>MAP</span>
+                </a>
+                <div class="server-status" title="Click to copy IP">
+                    <div class="status-dot"></div>
+                    <div class="status-text">Loading...</div>
+                </div>
+            </div>
+            <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+            <nav class="desktop-nav">
+                <a href="index.html">Головна</a>
+                <a href="news.html">Хроніки</a>
+                <a href="donate.html">Підтримати</a>
+                <a href="map.html" class="active">Мапа Світу</a>
+                <a href="https://discord.gg/jrfKVsXp" target="_blank" class="discord-btn">Discord</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="map-container">
+        <iframe src="https://map.obriyhytale.pp.ua/" class="map-frame" title="Мапа світу ОБРІЙ"></iframe>
+    </main>
+
+    <!-- Script needed for header/mobile menu and server status -->
+    <script src="script.js?v=1.7"></script>
+
+    <!-- Cloudflare Web Analytics -->
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js'
+        data-cf-beacon='{"token": "9cac6707b13f4481a4ed3b83d3ede706"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+
+</html>
