@@ -123,7 +123,13 @@ async function fetchServerStatus() {
             if (data && typeof data.online !== 'undefined') {
                 dot.classList.add('online');
                 dot.classList.remove('offline');
-                text.innerHTML = `Online: <span style="color: var(--vp-c-brand);">${data.online}</span> / ${data.maxPlayers}`;
+                
+                // Hide player count if 0 to avoid "scaring off" new players
+                if (data.online === 0) {
+                    text.innerHTML = `<span style="color: var(--vp-c-brand);">Server Online</span>`;
+                } else {
+                    text.innerHTML = `Online: <span style="color: var(--vp-c-brand);">${data.online}</span> / ${data.maxPlayers}`;
+                }
             } else {
                 dot.classList.add('offline');
                 dot.classList.remove('online');
