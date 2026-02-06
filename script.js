@@ -126,7 +126,7 @@ async function fetchServerStatus() {
                 
                 // Hide player count if 0 to avoid "scaring off" new players
                 if (data.online === 0) {
-                    text.innerHTML = `<span style="color: var(--vp-c-brand);">Server Online</span>`;
+                    text.innerHTML = `<span style="color: var(--vp-c-brand);">Online</span>`;
                 } else {
                     text.innerHTML = `Online: <span style="color: var(--vp-c-brand);">${data.online}</span> / ${data.maxPlayers}`;
                 }
