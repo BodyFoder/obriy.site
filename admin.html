@@ -205,13 +205,91 @@
             border-radius: 12px;
             position: relative;
         }
+        /* Image Control Overlay */
+        #imageOverlay {
+            position: absolute;
+            border: 2px solid var(--vp-c-brand);
+            pointer-events: none; /* Let clicks pass unless on handles */
+            display: none;
+            z-index: 50;
+        }
+
+        .resize-handle {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--vp-c-brand);
+            border: 1px solid #fff;
+            pointer-events: auto; /* Enable interaction */
+        }
+        .rh-nw { top: -6px; left: -6px; cursor: nw-resize; }
+        .rh-ne { top: -6px; right: -6px; cursor: ne-resize; }
+        .rh-sw { bottom: -6px; left: -6px; cursor: sw-resize; }
+        .rh-se { bottom: -6px; right: -6px; cursor: se-resize; }
+
+        .img-btn {
+            background: var(--vp-c-bg-alt);
+            color: var(--vp-c-text-1);
+            border: 1px solid var(--vp-c-border);
+            border-radius: 4px;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+        .img-btn:hover { border-color: var(--vp-c-brand); color: var(--vp-c-brand); }
+        .btn-del:hover { background: #ff4d4d; color: white; border-color: #ff4d4d; }
+
+        /* Crop Modal (Fullscreen) */
+        #cropModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 99999; /* Topmost */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #cropContainer {
+            max-width: 90%;
+            max-height: 80vh;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        #cropImage {
+            max-width: 100%;
+            display: block; /* Required for Cropper.js */
+        }
     </style>
     <!-- Quill CDN -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <!-- Cropper.js CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
 </head>
 
 <body>
+    <!-- Crop Modal -->
+    <div id="cropModal">
+        <div id="cropContainer">
+            <img id="cropImage" src="">
+        </div>
+        
+        <div style="margin-top: 20px; display: flex; gap: 16px;">
+            <button class="btn btn-primary" onclick="confirmCrop()" id="confirmCropBtn"><i class="fas fa-check"></i> Обрізати та Зберегти</button>
+            <button class="btn btn-outline" style="background:transparent; color:white; border:1px solid white;" onclick="cancelCrop()"><i class="fas fa-times"></i> Скасувати</button>
+        </div>
+    </div>
 
     <!-- Auth Overlay -->
     <div class="login-overlay" id="authOverlay">
@@ -234,6 +312,22 @@
         </div>
     </div>
 
+    <!-- Image Overlay (Resize/Delete/Crop) -->
+    <div id="imageOverlay">
+        <div class="resize-handle rh-nw" data-dir="nw"></div>
+        <div class="resize-handle rh-ne" data-dir="ne"></div>
+        <div class="resize-handle rh-sw" data-dir="sw"></div>
+        <div class="resize-handle rh-se" data-dir="se"></div>
+        
+        <!-- Action Buttons -->
+        <div style="position: absolute; top: -12px; right: -70px; display: flex; gap: 4px;">
+            <button class="img-btn btn-crop" onclick="startCrop()" title="Crop"><i class="fas fa-crop-alt"></i></button>
+            <button class="img-btn btn-del" onclick="deleteSelectedImage()" title="Delete"><i class="fas fa-trash"></i></button>
+        </div>
+    </div>
+
+    <!-- Fullscreen Drop Zone REMOVED -->
+    
     <!-- Main Interface -->
     <div class="admin-panel" id="adminPanel">
         <div class="container">
@@ -269,56 +363,72 @@
                         class="fas fa-cloud-upload-alt"></i> Зберегти поточну вкладку</button>
             </div>
 
-            <!-- NEWS SECTION -->
-            <div id="newsSection" class="section-content active">
-                <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px;">
-                    <div>
-                        <h2 style="margin-bottom: 24px;">Редактор Новин</h2>
-                        <input type="hidden" id="editIndex" value="-1">
-                        <div class="form-group"><label>Заголовок</label><input type="text" id="newsTitle"></div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                            <div class="form-group"><label>ID</label><input type="text" id="newsId"></div>
-                            <div class="form-group"><label>Дата</label><input type="text" id="newsDate"></div>
+            <!-- NEWS SECTION (INLINE EDITOR) -->
+            <div id="newsSection" class="section-content active admin-inline-edit">
+                 
+                 <!-- Grid Layout: Editor (Left) | Sidebar (Right) -->
+                 <div style="display: grid; grid-template-columns: 1fr 320px; gap: 32px; align-items: start;">
+                     
+                     <!-- LEFT: Editor Area -->
+                     <div style="min-width: 0;"> <!-- min-width fix for grid overflow -->
+                        
+                        <!-- Actions Toolbar -->
+                        <div style="margin-bottom: 24px; text-align: right;">
+                           <button onclick="clearNewsForm()" class="btn btn-outline">Нова стаття</button>
+                           <button onclick="saveLocalNews()" class="btn btn-primary">Зберегти</button>
+                           <input type="hidden" id="newsId">
+                           <input type="hidden" id="editIndex" value="-1">
                         </div>
-                        <div class="form-group"><label>Картинка (URL)</label><input type="text" id="newsImage"></div>
-                        <!-- Image Upload UI -->
-                        <div
-                            style="background: var(--vp-c-bg-soft); padding: 16px; border-radius: 8px; border: 1px dashed var(--vp-c-brand); margin-bottom: 20px;">
-                            <h4 style="margin-bottom: 12px; font-size: 14px; color: var(--vp-c-text-1);">Завантаження
-                                зображень (GitHub)</h4>
-                            <input type="file" id="fileInput" style="display: none;" onchange="uploadFile()">
-                            <button onclick="uploadTarget='cover'; document.getElementById('fileInput').click()"
-                                class="btn btn-outline" style="width: 100%; font-size: 13px;"><i
-                                    class="fas fa-camera"></i> Вибрати
-                                файл...</button>
-                            <div id="uploadStatus" style="font-size: 12px; margin-top: 8px; color: var(--vp-c-text-2);">
-                            </div>
-                        </div>
-                        <div class="form-group"><label>Короткий опис</label><textarea id="newsSummary"
-                                rows="3"></textarea></div>
-                        <div class="form-group"><label>Теги</label><input type="text" id="newsTags"></div>
-                        <div class="form-group">
-                            <label>Текст (Візуальний редактор)</label>
-                            <!-- Quill Editor Container -->
-                            <div id="editor-container" style="height: 400px;"></div>
-                            <input type="hidden" id="newsContent"> <!-- Hidden input to store value for strict compatibility if needed, though we use JS var -->
-                        </div>
-                        <div style="display: flex; gap: 12px;">
-                            <button onclick="showPreview()" class="btn btn-outline" style="border-color: var(--vp-c-brand); color: var(--vp-c-brand);"><i class="fas fa-eye"></i> Попередній перегляд</button>
-                            <button onclick="saveLocalNews()" class="btn btn-primary" style="flex: 1;">Застосувати зміни
-                                (Локально)</button>
-                            <button onclick="clearNewsForm()" class="btn btn-outline">Очистити</button>
-                        </div>
+
+                        <!-- Article Container -->
+                        <div class="full-article" style="background: var(--vp-c-bg); padding: 40px; border-radius: 12px; border: 1px solid var(--vp-c-border);">
+                           
+                           <div class="article-header" style="margin-bottom: 32px;">
+                               <!-- Inline Title Input -->
+                               <h1 style="margin-top:16px; margin-bottom:16px;">
+                                   <input type="text" id="newsTitle" placeholder="Введіть заголовок статті..." autocomplete="off">
+                               </h1>
+                               
+                               <!-- Inline Meta Inputs -->
+                               <div class="news-meta" style="margin-bottom: 16px; color: var(--vp-c-text-2); display: flex; gap: 16px; align-items: center;">
+                                   <div style="display: flex; align-items: center; gap: 8px;">
+                                       <i class="far fa-calendar-alt"></i>
+                                       <input type="text" id="newsDate" placeholder="DD.MM.YYYY" style="width: 120px;">
+                                   </div>
+                                   <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+                                       <span style="font-weight: 600; color: var(--vp-c-brand);">#</span>
+                                       <input type="text" id="newsTags" placeholder="теги, через, кому" style="color: var(--vp-c-brand);">
+                                   </div>
+                               </div>
+
+                               <!-- Main Image Trigger -->
+                               <div class="news-image" onclick="uploadTarget='cover'; document.getElementById('fileInput').click()" 
+                                    style="height: 400px; border-radius: 12px; margin-bottom: 24px; overflow:hidden; background: var(--vp-c-bg-alt); display: flex; align-items: center; justify-content: center;">
+                                   <img id="newsImagePreview" src="assets/images/logo_new.png" alt="Cover" style="width: 100%; height: 100%; object-fit: cover;">
+                                   <input type="hidden" id="newsImage" value="assets/images/logo_new.png">
+                               </div>
+                           </div>
+
+                           <!-- Quill Editor (Body) -->
+                           <div class="article-content" style="color: var(--vp-c-text-1);">
+                               <div id="editor-container"></div>
+                           </div>
+                       </div>
                     </div>
-                    <div>
-                        <h2 style="margin-bottom: 24px;">Список новин</h2>
-                        <div id="newsList"
-                            style="max-height: 500px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
-                        </div>
+
+                    <!-- RIGHT: Sidebar List -->
+                    <div style="position: sticky; top: 20px;">
+                        <h3 style="margin-bottom: 16px; font-size: 18px;">Історія статей</h3>
+                        <div id="newsList" style="display: flex; flex-direction: column; gap: 12px; max-height: 80vh; overflow-y: auto;"></div>
                     </div>
-                </div>
+
+                 </div> <!-- End Grid -->
             </div>
 
+            <!-- Hidden Controls -->
+            <input type="file" id="fileInput" style="display: none;" onchange="uploadFile()">
+            <div id="uploadStatus" style="text-align: right; font-size: 12px; color: var(--vp-c-text-2); margin-top: 8px;"></div>
+            
             <!-- PATRONS SECTION -->
             <div id="patronsSection" class="section-content">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
@@ -361,18 +471,52 @@
         let quill; // Quill instance
 
         // INIT
+        // INIT
         document.addEventListener('DOMContentLoaded', () => {
-            // Init Quill
+             // 1. Register Custom 'Info Box' Blot
+             const Block = Quill.import('blots/block');
+             class InfoBoxBlot extends Block {
+                 static create(value) {
+                     let node = super.create();
+                     node.setAttribute('class', 'info-box');
+                     return node;
+                 }
+                 static formats(node) {
+                     return node.getAttribute('class');
+                 }
+             }
+             InfoBoxBlot.blotName = 'info-box';
+             InfoBoxBlot.tagName = 'div';
+             Quill.register(InfoBoxBlot);
+             
+             // 2. Add Custom Icon to Toolbar
+             const icons = Quill.import('ui/icons');
+             icons['info-box'] = '<i class="fas fa-lightbulb" style="color:#ffd700; font-weight:bold;"></i>';
+
+            // Init Quill with custom Toolbar
             quill = new Quill('#editor-container', {
                 theme: 'snow',
                 modules: {
-                    toolbar: [
-                        [{ 'header': [2, 3, false] }],
-                        ['bold', 'italic', 'underline', 'strike'],
-                        ['link', 'image', 'video'],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                        ['clean']
-                    ]
+                    toolbar: {
+                        container: [
+                            [{ 'header': [2, 3, false] }],
+                            ['bold', 'italic', 'underline', 'strike'],
+                            ['link', 'image', 'video'],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            ['info-box'], // Custom Button
+                            ['clean']
+                        ],
+                        handlers: {
+                            'info-box': function() {
+                                const format = this.quill.getFormat();
+                                if (format['info-box']) {
+                                    this.quill.format('info-box', false); // Remove
+                                } else {
+                                    this.quill.format('info-box', true); // Add
+                                }
+                            }
+                        }
+                    }
                 }
             });
 
@@ -548,49 +692,505 @@
                 title: title,
                 date: document.getElementById('newsDate').value,
                 image: document.getElementById('newsImage').value || 'assets/images/logo_new.png',
-                summary: document.getElementById('newsSummary').value,
-                fullContent: quill.root.innerHTML, // GET CONTENT FROM QUILL
+                // No summary field in inline mode, generate from content text
+                summary: quill.getText().substring(0, 200) + '...',
+                fullContent: quill.root.innerHTML, 
                 tags: document.getElementById('newsTags').value.split(',').map(t => t.trim()).filter(t => t.length > 0)
             };
             const idx = parseInt(document.getElementById('editIndex').value);
             if (idx >= 0) newsData[idx] = item; else newsData.push(item);
-            renderNews(); clearNewsForm();
+            renderNews(); 
+            // Don't clear form immediately after save, let user keep editing if they want
+            alert('Зміни збережено локально! Не забудьте натиснути "Зберегти поточну вкладку" зверху.');
         }
-        function renderNews() {
-            const l = document.getElementById('newsList'); l.innerHTML = '';
-            newsData.forEach((i, idx) => {
-                l.innerHTML += `<div class="list-item"><b>${i.title}</b> <div><button onclick="editNews(${idx})">✏️</button> <button onclick="delNews(${idx})">🗑️</button></div></div>`;
+
+        // --- IMAGE CONTROLS (RESIZE & DELETE) ---
+        let selectedImg = null;
+        const overlay = document.getElementById('imageOverlay');
+
+        // 1. Detect Image Selection
+        document.addEventListener('click', (e) => {
+            if (e.target.tagName === 'IMG' && e.target.closest('.ql-editor')) {
+                selectImage(e.target);
+            } else if (!e.target.closest('#imageOverlay') && !e.target.closest('.ql-tooltip') && !e.target.closest('#cropModal')) {
+                deselectImage();
+            }
+        });
+        
+        // Also deselect on scroll/resize to avoid misalignment
+        window.addEventListener('resize', deselectImage);
+        document.getElementById('editor-container').addEventListener('scroll', updateOverlayPosition, true);
+
+        function selectImage(img) {
+            selectedImg = img;
+            updateOverlayPosition();
+            overlay.style.display = 'block';
+        }
+
+        function deselectImage() {
+            selectedImg = null;
+            overlay.style.display = 'none';
+        }
+
+        function updateOverlayPosition() {
+            if (!selectedImg) return;
+            const rect = selectedImg.getBoundingClientRect();
+            // Account for scroll if overlay is fixed/absolute relative to body
+            const scrollX = window.scrollX || window.pageXOffset;
+            const scrollY = window.scrollY || window.pageYOffset;
+
+            overlay.style.width = rect.width + 'px';
+            overlay.style.height = rect.height + 'px';
+            overlay.style.top = (rect.top + scrollY) + 'px';
+            overlay.style.left = (rect.left + scrollX) + 'px';
+        }
+
+        function deleteSelectedImage() {
+            if (selectedImg) {
+                const blot = Quill.find(selectedImg);
+                if (blot) {
+                    const idx = quill.getIndex(blot);
+                    quill.deleteText(idx, 1);
+                }
+                deselectImage();
+            }
+        }
+
+        // 2. Resize Logic
+        let isResizing = false;
+        let startX, startY, startWidth, startHeight, ratio;
+
+        document.querySelectorAll('.resize-handle').forEach(handle => {
+            handle.addEventListener('mousedown', initResize);
+        });
+
+        function initResize(e) {
+            if (!selectedImg) return;
+            e.preventDefault();
+            e.stopPropagation();
+            
+            isResizing = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            startWidth = selectedImg.offsetWidth;
+            startHeight = selectedImg.offsetHeight;
+            ratio = startWidth / startHeight; // Calculate Aspect Ratio
+            
+            const handle = e.target;
+            const dir = handle.getAttribute('data-dir'); // nw, ne, sw, se
+
+            const onMouseMove = (moveEvent) => {
+                if (!isResizing) return;
+                
+                const dx = moveEvent.clientX - startX;
+                // We mainly drive by Width to keep it simple and responsive
+                // Height will adjust automatically via CSS
+                
+                let newW = startWidth;
+                
+                // Logic based on handle direction (Width focus)
+                if (dir.includes('e')) newW = startWidth + dx;
+                if (dir.includes('w')) newW = startWidth - dx;
+
+                if (newW < 50) newW = 50; // Min width
+
+                selectedImg.style.width = newW + 'px';
+                selectedImg.style.height = 'auto'; // Force auto height to maintain ratio
+                
+                updateOverlayPosition();
+            };
+
+            const onMouseUp = () => {
+                isResizing = false;
+                window.removeEventListener('mousemove', onMouseMove);
+                window.removeEventListener('mouseup', onMouseUp);
+                
+                // Persist changes
+                // We set width explicitly, and remove height to let browser handle ratio
+                selectedImg.setAttribute('width', selectedImg.style.width);
+                selectedImg.removeAttribute('height'); 
+                
+                quill.update();
+            };
+
+            window.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('mouseup', onMouseUp);
+        }
+
+        // --- CROPPER LOGIC ---
+        let cropper = null;
+        const cropModal = document.getElementById('cropModal');
+        const cropImgEl = document.getElementById('cropImage');
+
+        function startCrop() {
+            if (!selectedImg) return alert('No image selected!');
+            
+            // Debug
+            console.log('Starting crop for:', selectedImg.src);
+
+            // 1. Open Modal first
+            cropModal.style.display = 'flex';
+
+            // 2. Setup Handler BEFORE setting src (Fix race condition)
+            cropImgEl.onload = () => {
+                console.log('Image loaded in modal. Init Cropper.');
+                // Destroy prev if exists
+                if (cropper) cropper.destroy();
+
+                cropper = new Cropper(cropImgEl, {
+                    viewMode: 2, 
+                    dragMode: 'move',
+                    autoCropArea: 0.8,
+                    restore: false,
+                    guides: true,
+                    center: true,
+                    highlight: false,
+                    cropBoxMovable: true,
+                    cropBoxResizable: true,
+                    toggleDragModeOnDblclick: false,
+                    background: false, 
+                });
+            };
+
+            cropImgEl.onerror = (e) => {
+                alert('Failed to load image for cropping. CORS or Network issue.');
+                console.error(e);
+            };
+            
+            // 3. Setup Image Src with CORS
+            cropImgEl.crossOrigin = 'anonymous'; 
+            
+            // Cache busting
+            const src = selectedImg.src;
+            if (src.startsWith('http')) {
+                cropImgEl.src = src + (src.includes('?') ? '&' : '?') + 't=' + Date.now();
+            } else {
+                cropImgEl.src = src;
+            }
+        }
+
+        function cancelCrop() {
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+            cropModal.style.display = 'none';
+        }
+
+        async function confirmCrop() {
+            console.log('Confirm crop clicked');
+            
+            // Capture implicit 'event' if available or just proceed
+            // Note: onclick="confirmCrop()" in HTML doesn't pass event, but we can access global 'event' if needed,
+            // or better, rely on local variable capture.
+            
+            // CAPTURE LOCAL REFERENCE before await or global clicks reset it
+            const currentImg = selectedImg;
+            
+            if (!cropper || !currentImg) return alert('Помилка: Редактор або зображення втрачено. Спробуйте закрити і відкрити знову.');
+            
+            const btn = document.getElementById('confirmCropBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Обробка...';
+            btn.disabled = true;
+
+            try {
+                // Get Canvas
+                console.log('Getting cropped canvas...');
+                const canvas = cropper.getCroppedCanvas();
+                if (!canvas) throw new Error('Не вдалося отримати Canvas');
+
+                // Convert to Blob
+                console.log('Converting to Blob...');
+                const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+                if (!blob) throw new Error('Не вдалося створити Blob');
+                
+                // Create File object
+                const file = new File([blob], `cropped_${Date.now()}.png`, { type: 'image/png' });
+                console.log('File created, size:', file.size);
+
+                // Upload
+                console.log('Uploading...');
+                const url = await performUpload(file);
+                console.log('Uploaded URL:', url);
+                
+                // Update Original Image using LOCAL REFERENCE
+                currentImg.src = url;
+                currentImg.style.width = ''; 
+                currentImg.removeAttribute('width');
+                currentImg.removeAttribute('height');
+
+                // Close Modal
+                cancelCrop();
+                
+                // Refresh Overlay
+                // We need to re-select or just hide? 
+                // Since cancelCrop hides overlay, we might want to re-select the image if user wants to see it?
+                // Let's just update if it's still "selected" globaly, but we know cancelCrop might have messed it up.
+                // Actually, let's explicitely re-select it
+                selectImage(currentImg);
+
+            } catch (e) {
+                console.error(e);
+                alert('Помилка процесу: ' + e.message);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // --- DRAG AND DROP IMAGE LOGIC ---
+        document.addEventListener('DOMContentLoaded', () => {
+             // 1. Setup Custom Caret (Visual Indicator)
+             const caretEl = document.createElement('div');
+             caretEl.id = 'dragCaret';
+             Object.assign(caretEl.style, {
+                 position: 'fixed',
+                 height: '2px', // Horizontal Line
+                 width: '100%',
+                 backgroundColor: '#00fa9a',
+                 zIndex: '10000',
+                 display: 'none',
+                 pointerEvents: 'none',
+                 boxShadow: '0 0 8px #00fa9a',
+                 transition: 'top 0.05s' // Smooth vertical movement
+             });
+             document.body.appendChild(caretEl);
+
+             // 2. Prevent browser opening files on global drop
+             window.addEventListener('dragover', e => e.preventDefault(), false);
+             window.addEventListener('drop', e => e.preventDefault(), false);
+             // Hide caret on global interactions
+             window.addEventListener('dragleave', () => { caretEl.style.display = 'none'; });
+             window.addEventListener('drop', () => { caretEl.style.display = 'none'; });
+
+             const editorDiv = document.querySelector('.ql-editor');
+             if (editorDiv) {
+                 // 3. Handle Drag Over: Move Custom Caret
+                 editorDiv.addEventListener('dragover', (e) => {
+                     e.preventDefault(); 
+                     
+                     let range = null;
+                     let rect = null;
+
+                     // Standard (Firefox/Gecko)
+                     if (document.caretPositionFromPoint) {
+                         const point = document.caretPositionFromPoint(e.clientX, e.clientY);
+                         if (point) {
+                             range = document.createRange();
+                             range.setStart(point.offsetNode, point.offset);
+                             range.collapse(true);
+                         }
+                     } 
+                     // WebKit (Chrome/Safari)
+                     else if (document.caretRangeFromPoint) {
+                         range = document.caretRangeFromPoint(e.clientX, e.clientY);
+                     }
+
+                     if (range) {
+                         // Correctly position the visual indicator
+                         const rects = range.getClientRects();
+                         if (rects.length > 0) {
+                             rect = rects[0];
+                             const editorRect = editorDiv.getBoundingClientRect();
+                             
+                             // Horizontal Line Logic
+                             caretEl.style.width = editorRect.width + 'px';
+                             caretEl.style.left = editorRect.left + 'px';
+                             caretEl.style.top = rect.top + 'px'; // Snap to top of the line
+                             caretEl.style.display = 'block';
+                             
+                             // Also sync internal selection so drop knows where to go
+                             const blot = Quill.find(range.startContainer, true);
+                             if (blot) {
+                                 const offset = blot.offset(quill.scroll);
+                                 const dragIndex = offset + range.startOffset;
+                                 quill.setSelection(dragIndex, 0, 'silent');
+                             }
+                         }
+                     }
+                 });
+
+                 // 4. Handle Drop
+                 editorDiv.addEventListener('drop', async (e) => {
+                     e.preventDefault();
+                     e.stopPropagation();
+                     caretEl.style.display = 'none';
+
+                     const files = e.dataTransfer.files;
+                     if (files && files.length > 0) {
+                         const file = files[0];
+                         if (file.type.startsWith('image/')) {
+                             const status = document.getElementById('uploadStatus');
+                             status.innerHTML = 'Завантаження картинки...';
+                             
+                             try {
+                                 const url = await performUpload(file);
+                                 const range = quill.getSelection(true) || { index: quill.getLength() };
+                                 quill.insertEmbed(range.index, 'image', url);
+                                 quill.setSelection(range.index + 1, 0);
+                                 status.innerHTML = 'Картинка додана!';
+                             } catch (err) {
+                                 console.error(err);
+                                 status.innerHTML = 'Помилка: ' + err.message;
+                                 alert('Не вдалося завантажити: ' + err.message);
+                             }
+                         }
+                     }
+                 });
+             }
+        });
+
+        // (Helper function removed as it is now inline or unused)
+        // async function handleDrop(e) ... REMOVED
+        
+        // Unified Upload Logic via Worker (Uses admin_pass, no Token needed)
+        async function performUpload(file) {
+            // Remove special chars to avoid URL issues
+            const cleanName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+            const path = `assets/images/uploads/${Date.now()}_${cleanName}`;
+            
+            const reader = new FileReader();
+            return new Promise((resolve, reject) => {
+                reader.onload = async () => {
+                    // Get base64 content
+                    const rawBase64 = reader.result.split(',')[1];
+                    
+                    try {
+                        const pass = localStorage.getItem('admin_pass');
+                        if (!pass) throw new Error('Немає пароля адміністратора. Перезайдіть.');
+
+                        // Add debug query param to bypass cache if needed? No.
+                        const res = await fetch(`${WORKER_URL}?path=${path}`, {
+                            method: 'PUT',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'x-admin-password': pass
+                            },
+                            body: JSON.stringify({
+                                message: 'Upload image via Admin Panel',
+                                content: rawBase64
+                            })
+                        });
+                        
+                        if (!res.ok) throw new Error(await res.text());
+                        const json = await res.json();
+                        
+                        // Construct URL
+                        // The worker usually returns GitHub API response which has content.download_url
+                        let rawUrl = '';
+                        if (json.content && json.content.download_url) {
+                            rawUrl = json.content.download_url;
+                        } else {
+                            // Fallback construction
+                            const user = 'BodyFoder';
+                            const repo = 'obriy_hytale_site';
+                            rawUrl = `https://raw.githubusercontent.com/${user}/${repo}/main/${path}`;
+                        }
+                        
+                        resolve(rawUrl);
+                    } catch (e) { reject(e); }
+                };
+                reader.readAsDataURL(file);
             });
         }
+
+        // Updated File Input Listener (Clicked 'Cover' or 'Insert Image' button)
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (!file) return;
+            
+            const status = document.getElementById('uploadStatus');
+            status.innerHTML = 'Завантаження...';
+            
+            try {
+                const url = await performUpload(file); // Use the Worker logic!
+                status.innerHTML = 'Готово!';
+                
+                if (uploadTarget === 'cover') {
+                    document.getElementById('newsImage').value = url;
+                    document.getElementById('newsImagePreview').src = url;
+                } else {
+                    const range = quill.getSelection(true) || { index: quill.getLength() };
+                    quill.insertEmbed(range.index, 'image', url);
+                }
+            } catch (e) {
+                status.innerHTML = 'Error: ' + e.message;
+                alert('Помилка завантаження: ' + e.message);
+            }
+            // Clear input so same file can be selected again
+            fileInput.value = '';
+        }
+
+        // Updated Render with Image Fallback
+        function renderNews() {
+            const l = document.getElementById('newsList'); l.innerHTML = '';
+            
+            // Sort by date descending (optional, but good for admin)
+            // newsData.sort((a,b) => new Date(b.date) - new Date(a.date)); // Let's keep original order for now to match index
+
+            newsData.forEach((i, idx) => {
+                const imgUrl = i.image || 'assets/images/logo_new.png';
+                
+                l.innerHTML += `
+                <div class="list-item" onclick="editNews(${idx})" style="width: 100%; cursor: pointer; border: 1px solid var(--vp-c-border); border-radius: 8px; overflow: hidden; background: var(--vp-c-bg-alt); transition: transform 0.2s; display: flex;">
+                    <div style="width: 80px; height: 80px; flex-shrink: 0; background-color: #000;">
+                        <img src="${imgUrl}" 
+                             onerror="this.onerror=null; this.src='assets/images/logo_new.png';" 
+                             style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div style="padding: 10px; flex: 1; min-width: 0;">
+                         <div style="font-weight: bold; font-size: 13px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${i.title}</div>
+                         <div style="font-size: 11px; color: var(--vp-c-text-3);">${i.date}</div>
+                         <div style="margin-top: 4px; text-align: right;">
+                            <button onclick="event.stopPropagation(); delNews(${idx})" style="background:none; border:none; color:#ff4d4d; cursor:pointer; font-size: 12px;">✕</button>
+                         </div>
+                    </div>
+                </div>`;
+            });
+        }
+
         function editNews(i) {
             const d = newsData[i];
-            console.log('Editing post:', d); // Debugging
             
             document.getElementById('newsTitle').value = d.title || '';
             document.getElementById('newsId').value = d.id || '';
+            document.getElementById('newsDate').value = d.date || '';
+            document.getElementById('newsTags').value = d.tags ? d.tags.join(', ') : '';
             
-            // Try different keys for content, just in case
-            // script.js uses: item.fullContent || item.summary
-            let contentToLoad = d.fullContent || d.content || d.body || d.text || '';
-            
-            // If main content is empty but summary exists and seems long, maybe that's it?
-            if (!contentToLoad && d.summary && d.summary.length > 100) {
-                contentToLoad = d.summary;
-            }
+            const img = d.image || 'assets/images/logo_new.png';
+            document.getElementById('newsImage').value = img;
+            document.getElementById('newsImagePreview').src = img;
 
-            if (quill) {
-                // Use clipboard for safer HTML insertion
-                quill.clipboard.dangerouslyPasteHTML(contentToLoad);
-            }
+            let contentToLoad = d.fullContent || d.content || '';
+            if (!contentToLoad && d.summary && d.summary.length > 100) contentToLoad = d.summary;
+
+            if (quill) quill.clipboard.dangerouslyPasteHTML(contentToLoad);
             
             document.getElementById('editIndex').value = i;
-            document.getElementById('newsImage').value = d.image || '';
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-        function delNews(i) { newsData.splice(i, 1); renderNews(); }
+
+        function delNews(i) { 
+            if(confirm('Видалити цю новину?')) {
+                newsData.splice(i, 1); 
+                renderNews(); 
+                if (document.getElementById('editIndex').value == i) clearNewsForm();
+            }
+        }
+
         function clearNewsForm() { 
             document.getElementById('newsTitle').value = ''; 
+            document.getElementById('newsId').value = `post-${Date.now()}`;
+            document.getElementById('newsDate').value = new Date().toLocaleDateString('uk-UA');
+            document.getElementById('newsTags').value = '';
+            document.getElementById('newsImage').value = 'assets/images/logo_new.png';
+            document.getElementById('newsImagePreview').src = 'assets/images/logo_new.png';
             document.getElementById('editIndex').value = '-1'; 
-            quill.root.innerHTML = ''; // Clear Quill
+            quill.root.innerHTML = ''; 
         }
 
         // PATRONS CRUD
@@ -621,58 +1221,156 @@
         function clearPatronForm() { document.getElementById('pName').value = ''; document.getElementById('pAmount').value = ''; document.getElementById('pMessage').value = ''; document.getElementById('pIndex').value = '-1'; }
         async function loadTabFile(f) { loadFromGitHub(); }
 
-        // Upload (Same as before)
+        // --- DRAG AND DROP IMAGE LOGIC ---
+        document.addEventListener('DOMContentLoaded', () => {
+             // ... previous Quill init code ...
+
+             // DnD for Editor Content
+             const editorDiv = document.querySelector('.ql-editor');
+             if (editorDiv) {
+                 editorDiv.addEventListener('drop', handleDrop);
+                 editorDiv.addEventListener('dragover', e => e.preventDefault());
+             }
+             
+             // Also allow dropping on the main container
+             const container = document.getElementById('editor-container');
+             container.addEventListener('drop', handleDrop);
+             container.addEventListener('dragover', e => e.preventDefault());
+        });
+
+        async function handleDrop(e) {
+            e.preventDefault();
+            const files = e.dataTransfer.files;
+            if (files && files.length > 0) {
+                const file = files[0];
+                if (file.type.startsWith('image/')) {
+                    // Calculate precise index from drop coordinates
+                    let index = quill.getLength(); // Default to end
+                    
+                    if (document.caretRangeFromPoint) {
+                        const range = document.caretRangeFromPoint(e.clientX, e.clientY);
+                        if (range) {
+                            const blot = Quill.find(range.startContainer);
+                            if (blot) {
+                                index = blot.offset(quill.scroll) + range.startOffset;
+                            }
+                        }
+                    } else if (document.caretPositionFromPoint) {
+                        const range = document.caretPositionFromPoint(e.clientX, e.clientY);
+                        if (range) {
+                            const blot = Quill.find(range.offsetNode);
+                            if (blot) {
+                                index = blot.offset(quill.scroll) + range.offset;
+                            }
+                        }
+                    }
+
+                    const status = document.getElementById('uploadStatus');
+                    status.innerHTML = 'Uploading dropped image...';
+                    
+                    try {
+                        const url = await performUpload(file);
+                        // Insert at calculated index
+                        quill.insertEmbed(index, 'image', url);
+                        // Fix cursor position
+                        quill.setSelection(index + 1);
+                        status.innerHTML = 'Image inserted!';
+                    } catch (err) {
+                        status.innerHTML = 'Error: ' + err.message;
+                    }
+                }
+            }
+        }
+        
+        // Refactored Upload Logic
+        async function performUpload(file) {
+            const user = localStorage.getItem('gh_user') || 'BodyFoder'; // Fallback if missing
+            const repo = localStorage.getItem('gh_repo') || 'obriy_hytale_site';
+            // We need tokens. If not stored (because simple auth), we might need to prompt or use existing flow.
+            // Wait, existing flow uses localStorage 'gh_token'.
+            const token = localStorage.getItem('gh_token'); 
+            // Wait, previous code used hardcoded token or stored one? 
+            // In original code: const token = localStorage.getItem('gh_token');
+            // But we only have 'admin_pass' in new auth system.
+            // Ah, the `uploadFile` function in previous steps used localStorage items that might not exist in the new "Simple Admin" flow.
+            // The simple admin flow passes `x-admin-password` to the WORKER.
+            // So we must upload VIA THE WORKER, not direct to GitHub API, unless we expose the token.
+            // Let's check `pushToGitHub`. It uses the Worker.
+            // We should implement `server-side upload` in the worker or (easier) 
+            // rely on the user having the token or just use Base64 if small?
+            // No, the previous uploadFile code was:
+            /*
+            async function uploadFile() {
+                const user = localStorage.getItem('gh_user'); ...
+            */
+            // If the user hasn't set 'gh_user' etc, this fails. 
+            // Since we are upgrading, let's make it robust. 
+            // We will Try to use the Worker for upload if feasible, or ask user for token if missing.
+            // Actually, for now, let's assume the user has configured it OR we use the Worker proxy.
+            
+            // To allow image uploads without exposing token in JS, we need a Worker endpoint for it.
+            // Since I cannot edit the Worker right now (I can, but task scope?), 
+            // I will use a clever trick: The worker supports PUT.
+            // generic PUT path? `assets/images/uploads/...`
+            
+            const cleanName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+            const path = `assets/images/uploads/${Date.now()}_${cleanName}`;
+            
+            const reader = new FileReader();
+            return new Promise((resolve, reject) => {
+                reader.onload = async () => {
+                    const contentBase64 = reader.result.split(',')[1];
+                    try {
+                        const pass = localStorage.getItem('admin_pass');
+                        const res = await fetch(`${WORKER_URL}?path=${path}`, {
+                            method: 'PUT',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'x-admin-password': pass
+                            },
+                            body: JSON.stringify({
+                                message: 'Upload image via Admin DnD',
+                                content: contentBase64
+                            })
+                        });
+                        
+                        if (!res.ok) throw new Error(await res.text());
+                        const json = await res.json();
+                        // Construct URL. JSON returns content.download_url usually?
+                        // Worker returns GitHub response.
+                        // If we can't get exact URL, guess it.
+                        // Raw URL pattern:
+                        const rawUrl = json.content ? json.content.download_url : `https://raw.githubusercontent.com/BodyFoder/obriy_hytale_site/main/${path}`;
+                        resolve(rawUrl);
+                    } catch (e) { reject(e); }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Modify existing uploadFile to use new helper
         async function uploadFile() {
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
             if (!file) return;
-            const user = localStorage.getItem('gh_user');
-            const repo = localStorage.getItem('gh_repo');
-            const token = localStorage.getItem('gh_token');
+            
             const status = document.getElementById('uploadStatus');
             status.innerHTML = 'Uploading...';
             
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = async function () {
-                const contentBase64 = reader.result.split(',')[1];
-                const cleanName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-                const path = `assets/images/uploads/${Date.now()}_${cleanName}`;
+            try {
+                const url = await performUpload(file);
+                status.innerHTML = 'Done!';
                 
-                try {
-                    // 1. Upload to GitHub
-                    await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${path}`, {
-                        method: 'PUT',
-                        headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ message: 'upload', content: contentBase64 })
-                    });
-                    
-                    // 2. Get Default Branch (for Raw URL)
-                    let branch = 'main';
-                    try {
-                        const repoRes = await fetch(`https://api.github.com/repos/${user}/${repo}`, {
-                             headers: { 'Authorization': `token ${token}` }
-                        });
-                        const repoJson = await repoRes.json();
-                        if (repoJson.default_branch) branch = repoJson.default_branch;
-                    } catch (e) { console.warn('Could not detect branch, defaulting to main'); }
-
-                    // 3. Construct Raw URL (Works immediately-ish)
-                    const rawUrl = `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${path}`;
-                    status.innerHTML = `Done!`;
-
-                    if (uploadTarget === 'cover') {
-                        document.getElementById('newsImage').value = rawUrl;
-                    } else if (uploadTarget === 'content-quill') {
-                        // Insert image into Quill cursor position
-                        const range = quill.getSelection();
-                        quill.insertEmbed(range ? range.index : 0, 'image', rawUrl);
-                    } else {
-                        // Fallback
-                        // const imgTag = `<img src="${rawUrl}" alt="Image" style="width:100%; border-radius:8px; margin: 16px 0;">`;
-                    }
-                } catch (e) { status.innerHTML = 'Error: ' + e.message; }
-            };
+                if (uploadTarget === 'cover') {
+                    document.getElementById('newsImage').value = url;
+                    document.getElementById('newsImagePreview').src = url;
+                } else {
+                    const range = quill.getSelection(true);
+                    quill.insertEmbed(range.index, 'image', url);
+                }
+            } catch (e) {
+                status.innerHTML = 'Error: ' + e.message;
+            }
         }
     </script>
     <!-- Cloudflare Web Analytics -->

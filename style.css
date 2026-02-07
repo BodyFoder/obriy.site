@@ -1148,3 +1148,116 @@ footer {
     color: var(--vp-c-text-2);
     font-size: 12px;
 }
+
+/* --- Info Box Component --- */
+.info-box {
+    background: #2b261b; /* Dark yellowish bg to match screenshot/theme */
+    border-left: 4px solid var(--vp-c-brand);
+    padding: 16px 20px;
+    margin: 24px 0;
+    border-radius: 8px;
+    color: var(--vp-c-text-1);
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.info-box strong {
+    color: #ffd700; /* Gold/Yellow highlight for headers inside box */
+}
+
+/* Ensure Quill editor matches site styles */
+#editor-container .ql-editor {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--vp-c-text-1);
+    padding: 24px;
+}
+
+#editor-container .ql-editor .info-box {
+     /* Inherit styles from above */
+     margin: 16px 0;
+}
+
+/* --- Inline Admin Editor Styles --- */
+.admin-inline-edit .article-header input,
+.admin-inline-edit .article-header .news-meta input {
+    background: transparent;
+    border: 1px dashed transparent;
+    color: inherit;
+    font-family: inherit;
+    width: 100%;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.admin-inline-edit .article-header input:hover,
+.admin-inline-edit .article-header .news-meta input:hover {
+    border-color: var(--vp-c-brand);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.admin-inline-edit .article-header input:focus,
+.admin-inline-edit .article-header .news-meta input:focus {
+    outline: none;
+    border-color: var(--vp-c-brand);
+    background: var(--vp-c-bg-alt);
+}
+
+.admin-inline-edit .article-header h1 input {
+    font-size: 36px; /* Match h1 */
+    font-weight: 700;
+}
+
+.admin-inline-edit .news-image {
+    cursor: pointer;
+    position: relative;
+    border: 2px dashed transparent;
+    transition: border-color 0.2s;
+}
+
+.admin-inline-edit .news-image:hover {
+    border-color: var(--vp-c-brand);
+}
+
+.admin-inline-edit .news-image::after {
+    content: 'Click or Drag Image Here';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.admin-inline-edit .news-image:hover::after {
+    opacity: 1;
+}
+
+/* Quill Overrides for Inline Feel */
+.admin-inline-edit #editor-container {
+    border: 1px dashed transparent;
+    margin: -24px; /* Offset padding to align text exactly */
+}
+
+.admin-inline-edit #editor-container:hover {
+    border-color: var(--vp-c-border);
+}
+
+/* Custom Toolbar Position */
+.ql-toolbar.ql-snow {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--vp-c-bg);
+    border-bottom: 1px solid var(--vp-c-border) !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    margin-bottom: 24px;
+}
