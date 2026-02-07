@@ -243,6 +243,15 @@
         }
         .img-btn:hover { border-color: var(--vp-c-brand); color: var(--vp-c-brand); }
         .btn-del:hover { background: #ff4d4d; color: white; border-color: #ff4d4d; }
+        
+        /* List Item Hover */
+        .list-item:hover {
+            border-color: var(--vp-c-text-2) !important;
+            background: var(--vp-c-bg-soft) !important;
+        }
+        .list-item button:hover {
+            color: #ff4d4d !important;
+        }
 
         /* Crop Modal (Fullscreen) */
         #cropModal {
@@ -417,9 +426,15 @@
                     </div>
 
                     <!-- RIGHT: Sidebar List -->
-                    <div style="position: sticky; top: 20px;">
-                        <h3 style="margin-bottom: 16px; font-size: 18px;">Історія статей</h3>
-                        <div id="newsList" style="display: flex; flex-direction: column; gap: 12px; max-height: 80vh; overflow-y: auto;"></div>
+                    <div style="position: sticky; top: 20px; max-height: calc(100vh - 40px); display: flex; flex-direction: column;">
+                        <h3 style="margin-bottom: 12px; font-size: 18px;">Історія статей</h3>
+                        
+                        <!-- Search Input -->
+                        <input type="text" id="newsSearch" placeholder="Пошук..." oninput="renderNews()" 
+                               style="width: 100%; padding: 8px 12px; margin-bottom: 12px; background: var(--vp-c-bg-alt); border: 1px solid var(--vp-c-border); color: var(--vp-c-text-1); border-radius: 6px; font-size: 14px;">
+                        
+                        <!-- Scrollable List -->
+                        <div id="newsList" style="display: flex; flex-direction: column; gap: 8px; overflow-y: auto; padding-right: 4px; flex: 1;"></div>
                     </div>
 
                  </div> <!-- End Grid -->
@@ -1124,29 +1139,62 @@
         }
 
         // Updated Render with Image Fallback
+        // Updated Render with Search & Sort & Compact Design
         function renderNews() {
-            const l = document.getElementById('newsList'); l.innerHTML = '';
+            const l = document.getElementById('newsList'); 
+            l.innerHTML = '';
             
-            // Sort by date descending (optional, but good for admin)
-            // newsData.sort((a,b) => new Date(b.date) - new Date(a.date)); // Let's keep original order for now to match index
+            const filter = document.getElementById('newsSearch') ? document.getElementById('newsSearch').value.toLowerCase() : '';
 
-            newsData.forEach((i, idx) => {
-                const imgUrl = i.image || 'assets/images/logo_new.png';
+            // Create reference array with original indices
+            const mapped = newsData.map((item, index) => ({ item, index }));
+
+            // Sort by Date Descending (Newest first)
+            mapped.sort((a, b) => {
+                // Parse DD.MM.YYYY
+                const parseDate = (dStr) => {
+                    if(!dStr) return 0;
+                    const parts = dStr.split('.');
+                    if(parts.length !== 3) return 0;
+                    return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`).getTime();
+                };
+                return parseDate(b.item.date) - parseDate(a.item.date);
+            });
+
+            mapped.forEach(({ item, index }) => {
+                if (filter && !item.title.toLowerCase().includes(filter)) return;
+
+                const imgUrl = item.image || 'assets/images/logo_new.png';
                 
+                // Active state check
+                const isActive = document.getElementById('editIndex').value == index;
+                const borderStyle = isActive ? '2px solid var(--vp-c-brand)' : '1px solid var(--vp-c-border)';
+
                 l.innerHTML += `
-                <div class="list-item" onclick="editNews(${idx})" style="width: 100%; cursor: pointer; border: 1px solid var(--vp-c-border); border-radius: 8px; overflow: hidden; background: var(--vp-c-bg-alt); transition: transform 0.2s; display: flex;">
-                    <div style="width: 80px; height: 80px; flex-shrink: 0; background-color: #000;">
+                <div class="list-item" onclick="editNews(${index})" 
+                     style="width: 100%; cursor: pointer; border: ${borderStyle}; border-radius: 6px; overflow: hidden; background: var(--vp-c-bg-alt); transition: all 0.2s; display: flex; align-items: center; position: relative;">
+                    
+                    <div style="width: 56px; height: 56px; flex-shrink: 0; background-color: #000;">
                         <img src="${imgUrl}" 
                              onerror="this.onerror=null; this.src='assets/images/logo_new.png';" 
-                             style="width: 100%; height: 100%; object-fit: cover;">
+                             style="width: 100%; height: 100%; object-fit: cover; opacity: 0.9;">
                     </div>
-                    <div style="padding: 10px; flex: 1; min-width: 0;">
-                         <div style="font-weight: bold; font-size: 13px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${i.title}</div>
-                         <div style="font-size: 11px; color: var(--vp-c-text-3);">${i.date}</div>
-                         <div style="margin-top: 4px; text-align: right;">
-                            <button onclick="event.stopPropagation(); delNews(${idx})" style="background:none; border:none; color:#ff4d4d; cursor:pointer; font-size: 12px;">✕</button>
+                    
+                    <div style="padding: 8px 10px; flex: 1; min-width: 0;">
+                         <div style="font-weight: 500; font-size: 13px; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--vp-c-text-1);">
+                            ${item.title || 'Без назви'}
+                         </div>
+                         <div style="font-size: 11px; color: var(--vp-c-text-3); display:flex; justify-content:space-between; align-items: center;">
+                            <span>${item.date}</span>
                          </div>
                     </div>
+
+                    <!-- Compact Delete Button on hover/always visible -->
+                    <button onclick="event.stopPropagation(); delNews(${index})" 
+                            title="Видалити"
+                            style="background: transparent; border: none; color: var(--vp-c-text-3); width: 24px; height: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: color 0.2s; margin-right: 4px;">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>`;
             });
         }
