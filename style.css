@@ -799,29 +799,39 @@ footer {
     border-radius: 12px;
     padding: 16px 24px;
     margin: 24px 0;
-}
 
-/* Merge adjacent info-boxes */
-.info-box + .info-box {
-    margin-top: -25px; /* Pull up to overlap border */
-    border-top: none;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    padding-top: 8px;
-}
-
-.info-box:has(+ .info-box) {
-    border-bottom: none;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-    padding-bottom: 8px;
-    margin-bottom: 0;
-}
-    display: inline-flex;
+    display: flex;
     align-items: flex-start;
     gap: 12px;
     text-align: left;
-    max-width: 700px;
+    max-width: 100%;
+}
+
+/* Merge adjacent info-boxes via JS props */
+.info-box.ib-start {
+    border-bottom: none;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-bottom: 0;
+    padding-bottom: 8px;
+}
+
+.info-box.ib-middle {
+    border-top: none;
+    border-bottom: none;
+    border-radius: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.info-box.ib-end {
+    border-top: none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    margin-top: 0;
+    padding-top: 8px;
 }
 
 .info-box i {

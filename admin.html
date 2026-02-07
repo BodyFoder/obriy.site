@@ -599,6 +599,31 @@
                 document.getElementById('fileInput').click();
             });
 
+            quill.on('text-change', () => {
+                setTimeout(mergeInfoBoxesAdmin, 10);
+            });
+            
+            function mergeInfoBoxesAdmin() {
+                const boxes = document.querySelectorAll('.ql-editor .info-box');
+                boxes.forEach((box) => {
+                    const prev = box.previousElementSibling;
+                    const next = box.nextElementSibling;
+                    
+                    const isPrevBox = prev && prev.classList.contains('info-box');
+                    const isNextBox = next && next.classList.contains('info-box');
+
+                    box.classList.remove('ib-start', 'ib-middle', 'ib-end');
+
+                    if (isNextBox && !isPrevBox) {
+                        box.classList.add('ib-start');
+                    } else if (isPrevBox && isNextBox) {
+                        box.classList.add('ib-middle');
+                    } else if (isPrevBox && !isNextBox) {
+                        box.classList.add('ib-end');
+                    }
+                });
+            }
+
             const u = localStorage.getItem('admin_pass');
             if (u) {
                 document.getElementById('adminPass').value = u;
