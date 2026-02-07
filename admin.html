@@ -278,6 +278,44 @@
             max-width: 100%;
             display: block; /* Required for Cropper.js */
         }
+
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 16px;
+            padding: 20px 0;
+        }
+        .gallery-item {
+            background: var(--vp-c-bg-alt);
+            border: 1px solid var(--vp-c-border);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            aspect-ratio: 1;
+            cursor: pointer;
+        }
+        .gallery-item img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.3s;
+        }
+        .gallery-item:hover img { transform: scale(1.05); }
+        .gallery-actions {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex; justify-content: space-around;
+            padding: 8px;
+            opacity: 0; transition: opacity 0.2s;
+        }
+        .gallery-item:hover .gallery-actions { opacity: 1; }
+        .gallery-btn {
+            background: none; border: none; color: white; cursor: pointer;
+            font-size: 16px; opacity: 0.8;
+            transition: transform 0.2s;
+        }
+        .gallery-btn:hover { opacity: 1; transform: scale(1.1); }
+
     </style>
     <!-- Quill CDN -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
@@ -359,6 +397,7 @@
             <div class="tabs">
                 <button class="tab-btn active" onclick="switchTab('news')">Новини</button>
                 <button class="tab-btn" onclick="switchTab('patrons')">Меценати (Донати)</button>
+                <button class="tab-btn" onclick="switchTab('gallery')">Галерея</button>
             </div>
 
             <!-- Global Actions -->
@@ -472,6 +511,24 @@
                 </div>
             </div>
 
+            <!-- GALLERY SECTION -->
+            <div id="gallerySection" class="section-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <h2 style="margin-bottom: 8px;">Менеджер зображень</h2>
+                        <p style="color: var(--vp-c-text-2); font-size:14px;">Файли з теки <code>assets/images/uploads</code></p>
+                    </div>
+                    <button class="btn btn-primary" onclick="loadGallery()"><i class="fas fa-sync-alt"></i> Оновити список</button>
+                </div>
+                
+                <div id="galleryContainer" class="gallery-grid">
+                    <!-- Images will be injected here -->
+                    <div style="grid-column: 1/-1; text-align: center; color: var(--vp-c-text-3);">
+                        Натисніть "Оновити список", щоб завантажити файли.
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -552,19 +609,131 @@
 
         // ... existing TABS ...
         function switchTab(tab) {
-             // ... existing logic ...
-             if (tab === 'news') {
-                 // Refresh height check or something if needed
-             }
              currentTab = tab;
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
+             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+             document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
 
-            event.target.classList.add('active');
-            document.getElementById(tab + 'Section').classList.add('active');
+             // Find button text to set active? Or rely on onclick
+             // Actually, we need to find the specific button index or ID.
+             // Simplest way: loop and match text or index.
+             // But simpler: just add IDs to buttons in HTML upgrade above?
+             // Or easier: pass 'this' (event.target) to function? No, we call it manually too.
+             // Let's rely on text textContent mapping or just:
+             const index = ['news', 'patrons', 'gallery'].indexOf(tab);
+             if (index !== -1) {
+                 document.querySelectorAll('.tab-btn')[index].classList.add('active');
+             }
 
-            if (tab === 'news' && newsData.length === 0) loadTabFile('news.json');
-            if (tab === 'patrons' && patronsData.length === 0) loadTabFile('patrons.json');
+             document.getElementById(tab + 'Section').classList.add('active');
+
+             if (tab === 'news' && newsData.length === 0) loadTabFile('news.json');
+             if (tab === 'patrons' && patronsData.length === 0) loadTabFile('patrons.json');
+             if (tab === 'gallery') loadGallery();
+        }
+
+        // GALLERY LOGIC
+        async function loadGallery() {
+            const container = document.getElementById('galleryContainer');
+            container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px;">Завантаження... <i class="fas fa-spinner fa-spin"></i></div>';
+            
+            try {
+                const pass = localStorage.getItem('admin_pass');
+                const path = 'assets/images/uploads';
+                
+                // Use the Worker to fetch directory listing
+                const res = await fetch(`${WORKER_URL}?path=${path}`, {
+                    headers: { 'x-admin-password': pass }
+                });
+
+                if (!res.ok) throw new Error(await res.text());
+                const json = await res.json();
+                
+                let items = [];
+                // Support both direct array (if worker proxies raw) or { content: [] }
+                if (Array.isArray(json)) {
+                    items = json;
+                } else if (json.content && Array.isArray(json.content)) {
+                    items = json.content;
+                } else if (typeof json.content === 'string') {
+                     try { items = JSON.parse(json.content); } catch(e){}
+                }
+                
+                if (!items || !items.length) {
+                     container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px;">Папка порожня.</div>';
+                     return;
+                }
+
+                renderGalleryData(items);
+
+            } catch (e) {
+                console.error(e);
+                container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #ff4d4d;">Помилка: ${e.message}</div>`;
+            }
+        }
+
+        function renderGalleryData(items) {
+            const container = document.getElementById('galleryContainer');
+            container.innerHTML = '';
+
+            // Filter images only
+            const images = items.filter(i => i.name.match(/\.(png|jpg|jpeg|gif|webp)$/i));
+            
+            // Sort by name desc (assuming timestamped names)
+            images.sort((a,b) => b.name.localeCompare(a.name)); 
+
+            images.forEach(img => {
+                let url = img.download_url;
+                if (!url) {
+                     // Fallback construction
+                     url = `https://raw.githubusercontent.com/${localStorage.getItem('gh_user') || 'BodyFoder'}/${localStorage.getItem('gh_repo') || 'obriy_hytale_site'}/main/${img.path}`;
+                }
+
+                const div = document.createElement('div');
+                div.className = 'gallery-item';
+                div.innerHTML = `
+                    <div style="width:100%; height:100%; position:relative;">
+                        <img src="${url}" loading="lazy" onerror="this.src='assets/images/logo_new.png'">
+                        <div class="gallery-actions">
+                            <button class="gallery-btn" onclick="copyToClipboard('${url}')" title="Copy Link"><i class="fas fa-link"></i></button>
+                            <button class="gallery-btn" onclick="deleteGalleryImage('${img.path}', '${img.sha}')" title="Delete" style="color: #ff4d4d;"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        async function deleteGalleryImage(path, sha) {
+            if (!confirm('Видалити це зображення назавжди?')) return;
+            
+            try {
+                const pass = localStorage.getItem('admin_pass');
+                const res = await fetch(`${WORKER_URL}?path=${path}`, {
+                    method: 'DELETE',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'x-admin-password': pass 
+                    },
+                    body: JSON.stringify({
+                        message: `Delete ${path}`,
+                        sha: sha
+                    })
+                });
+                
+                if (!res.ok) throw new Error(await res.text());
+                loadGallery(); // Refresh
+                
+            } catch (e) {
+                alert('Помилка: ' + e.message);
+            }
+        }
+        
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const status = document.getElementById('statusMsg');
+                status.innerText = 'Посилання скопійовано! 📋';
+                setTimeout(() => status.innerText = '', 2000);
+            });
         }
         // ... existing AUTH ...
         // CONSTANTS
