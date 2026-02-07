@@ -536,7 +536,7 @@ html {
 /* Footer */
 footer {
     border-top: 1px solid var(--vp-c-border);
-    padding: 24px 0;
+    padding: 12px 0;
     margin-top: auto;
     text-align: center;
     color: var(--vp-c-text-3);
