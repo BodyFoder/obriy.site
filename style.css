@@ -798,6 +798,25 @@ footer {
     border: 1px solid rgba(var(--vp-c-brand-rgb), 0.2);
     border-radius: 12px;
     padding: 16px 24px;
+    margin: 24px 0;
+}
+
+/* Merge adjacent info-boxes */
+.info-box + .info-box {
+    margin-top: -25px; /* Pull up to overlap border */
+    border-top: none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    padding-top: 8px;
+}
+
+.info-box:has(+ .info-box) {
+    border-bottom: none;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    padding-bottom: 8px;
+    margin-bottom: 0;
+}
     display: inline-flex;
     align-items: flex-start;
     gap: 12px;

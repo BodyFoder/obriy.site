@@ -602,6 +602,8 @@
             const u = localStorage.getItem('admin_pass');
             if (u) {
                 document.getElementById('adminPass').value = u;
+                console.log('Auto-login triggered with password:', u.substring(0,3)+'***');
+                document.getElementById('loginBtn').innerText = 'Авто-вхід...';
                 authenticateGithub();
             }
             document.getElementById('newsDate').value = new Date().toLocaleDateString('uk-UA');
