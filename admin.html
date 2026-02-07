@@ -602,6 +602,7 @@
             const u = localStorage.getItem('admin_pass');
             if (u) {
                 document.getElementById('adminPass').value = u;
+                authenticateGithub();
             }
             document.getElementById('newsDate').value = new Date().toLocaleDateString('uk-UA');
             document.getElementById('pDate').value = new Date().toLocaleDateString('uk-UA');
