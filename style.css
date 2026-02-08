@@ -543,6 +543,24 @@ footer {
     font-size: 14px;
 }
 
+/* View Count Badge */
+.view-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--vp-c-text-2);
+    font-size: 14px;
+}
+
+.view-count i {
+    color: var(--vp-c-text-3);
+}
+
+.news-card .view-count {
+    font-size: 12px;
+    margin-left: auto;
+}
+
 
 /* News Layout */
 /* News Layout */

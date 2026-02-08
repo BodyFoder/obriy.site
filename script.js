@@ -44,7 +44,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    console.log('Script initialized v1.1');
+    console.log('Script initialized v1.2');
+
+    window.VIEWS_WORKER_URL = 'https://viewsworker.bodyagavril.workers.dev/';
 
 
 
@@ -280,6 +282,9 @@ function loadFullArticle(newsData) {
     if (article) {
         document.title = `${article.title} - ОБРІЙ`;
 
+        // Track view
+        trackArticleView(article.id);
+
         container.innerHTML = `
             <div class="full-article"> <!-- WRAPPER ADDED FOR STYLING -->
                 <div class="article-header" style="margin-bottom: 32px;">
@@ -287,6 +292,7 @@ function loadFullArticle(newsData) {
                      <h1 style="font-size: 36px; margin-top:16px; margin-bottom:16px;">${article.title}</h1>
                      <div class="news-meta" style="margin-bottom: 16px; color: var(--vp-c-text-2);">
                         <span><i class="far fa-calendar-alt"></i> ${article.date}</span>
+                        <span class="view-count" id="article-views" style="margin-left: 16px;"><i class="far fa-eye"></i> <span>—</span></span>
                         ${article.tags ? article.tags.map(tag => `<span class="tag" style="margin-left:12px; color: var(--vp-c-brand); font-weight:600;">#${tag}</span>`).join('') : ''}
                     </div>
                      <div class="news-image" style="height: 400px; border-radius: 12px; margin-bottom: 24px; overflow:hidden;">
@@ -520,4 +526,51 @@ function initStarfield() {
     resize();
     initStars();
     animate();
+}
+
+// --- VIEW COUNTER ---
+async function trackArticleView(slug) {
+    if (!slug || window.VIEWS_WORKER_URL === 'INSERT_YOUR_VIEWS_WORKER_URL_HERE') {
+        console.log('Views worker not configured');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${window.VIEWS_WORKER_URL}?slug=${encodeURIComponent(slug)}`, {
+            method: 'POST'
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            const viewsEl = document.getElementById('article-views');
+            if (viewsEl) {
+                viewsEl.querySelector('span').textContent = formatViewCount(data.views);
+            }
+            console.log(`View tracked: ${slug} = ${data.views} (cached: ${data.cached})`);
+        }
+    } catch (err) {
+        console.error('Failed to track view:', err);
+    }
+}
+
+async function getViewCounts(slugs) {
+    if (!slugs.length || window.VIEWS_WORKER_URL === 'INSERT_YOUR_VIEWS_WORKER_URL_HERE') {
+        return {};
+    }
+
+    try {
+        const response = await fetch(`${window.VIEWS_WORKER_URL}?slugs=${slugs.join(',')}`);
+        if (response.ok) {
+            return await response.json();
+        }
+    } catch (err) {
+        console.error('Failed to get view counts:', err);
+    }
+    return {};
+}
+
+function formatViewCount(count) {
+    if (count >= 1000000) return (count / 1000000).toFixed(1) + 'M';
+    if (count >= 1000) return (count / 1000).toFixed(1) + 'K';
+    return count.toString();
 }
