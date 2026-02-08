@@ -165,45 +165,65 @@ async function fetchServerStatus() {
 }
 
 // --- NEWS LOGIC ---
-function loadNews() {
-    fetch('news.json?t=' + Date.now())
-        .then(response => response.json())
-        .then(data => {
-            const newsContainer = document.getElementById('news-container');
-            if (!newsContainer) return;
-            newsContainer.innerHTML = '';
+async function loadNews() {
+    try {
+        const response = await fetch('news.json?t=' + Date.now());
+        const data = await response.json();
+        
+        const newsContainer = document.getElementById('news-container');
+        if (!newsContainer) return;
+        newsContainer.innerHTML = '';
 
-            const newsWithIds = data.map((item, index) => ({
-                ...item,
-                id: item.id || `post-${index}`
-            }));
+        const newsWithIds = data.map((item, index) => ({
+            ...item,
+            id: item.id || `post-${index}`
+        }));
 
-            newsWithIds.reverse().forEach(newsItem => {
-                const article = document.createElement('article');
-                article.className = 'news-card fade-in-item';
+        const reversedNews = newsWithIds.slice().reverse();
 
-                const tagsHtml = newsItem.tags && newsItem.tags.length > 0 && newsItem.tags[0] !== ""
-                    ? `<div class="news-tags">${newsItem.tags.filter(t => t.trim()).map(tag => `<span class="tag" style="font-size:11px; color:var(--vp-c-brand); margin-right:8px;">#${tag.trim()}</span>`).join('')}</div>`
-                    : '';
+        reversedNews.forEach(newsItem => {
+            const article = document.createElement('article');
+            article.className = 'news-card fade-in-item';
 
-                article.innerHTML = `
-                    <div class="news-image">
-                        <img src="${newsItem.image}" alt="${newsItem.title}" onerror="this.src='assets/images/logo_new.png'">
+            const tagsHtml = newsItem.tags && newsItem.tags.length > 0 && newsItem.tags[0] !== ""
+                ? `<div class="news-tags">${newsItem.tags.filter(t => t.trim()).map(tag => `<span class="tag" style="font-size:11px; color:var(--vp-c-brand); margin-right:8px;">#${tag.trim()}</span>`).join('')}</div>`
+                : '';
+
+            article.innerHTML = `
+                <div class="news-image">
+                    <img src="${newsItem.image}" alt="${newsItem.title}" onerror="this.src='assets/images/logo_new.png'">
+                </div>
+                <div class="news-content">
+                    <div class="news-meta">
+                        <span class="news-date"><i class="far fa-calendar-alt"></i> ${newsItem.date}</span>
                     </div>
-                    <div class="news-content">
-                        <div class="news-meta">
-                            <span class="news-date"><i class="far fa-calendar-alt"></i> ${newsItem.date}</span>
-                        </div>
-                        ${tagsHtml}
-                        <h3>${newsItem.title}</h3>
-                        <p style="margin-bottom: 16px;">${newsItem.summary || (stripHtml(newsItem.fullContent || '').substring(0, 300) + '...')}</p>
+                    ${tagsHtml}
+                    <h3>${newsItem.title}</h3>
+                    <p style="margin-bottom: 16px;">${newsItem.summary || (stripHtml(newsItem.fullContent || '').substring(0, 300) + '...')}</p>
+                    <div class="news-card-footer" style="display: flex; justify-content: space-between; align-items: center;">
                         <a href="article.html?id=${newsItem.id}" class="read-more">Читати далі <i class="fas fa-arrow-right"></i></a>
+                        <span class="view-count" data-slug="${newsItem.id}"><i class="far fa-eye"></i> <span>—</span></span>
                     </div>
-                `;
-                newsContainer.appendChild(article);
-            });
-        })
-        .catch(error => console.error('Error loading news:', error));
+                </div>
+            `;
+            newsContainer.appendChild(article);
+        });
+
+        // Fetch view counts for all articles
+        const slugs = reversedNews.map(n => n.id);
+        const viewCounts = await getViewCounts(slugs);
+        
+        // Update view counts in cards
+        document.querySelectorAll('.news-card .view-count[data-slug]').forEach(el => {
+            const slug = el.dataset.slug;
+            if (viewCounts[slug] !== undefined) {
+                el.querySelector('span').textContent = formatViewCount(viewCounts[slug]);
+            }
+        });
+
+    } catch (error) {
+        console.error('Error loading news:', error);
+    }
 }
 
 // Helper to strip HTML tags
@@ -214,60 +234,75 @@ function stripHtml(html) {
     return tmp.textContent || tmp.innerText || "";
 }
 
-function loadHomeNews() {
-    fetch('news.json?t=' + Date.now())
-        .then(response => response.json())
-        .then(data => {
-            const container = document.getElementById('home-news-grid');
-            if (!container) return;
-            container.innerHTML = '';
+async function loadHomeNews() {
+    try {
+        const response = await fetch('news.json?t=' + Date.now());
+        const data = await response.json();
+        
+        const container = document.getElementById('home-news-grid');
+        if (!container) return;
+        container.innerHTML = '';
 
-            const newsWithIds = data.map((item, index) => ({
-                ...item,
-                id: item.id || `post-${index}`
-            }));
+        const newsWithIds = data.map((item, index) => ({
+            ...item,
+            id: item.id || `post-${index}`
+        }));
 
-            // Take last 3 items (latest) and reverse them to show newest first
-            const latest = newsWithIds.slice(-3).reverse();
+        // Take last 3 items (latest) and reverse them to show newest first
+        const latest = newsWithIds.slice(-3).reverse();
 
-            latest.forEach(newsItem => {
-                const article = document.createElement('a'); // Make the whole card a link
-                article.href = `article.html?id=${newsItem.id}`;
-                article.className = 'news-card';
-                article.style.textDecoration = 'none';
-                article.style.color = 'inherit';
+        latest.forEach(newsItem => {
+            const article = document.createElement('a'); // Make the whole card a link
+            article.href = `article.html?id=${newsItem.id}`;
+            article.className = 'news-card';
+            article.style.textDecoration = 'none';
+            article.style.color = 'inherit';
 
-                const tagsHtml = newsItem.tags && newsItem.tags.length > 0 && newsItem.tags[0] !== ""
-                    ? `<div class="news-tags" style="margin-bottom:8px;">${newsItem.tags.filter(t => t.trim()).map(tag => `<span class="tag" style="font-size:11px; color:var(--vp-c-brand); margin-right:8px;">#${tag.trim()}</span>`).join('')}</div>`
-                    : '';
+            const tagsHtml = newsItem.tags && newsItem.tags.length > 0 && newsItem.tags[0] !== ""
+                ? `<div class="news-tags" style="margin-bottom:8px;">${newsItem.tags.filter(t => t.trim()).map(tag => `<span class="tag" style="font-size:11px; color:var(--vp-c-brand); margin-right:8px;">#${tag.trim()}</span>`).join('')}</div>`
+                : '';
 
-                // Enforce character limit (max 120 chars) AND STRIP HTML
-                let rawContent = newsItem.summary || newsItem.fullContent || '';
-                let plainText = stripHtml(rawContent);
-                
-                let summaryText = plainText;
-                if (summaryText.length > 500) {
-                    summaryText = summaryText.substring(0, 500) + '...';
-                }
+            // Enforce character limit (max 120 chars) AND STRIP HTML
+            let rawContent = newsItem.summary || newsItem.fullContent || '';
+            let plainText = stripHtml(rawContent);
+            
+            let summaryText = plainText;
+            if (summaryText.length > 500) {
+                summaryText = summaryText.substring(0, 500) + '...';
+            }
 
-                article.innerHTML = `
-                    <div class="news-image" style="height: 180px;">
-                         <img src="${newsItem.image}" alt="${newsItem.title}" onerror="this.src='assets/images/logo_new.png'">
+            article.innerHTML = `
+                <div class="news-image" style="height: 180px;">
+                     <img src="${newsItem.image}" alt="${newsItem.title}" onerror="this.src='assets/images/logo_new.png'">
+                </div>
+                <div class="news-content" style="padding: 20px;">
+                    <div class="news-meta" style="margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                        <span class="news-date" style="font-size: 12px;"><i class="far fa-calendar-alt"></i> ${newsItem.date}</span>
+                        <span class="view-count" data-slug="${newsItem.id}" style="font-size: 12px;"><i class="far fa-eye"></i> <span>—</span></span>
                     </div>
-                    <div class="news-content" style="padding: 20px;">
-                        <div class="news-meta" style="margin-bottom: 8px;">
-                            <span class="news-date" style="font-size: 12px;"><i class="far fa-calendar-alt"></i> ${newsItem.date}</span>
-                        </div>
-                        ${tagsHtml}
-                        <h3 class="home-news-title">${newsItem.title}</h3>
-                        <p class="home-news-desc">${summaryText}</p>
-                        <span class="read-more" style="margin-top:auto;">Читати далі <i class="fas fa-arrow-right"></i></span>
-                    </div>
-                `;
-                container.appendChild(article);
-            });
-        })
-        .catch(error => console.error('Error loading home news:', error));
+                    ${tagsHtml}
+                    <h3 class="home-news-title">${newsItem.title}</h3>
+                    <p class="home-news-desc">${summaryText}</p>
+                    <span class="read-more" style="margin-top:auto;">Читати далі <i class="fas fa-arrow-right"></i></span>
+                </div>
+            `;
+            container.appendChild(article);
+        });
+
+        // Fetch view counts for homepage cards
+        const slugs = latest.map(n => n.id);
+        const viewCounts = await getViewCounts(slugs);
+        
+        container.querySelectorAll('.view-count[data-slug]').forEach(el => {
+            const slug = el.dataset.slug;
+            if (viewCounts[slug] !== undefined) {
+                el.querySelector('span').textContent = formatViewCount(viewCounts[slug]);
+            }
+        });
+
+    } catch (error) {
+        console.error('Error loading home news:', error);
+    }
 }
 
 function loadFullArticle(newsData) {
