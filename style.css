@@ -558,7 +558,17 @@ footer {
 
 .news-card .view-count {
     font-size: 12px;
-    margin-left: auto;
+}
+
+.news-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.news-card-footer .read-more {
+    margin: 0;
 }
 
 
