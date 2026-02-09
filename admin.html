@@ -65,6 +65,31 @@
             outline: none;
         }
 
+        /* Inline editor inputs */
+        #newsTitle,
+        #newsDate,
+        #newsTags {
+            background: transparent;
+            border: 2px dashed var(--vp-c-border);
+            color: var(--vp-c-text-1) !important;
+            font-family: inherit;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+
+        #newsTitle {
+            font-size: 36px;
+            font-weight: 700;
+            width: 100%;
+        }
+
+        #newsTitle:focus,
+        #newsDate:focus,
+        #newsTags:focus {
+            border-color: var(--vp-c-brand);
+            outline: none;
+        }
+
         .editor-toolbar {
             display: flex;
             gap: 8px;
@@ -1337,7 +1362,7 @@
 
         // Updated Render with Image Fallback
         // Updated Render with Search & Sort & Compact Design
-        function renderNews() {
+        async function renderNews() {
             const l = document.getElementById('newsList'); 
             l.innerHTML = '';
             
@@ -1358,6 +1383,16 @@
                 return parseDate(b.item.date) - parseDate(a.item.date);
             });
 
+            // Fetch view counts
+            const slugs = mapped.map(m => m.item.id).filter(Boolean);
+            let viewCounts = {};
+            if (slugs.length > 0) {
+                try {
+                    const res = await fetch(`https://viewsworker.bodyagavril.workers.dev/?slugs=${slugs.join(',')}`);
+                    if (res.ok) viewCounts = await res.json();
+                } catch(e) { console.log('Views fetch error', e); }
+            }
+
             mapped.forEach(({ item, index }) => {
                 if (filter && !item.title.toLowerCase().includes(filter)) return;
 
@@ -1366,6 +1401,8 @@
                 // Active state check
                 const isActive = document.getElementById('editIndex').value == index;
                 const borderStyle = isActive ? '2px solid var(--vp-c-brand)' : '1px solid var(--vp-c-border)';
+
+                const views = viewCounts[item.id] !== undefined ? viewCounts[item.id] : '—';
 
                 l.innerHTML += `
                 <div class="list-item" onclick="editNews(${index})" 
@@ -1383,6 +1420,7 @@
                          </div>
                          <div style="font-size: 11px; color: var(--vp-c-text-3); display:flex; justify-content:space-between; align-items: center;">
                             <span>${item.date}</span>
+                            <span style="margin-left: 8px;"><i class="far fa-eye"></i> ${views}</span>
                          </div>
                     </div>
 
