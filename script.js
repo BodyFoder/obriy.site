@@ -320,17 +320,17 @@ function loadFullArticle(newsData) {
         // Track view
         trackArticleView(article.id);
 
-        // Generate gradient style from accent color
+        // Generate gradient style from accent color (background glow)
         const accentColor = article.accentColor || '';
-        const titleStyle = accentColor 
-            ? `background: linear-gradient(135deg, ${accentColor}, #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;`
+        const headerStyle = accentColor 
+            ? `background: linear-gradient(135deg, ${accentColor}33 0%, transparent 60%); border-radius: 16px; padding: 24px; margin: -24px -24px 0 -24px;`
             : '';
 
         container.innerHTML = `
             <div class="full-article"> <!-- WRAPPER ADDED FOR STYLING -->
-                <div class="article-header" style="margin-bottom: 32px;">
+                <div class="article-header" style="margin-bottom: 32px; ${headerStyle}">
                      <a href="news.html" class="back-link"><i class="fas fa-arrow-left"></i> До списку новин</a>
-                     <h1 style="font-size: 36px; margin-top:16px; margin-bottom:16px; ${titleStyle}">${article.title}</h1>
+                     <h1 style="font-size: 36px; margin-top:16px; margin-bottom:16px;">${article.title}</h1>
                      <div class="news-meta" style="margin-bottom: 16px; color: var(--vp-c-text-2);">
                         <span><i class="far fa-calendar-alt"></i> ${article.date}</span>
                         <span class="view-count" id="article-views" style="margin-left: 16px;"><i class="far fa-eye"></i> <span>—</span></span>
