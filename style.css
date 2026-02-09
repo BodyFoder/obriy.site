@@ -151,28 +151,7 @@ header {
     z-index: 1001;
 }
 
-@media (max-width: 768px) {
-    .menu-toggle {
-        display: block;
-    }
-    
-    .desktop-nav {
-        display: none; /* Hide desktop links on mobile */
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        flex-direction: column;
-        background: var(--vp-c-bg);
-        border-bottom: 1px solid var(--vp-c-border);
-        padding: 20px;
-        gap: 16px;
-    }
 
-    .desktop-nav.active {
-        display: flex; /* Show when active */
-    }
-}
 
 /* Sidebar & Widgets (Restored) */
 .sidebar {
@@ -986,11 +965,7 @@ footer {
     align-items: start;
 }
 
-@media (max-width: 768px) {
-    .donate-columns {
-        grid-template-columns: 1fr;
-    }
-}
+
 
 .support-card {
     background: var(--vp-c-bg-alt);
@@ -1315,4 +1290,48 @@ footer {
     border-left: none !important;
     border-right: none !important;
     margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+    .donate-columns {
+        grid-template-columns: 100%; /* Force fill container width */
+        gap: 24px;
+        margin-right: 0; /* Ensure no right margin causes overflow */
+    }
+
+    .vote-list {
+        grid-template-columns: 1fr;
+    }
+
+    .support-card {
+        padding: 20px;
+        width: 100%; /* Ensure card fits container */
+        box-sizing: border-box; /* Include padding in width */
+    }
+
+    .donate-hero h1 {
+        font-size: 28px !important;
+        padding: 0 16px; /* Add breathing room for title */
+    }
+    .menu-toggle {
+        display: block;
+    }
+    
+    .desktop-nav {
+        display: none; /* Hide desktop links on mobile */
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        background-color: rgba(15, 17, 21, 0.95); /* Match header transparency */
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--vp-c-border);
+        padding: 20px;
+        gap: 16px;
+    }
+
+    .desktop-nav.active {
+        display: flex; /* Show when active */
+    }
 }
