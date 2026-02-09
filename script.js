@@ -322,15 +322,15 @@ function loadFullArticle(newsData) {
 
         // Generate gradient style from accent color
         const accentColor = article.accentColor || '';
-        const gradientStyle = accentColor 
-            ? `background: linear-gradient(135deg, ${accentColor}22 0%, transparent 50%); border-radius: 16px; padding: 24px; margin: -24px -24px 0 -24px;`
+        const titleStyle = accentColor 
+            ? `background: linear-gradient(135deg, ${accentColor}, #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;`
             : '';
 
         container.innerHTML = `
             <div class="full-article"> <!-- WRAPPER ADDED FOR STYLING -->
-                <div class="article-header" style="margin-bottom: 32px; ${gradientStyle}">
+                <div class="article-header" style="margin-bottom: 32px;">
                      <a href="news.html" class="back-link"><i class="fas fa-arrow-left"></i> До списку новин</a>
-                     <h1 style="font-size: 36px; margin-top:16px; margin-bottom:16px;">${article.title}</h1>
+                     <h1 style="font-size: 36px; margin-top:16px; margin-bottom:16px; ${titleStyle}">${article.title}</h1>
                      <div class="news-meta" style="margin-bottom: 16px; color: var(--vp-c-text-2);">
                         <span><i class="far fa-calendar-alt"></i> ${article.date}</span>
                         <span class="view-count" id="article-views" style="margin-left: 16px;"><i class="far fa-eye"></i> <span>—</span></span>
