@@ -980,9 +980,10 @@ footer {
 /* Donate Page Refactor */
 .donate-columns {
     display: grid;
-    grid-template-columns: 1.4fr 1fr; /* Wider left column */
+    grid-template-columns: 1fr 1fr; /* Equal width columns */
     gap: 32px;
     margin-bottom: 40px;
+    align-items: start;
 }
 
 @media (max-width: 768px) {
@@ -998,7 +999,6 @@ footer {
     padding: 32px;
     display: flex;
     flex-direction: column;
-    height: 100%;
 }
 
 .support-header {
@@ -1022,9 +1022,9 @@ footer {
 
 /* Voting Specifics */
 .vote-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
 }
 
 .vote-item {
@@ -1078,7 +1078,7 @@ footer {
 .stat-item {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
 }
 
 .stat-label {
