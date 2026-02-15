@@ -166,24 +166,35 @@ async function fetchServerStatus() {
                 // Check visibility state to decide whether to load images immediately
                 const isVisible = tooltip.classList.contains('active');
                 
-                // Update Tooltip Content
-                // Uses Hyvatar Proxy with correct endpoint
-                tooltip.innerHTML = `
-                    <div class="player-list-header">Гравці онлайн (${data.online})</div>
-                    <div class="player-list-grid">
-                        ${players.map(player => `
-                            <div class="player-item">
-                                <img 
-                                    src="${isVisible ? `https://hyvatar-worker.bodyagavril.workers.dev/?username=${player}` : 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}" 
-                                    data-src="https://hyvatar-worker.bodyagavril.workers.dev/?username=${player}" 
-                                    alt="${player}" 
-                                    loading="lazy"
-                                >
-                                <span>${player}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
+                // Check if player list has changed to avoid unnecessary DOM updates
+                const currentPlayersJson = JSON.stringify(players);
+                if (tooltip.dataset.lastPlayers !== currentPlayersJson) {
+                    tooltip.dataset.lastPlayers = currentPlayersJson;
+                    
+                    // Update Tooltip Content
+                    // Uses Hyvatar Proxy with correct endpoint
+                    tooltip.innerHTML = `
+                        <div class="player-list-header">Гравці онлайн (${data.online})</div>
+                        <div class="player-list-grid">
+                            ${players.map(player => `
+                                <div class="player-item">
+                                    <img 
+                                        src="${isVisible ? `https://hyvatar-worker.bodyagavril.workers.dev/?username=${player}` : 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}" 
+                                        data-src="https://hyvatar-worker.bodyagavril.workers.dev/?username=${player}" 
+                                        alt="${player}" 
+                                        loading="lazy"
+                                    >
+                                    <span>${player}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    // If list hasn't changed, but tooltip became active, make sure images are loaded
+                    if (isVisible) {
+                        loadTooltipImages(tooltip);
+                    }
+                }
 
                 // If existing tooltip was active, we need to ensure images are loaded (handled by src=${isVisible...} above)
                 // But if we just created it or it was closed, we rely on the click handler.
