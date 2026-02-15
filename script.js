@@ -139,8 +139,9 @@ async function fetchServerStatus() {
             }
 
             // Player List Tooltip Logic
-            console.log('Players data:', data.players);
-            if (data && data.players && data.players.length > 0) {
+            const players = data.worlds && data.worlds[0] && data.worlds[0].players ? data.worlds[0].players : [];
+            console.log('Players data:', players);
+            if (players.length > 0) {
                 // Check if tooltip already exists, if not create it
                 let tooltip = widget.querySelector('.player-list-tooltip');
                 if (!tooltip) {
