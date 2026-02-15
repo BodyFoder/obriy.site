@@ -161,8 +161,9 @@ async function fetchServerStatus() {
                 }
 
                 // Update Tooltip Content
+                // Uses Hyvatar Proxy with correct endpoint
                 tooltip.innerHTML = `
-                    <div class="player-list-header">Online Players (${data.online})</div>
+                    <div class="player-list-header">Гравці онлайн (${data.online})</div>
                     <div class="player-list-grid">
                         ${players.map(player => `
                             <div class="player-item">
