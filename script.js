@@ -166,7 +166,7 @@ async function fetchServerStatus() {
                     <div class="player-list-grid">
                         ${players.map(player => `
                             <div class="player-item">
-                                <img src="https://hyvatar.io/render/head/${player}?size=64" alt="${player}" loading="lazy">
+                                <img src="https://hyvatar-worker.bodyagavril.workers.dev/?username=${player}" alt="${player}" loading="lazy">
                                 <span>${player}</span>
                             </div>
                         `).join('')}
