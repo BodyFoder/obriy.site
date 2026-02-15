@@ -1335,3 +1335,99 @@ footer {
         display: flex; /* Show when active */
     }
 }
+
+/* Player List Tooltip */
+.player-list-tooltip {
+    position: absolute;
+    top: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    background: var(--vp-c-bg-alt);
+    border: 1px solid var(--vp-c-border);
+    border-radius: 12px;
+    padding: 16px;
+    width: 280px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+.player-list-tooltip.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+
+/* Arrow */
+.player-list-tooltip::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 12px;
+    height: 12px;
+    background: var(--vp-c-bg-alt);
+    border-left: 1px solid var(--vp-c-border);
+    border-top: 1px solid var(--vp-c-border);
+}
+
+.player-list-header {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--vp-c-text-2);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--vp-c-border);
+}
+
+.player-list-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+    /* Custom Scrollbar */
+    padding-right: 4px;
+}
+
+.player-list-grid::-webkit-scrollbar {
+    width: 4px;
+}
+
+.player-list-grid::-webkit-scrollbar-thumb {
+    background: var(--vp-c-border);
+    border-radius: 4px;
+}
+
+.player-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.player-item:hover {
+    background: var(--vp-c-bg-soft);
+}
+
+.player-item img {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: var(--vp-c-bg);
+}
+
+.player-item span {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--vp-c-text-1);
+}

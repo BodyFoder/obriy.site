@@ -138,17 +138,46 @@ async function fetchServerStatus() {
                 text.textContent = 'Offline';
             }
 
-            // Copy click handler
-            widget.onclick = () => {
-                navigator.clipboard.writeText('play.obriyhytale.pp.ua:25504').then(() => {
-                    const originalText = text.innerHTML;
-                    if (!text.textContent.includes('Copied')) {
-                        const oldContent = text.innerHTML;
-                        text.textContent = 'IP Copied!';
-                        setTimeout(() => text.innerHTML = oldContent, 2000);
-                    }
-                });
-            };
+            // Player List Tooltip Logic
+            if (data && data.players && data.players.length > 0) {
+                // Check if tooltip already exists, if not create it
+                let tooltip = widget.querySelector('.player-list-tooltip');
+                if (!tooltip) {
+                    tooltip = document.createElement('div');
+                    tooltip.className = 'player-list-tooltip';
+                    widget.appendChild(tooltip); // Append to widget for relative positioning
+                    
+                    // Add Click Handler to toggle tooltip
+                    widget.style.cursor = 'pointer';
+                    widget.onclick = (e) => {
+                        e.stopPropagation();
+                        // Close other tooltips if any (for future proofing)
+                        document.querySelectorAll('.player-list-tooltip.active').forEach(t => {
+                            if (t !== tooltip) t.classList.remove('active');
+                        });
+                        tooltip.classList.toggle('active');
+                    };
+                }
+
+                // Update Tooltip Content
+                tooltip.innerHTML = `
+                    <div class="player-list-header">Online Players (${data.online})</div>
+                    <div class="player-list-grid">
+                        ${data.players.map(player => `
+                            <div class="player-item">
+                                <img src="https://hyvatar.io/render/head/${player}?size=64" alt="${player}" loading="lazy">
+                                <span>${player}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                // Remove tooltip if no players or offline
+                const tooltip = widget.querySelector('.player-list-tooltip');
+                if (tooltip) tooltip.remove();
+                widget.onclick = null; // Remove click handler
+                widget.style.cursor = 'default';
+            }
         });
 
     } catch (error) {
@@ -163,6 +192,15 @@ async function fetchServerStatus() {
         });
     }
 }
+
+// Close tooltip when clicking outside
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.server-status')) {
+        document.querySelectorAll('.player-list-tooltip.active').forEach(t => {
+            t.classList.remove('active');
+        });
+    }
+});
 
 // --- NEWS LOGIC ---
 async function loadNews() {
