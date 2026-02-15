@@ -139,6 +139,7 @@ async function fetchServerStatus() {
             }
 
             // Player List Tooltip Logic
+            console.log('Players data:', data.players);
             if (data && data.players && data.players.length > 0) {
                 // Check if tooltip already exists, if not create it
                 let tooltip = widget.querySelector('.player-list-tooltip');
@@ -150,12 +151,14 @@ async function fetchServerStatus() {
                     // Add Click Handler to toggle tooltip
                     widget.style.cursor = 'pointer';
                     widget.onclick = (e) => {
+                        console.log('Widget clicked!');
                         e.stopPropagation();
                         // Close other tooltips if any (for future proofing)
                         document.querySelectorAll('.player-list-tooltip.active').forEach(t => {
                             if (t !== tooltip) t.classList.remove('active');
                         });
                         tooltip.classList.toggle('active');
+                        console.log('Tooltip active:', tooltip.classList.contains('active'));
                     };
                 }
 
