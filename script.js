@@ -140,7 +140,6 @@ async function fetchServerStatus() {
 
             // Player List Tooltip Logic
             const players = data.worlds && data.worlds[0] && data.worlds[0].players ? data.worlds[0].players : [];
-            console.log('Players data:', players);
             if (players.length > 0) {
                 // Check if tooltip already exists, if not create it
                 let tooltip = widget.querySelector('.player-list-tooltip');
@@ -152,14 +151,12 @@ async function fetchServerStatus() {
                     // Add Click Handler to toggle tooltip
                     widget.style.cursor = 'pointer';
                     widget.onclick = (e) => {
-                        console.log('Widget clicked!');
                         e.stopPropagation();
                         // Close other tooltips if any (for future proofing)
                         document.querySelectorAll('.player-list-tooltip.active').forEach(t => {
                             if (t !== tooltip) t.classList.remove('active');
                         });
                         tooltip.classList.toggle('active');
-                        console.log('Tooltip active:', tooltip.classList.contains('active'));
                     };
                 }
 
@@ -167,7 +164,7 @@ async function fetchServerStatus() {
                 tooltip.innerHTML = `
                     <div class="player-list-header">Online Players (${data.online})</div>
                     <div class="player-list-grid">
-                        ${data.players.map(player => `
+                        ${players.map(player => `
                             <div class="player-item">
                                 <img src="https://hyvatar.io/render/head/${player}?size=64" alt="${player}" loading="lazy">
                                 <span>${player}</span>
