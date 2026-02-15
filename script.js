@@ -157,9 +157,15 @@ async function fetchServerStatus() {
                             if (t !== tooltip) t.classList.remove('active');
                         });
                         tooltip.classList.toggle('active');
+                        if (tooltip.classList.contains('active')) {
+                            loadTooltipImages(tooltip);
+                        }
                     };
                 }
 
+                // Check visibility state to decide whether to load images immediately
+                const isVisible = tooltip.classList.contains('active');
+                
                 // Update Tooltip Content
                 // Uses Hyvatar Proxy with correct endpoint
                 tooltip.innerHTML = `
@@ -167,12 +173,21 @@ async function fetchServerStatus() {
                     <div class="player-list-grid">
                         ${players.map(player => `
                             <div class="player-item">
-                                <img src="https://hyvatar-worker.bodyagavril.workers.dev/?username=${player}" alt="${player}" loading="lazy">
+                                <img 
+                                    src="${isVisible ? `https://hyvatar-worker.bodyagavril.workers.dev/?username=${player}` : 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}" 
+                                    data-src="https://hyvatar-worker.bodyagavril.workers.dev/?username=${player}" 
+                                    alt="${player}" 
+                                    loading="lazy"
+                                >
                                 <span>${player}</span>
                             </div>
                         `).join('')}
                     </div>
                 `;
+
+                // If existing tooltip was active, we need to ensure images are loaded (handled by src=${isVisible...} above)
+                // But if we just created it or it was closed, we rely on the click handler.
+
             } else {
                 // Remove tooltip if no players or offline
                 const tooltip = widget.querySelector('.player-list-tooltip');
@@ -193,6 +208,17 @@ async function fetchServerStatus() {
             if (text) text.textContent = 'Offline';
         });
     }
+}
+
+// Helper to load images in a specific tooltip
+function loadTooltipImages(tooltip) {
+    const images = tooltip.querySelectorAll('img[data-src]');
+    images.forEach(img => {
+        if (img.dataset.src) {
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+        }
+    });
 }
 
 // Close tooltip when clicking outside
