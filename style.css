@@ -1410,9 +1410,9 @@ footer {
 .player-item {
     display: flex;
     align-items: center;
-    gap: 10px; /* Reduced from 12px */
-    padding: 4px 6px; /* Reduced from 6px 8px */
-    border-radius: 6px;
+    gap: 12px; /* Increased from 10px */
+    padding: 6px 8px; /* Slightly increased padding */
+    border-radius: 8px;
     transition: background 0.2s;
 }
 
@@ -1421,14 +1421,14 @@ footer {
 }
 
 .player-item img {
-    width: 24px; /* Reduced from 32px */
-    height: 24px; /* Reduced from 32px */
-    border-radius: 4px;
+    width: 40px; /* Increased from 24px */
+    height: 40px; /* Increased from 24px */
+    border-radius: 6px;
     background: var(--vp-c-bg);
 }
 
 .player-item span {
-    font-size: 13px; /* Reduced from 14px */
+    font-size: 14px; /* Increased from 13px */
     font-weight: 500;
     color: var(--vp-c-text-1);
 }
