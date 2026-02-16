@@ -1410,8 +1410,8 @@ footer {
 .player-item {
     display: flex;
     align-items: center;
-    gap: 12px; /* Increased from 10px */
-    padding: 6px 8px; /* Slightly increased padding */
+    gap: 12px;
+    padding: 6px 8px;
     border-radius: 8px;
     transition: background 0.2s;
 }
@@ -1420,11 +1420,23 @@ footer {
     background: var(--vp-c-bg-soft);
 }
 
-.player-item img {
-    width: 40px; /* Increased from 24px */
-    height: 40px; /* Increased from 24px */
+.player-avatar {
+    width: 40px;
+    height: 40px;
     border-radius: 6px;
+    overflow: hidden;
     background: var(--vp-c-bg);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align top to capture head */
+}
+
+.player-avatar img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    transform: scale(2.2) translateY(3px); /* Zoom and positioning */
+    transform-origin: top center;
 }
 
 .player-item span {

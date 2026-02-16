@@ -178,12 +178,14 @@ async function fetchServerStatus() {
                         <div class="player-list-grid">
                             ${players.map(player => `
                                 <div class="player-item">
-                                    <img 
-                                        src="${isVisible ? `https://hyvatar-worker.bodyagavril.workers.dev/?username=${player}` : 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}" 
-                                        data-src="https://hyvatar-worker.bodyagavril.workers.dev/?username=${player}" 
-                                        alt="${player}" 
-                                        loading="lazy"
-                                    >
+                                    <div class="player-avatar">
+                                        <img 
+                                            src="${isVisible ? `https://hyvatar-worker.bodyagavril.workers.dev/?username=${player}` : 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}" 
+                                            data-src="https://hyvatar-worker.bodyagavril.workers.dev/?username=${player}" 
+                                            alt="${player}" 
+                                            loading="lazy"
+                                        >
+                                    </div>
                                     <span>${player}</span>
                                 </div>
                             `).join('')}
