@@ -1433,10 +1433,10 @@ footer {
 
 .player-avatar img {
     width: 100%;
-    height: 100%; /* Ensure full height */
+    height: 100%;
     object-fit: cover;
-    object-position: center 20%; /* Focus on upper body/face area */
-    transform: scale(1.3); /* Moderate zoom */
+    object-position: center 25%; /* Slightly lower focus point */
+    transform: scale(1.25); /* Minor zoom reduction */
 }
 
 .player-item span {
