@@ -282,13 +282,13 @@ function smartAlignAvatar(img) {
         const container = img.parentElement;
         const containerSize = container.offsetWidth; // 40px square
         
-        // Scale so head fills ~50% of container
-        const targetHeadSize = containerSize * 0.5;
+        // Scale so head fills ~35% of container
+        const targetHeadSize = containerSize * 0.35;
         const currentHeadDisplaySize = headHeight * (containerSize / canvas.width);
         const zoomScale = targetHeadSize / currentHeadDisplaySize;
         
         // Clamp scale to reasonable range
-        const scale = Math.min(Math.max(zoomScale, 1.2), 1.8);
+        const scale = Math.min(Math.max(zoomScale, 1.1), 1.4);
 
         // Calculate offset to center the head in the container
         const scaledHeadCenterY = headCenterY * (containerSize / canvas.width) * scale;
