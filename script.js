@@ -130,7 +130,7 @@ async function fetchServerStatus() {
                 if (data.online === 0) {
                     text.innerHTML = `<span style="color: var(--vp-c-brand);">Online</span>`;
                 } else {
-                    text.innerHTML = `Online: <span style="color: var(--vp-c-brand);">${data.online}</span> / ${data.maxPlayers} <span style="font-size: 0.7em; opacity: 0.6;">▾</span>`;
+                    text.innerHTML = `Online: <span style="color: var(--vp-c-brand);">${data.online}</span> / ${data.maxPlayers} <span class="chevron-hint">▾</span>`;
                 }
             } else {
                 dot.classList.add('offline');
@@ -150,6 +150,7 @@ async function fetchServerStatus() {
                     
                     // Add Click Handler to toggle tooltip
                     widget.style.cursor = 'pointer';
+                    widget.title = 'Натисніть щоб відкрити список гравців';
                     widget.onclick = (e) => {
                         e.stopPropagation();
                         // Close other tooltips if any (for future proofing)

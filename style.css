@@ -1443,3 +1443,27 @@ footer {
     font-weight: 500;
     color: var(--vp-c-text-1);
 }
+
+/* Chevron dropdown hint */
+.chevron-hint {
+    display: inline-block;
+    font-size: 0.7em;
+    opacity: 0.5;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    animation: chevron-bounce 2s ease-in-out infinite;
+}
+
+.server-status:hover .chevron-hint {
+    opacity: 0.9;
+}
+
+.server-status:has(.player-list-tooltip.active) .chevron-hint {
+    transform: rotate(180deg);
+    animation: none;
+    opacity: 0.9;
+}
+
+@keyframes chevron-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(2px); }
+}
