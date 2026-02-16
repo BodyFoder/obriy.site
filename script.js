@@ -236,7 +236,7 @@ function loadTooltipImages(tooltip) {
     });
 }
 
-// Smart Avatar Alignment: scans PNG for non-transparent pixels and centers on face
+// Smart Avatar Alignment: scans PNG for non-transparent pixels and zooms into face
 function smartAlignAvatar(img) {
     try {
         const canvas = document.createElement('canvas');
@@ -246,45 +246,66 @@ function smartAlignAvatar(img) {
         ctx.drawImage(img, 0, 0);
 
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const pixels = imageData.data; // RGBA array
+        const pixels = imageData.data;
 
         let topY = canvas.height;
         let bottomY = 0;
+        let leftX = canvas.width;
+        let rightX = 0;
 
-        // Scan for non-transparent pixels (alpha > 10)
+        // Find bounding box of non-transparent pixels
         for (let y = 0; y < canvas.height; y++) {
             for (let x = 0; x < canvas.width; x++) {
                 const alpha = pixels[(y * canvas.width + x) * 4 + 3];
                 if (alpha > 10) {
                     if (y < topY) topY = y;
                     if (y > bottomY) bottomY = y;
+                    if (x < leftX) leftX = x;
+                    if (x > rightX) rightX = x;
                 }
             }
         }
 
-        if (topY >= bottomY) return; // No visible pixels found
+        if (topY >= bottomY) return;
 
         const charHeight = bottomY - topY;
-        // Focus on head: top ~30% of the character
-        const headCenterY = topY + charHeight * 0.15;
-        // Container is 40px, image is scaled to fill width
-        // Calculate how much to shift the image so headCenterY is at container center
-        const imgDisplayHeight = img.offsetWidth * (canvas.height / canvas.width);
-        const scale = img.offsetWidth / canvas.width;
-        const headCenterInPx = headCenterY * scale;
-        const containerHeight = img.parentElement.offsetHeight;
-        const offsetY = containerHeight * 0.4 - headCenterInPx; // 40% from top
+        const charWidth = rightX - leftX;
+        const charCenterX = leftX + charWidth / 2;
 
-        // Clamp offset so we don't show empty space
-        const maxOffset = 0;
-        const minOffset = containerHeight - imgDisplayHeight;
-        const clampedOffset = Math.max(minOffset, Math.min(maxOffset, offsetY));
+        // Head area: top ~35% of character
+        const headTop = topY;
+        const headBottom = topY + charHeight * 0.35;
+        const headHeight = headBottom - headTop;
+        const headCenterY = headTop + headHeight / 2;
 
-        img.style.transform = `translateY(${clampedOffset}px)`;
+        // Calculate scale: container is 40px, we want the head (~35% of char) to fill it
+        const container = img.parentElement;
+        const containerSize = container.offsetWidth; // 40px square
+        
+        // Scale so head fills ~80% of container
+        const targetHeadSize = containerSize * 0.8;
+        const currentHeadDisplaySize = headHeight * (containerSize / canvas.width);
+        const zoomScale = targetHeadSize / currentHeadDisplaySize;
+        
+        // Clamp scale to reasonable range
+        const scale = Math.min(Math.max(zoomScale, 1.2), 3.0);
+
+        // Calculate offset to center the head in the container
+        const scaledHeadCenterY = headCenterY * (containerSize / canvas.width) * scale;
+        const scaledHeadCenterX = charCenterX * (containerSize / canvas.width) * scale;
+        
+        const offsetY = (containerSize / 2) - scaledHeadCenterY;
+        const offsetX = (containerSize / 2) - scaledHeadCenterX;
+
+        img.style.transform = `scale(${scale.toFixed(2)}) translate(${(offsetX / scale).toFixed(1)}px, ${(offsetY / scale).toFixed(1)}px)`;
         img.style.transformOrigin = 'top left';
+        
+        console.log(`Avatar aligned: ${img.alt}, scale=${scale.toFixed(2)}, topY=${topY}, charH=${charHeight}`);
     } catch (e) {
-        // CORS or other error — fall back to default positioning
+        // CORS or other error — apply fallback zoom
         console.warn('Smart avatar alignment failed:', e);
+        img.style.transform = 'scale(1.3)';
+        img.style.transformOrigin = 'top center';
     }
 }
 
