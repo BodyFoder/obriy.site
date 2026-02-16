@@ -1447,7 +1447,7 @@ footer {
 /* Chevron dropdown hint */
 .chevron-hint {
     display: inline-block;
-    font-size: 0.7em;
+    font-size: 0.9em;
     opacity: 0.5;
     transition: transform 0.3s ease, opacity 0.3s ease;
     animation: chevron-bounce 2s ease-in-out infinite;
