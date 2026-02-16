@@ -296,7 +296,7 @@ function smartAlignAvatar(img) {
         const originY = (headCenterY / canvas.height) * 100;
 
         img.style.transformOrigin = `${originX.toFixed(1)}% ${originY.toFixed(1)}%`;
-        img.style.transform = `scale(${scale.toFixed(2)})`;
+        img.style.transform = `scale(${scale.toFixed(2)}) translateX(-3px)`;
     } catch (e) {
         // CORS or other error — apply fallback zoom
         console.warn('Smart avatar alignment failed:', e);
