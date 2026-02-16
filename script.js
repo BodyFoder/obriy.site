@@ -184,6 +184,7 @@ async function fetchServerStatus() {
                                             data-src="https://hyvatar-worker.bodyagavril.workers.dev/?username=${player}" 
                                             alt="${player}" 
                                             loading="lazy"
+                                            crossorigin="anonymous"
                                         >
                                     </div>
                                     <span>${player}</span>
@@ -228,10 +229,63 @@ function loadTooltipImages(tooltip) {
     const images = tooltip.querySelectorAll('img[data-src]');
     images.forEach(img => {
         if (img.dataset.src) {
+            img.onload = () => smartAlignAvatar(img);
             img.src = img.dataset.src;
             img.removeAttribute('data-src');
         }
     });
+}
+
+// Smart Avatar Alignment: scans PNG for non-transparent pixels and centers on face
+function smartAlignAvatar(img) {
+    try {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        ctx.drawImage(img, 0, 0);
+
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const pixels = imageData.data; // RGBA array
+
+        let topY = canvas.height;
+        let bottomY = 0;
+
+        // Scan for non-transparent pixels (alpha > 10)
+        for (let y = 0; y < canvas.height; y++) {
+            for (let x = 0; x < canvas.width; x++) {
+                const alpha = pixels[(y * canvas.width + x) * 4 + 3];
+                if (alpha > 10) {
+                    if (y < topY) topY = y;
+                    if (y > bottomY) bottomY = y;
+                }
+            }
+        }
+
+        if (topY >= bottomY) return; // No visible pixels found
+
+        const charHeight = bottomY - topY;
+        // Focus on head: top ~30% of the character
+        const headCenterY = topY + charHeight * 0.15;
+        // Container is 40px, image is scaled to fill width
+        // Calculate how much to shift the image so headCenterY is at container center
+        const imgDisplayHeight = img.offsetWidth * (canvas.height / canvas.width);
+        const scale = img.offsetWidth / canvas.width;
+        const headCenterInPx = headCenterY * scale;
+        const containerHeight = img.parentElement.offsetHeight;
+        const offsetY = containerHeight * 0.4 - headCenterInPx; // 40% from top
+
+        // Clamp offset so we don't show empty space
+        const maxOffset = 0;
+        const minOffset = containerHeight - imgDisplayHeight;
+        const clampedOffset = Math.max(minOffset, Math.min(maxOffset, offsetY));
+
+        img.style.transform = `translateY(${clampedOffset}px)`;
+        img.style.transformOrigin = 'top left';
+    } catch (e) {
+        // CORS or other error — fall back to default positioning
+        console.warn('Smart avatar alignment failed:', e);
+    }
 }
 
 // Close tooltip when clicking outside
