@@ -290,17 +290,15 @@ function smartAlignAvatar(img) {
         // Clamp scale to reasonable range
         const scale = Math.min(Math.max(zoomScale, 1.1), 1.4);
 
-        // Calculate offset to center the head in the container
-        const scaledHeadCenterY = headCenterY * (containerSize / canvas.width) * scale;
-        const scaledHeadCenterX = charCenterX * (containerSize / canvas.width) * scale;
-        
-        const offsetY = (containerSize / 2) - scaledHeadCenterY;
-        const offsetX = (containerSize / 2) - scaledHeadCenterX;
+        // Use transform-origin to zoom into the head center
+        // Convert head center coordinates to percentages of the image
+        const originX = (charCenterX / canvas.width) * 100;
+        const originY = (headCenterY / canvas.height) * 100;
 
-        img.style.transform = `scale(${scale.toFixed(2)}) translate(${(offsetX / scale).toFixed(1)}px, ${(offsetY / scale).toFixed(1)}px)`;
-        img.style.transformOrigin = 'top left';
+        img.style.transformOrigin = `${originX.toFixed(1)}% ${originY.toFixed(1)}%`;
+        img.style.transform = `scale(${scale.toFixed(2)})`;
         
-        console.log(`Avatar aligned: ${img.alt}, scale=${scale.toFixed(2)}, topY=${topY}, charH=${charHeight}`);
+        console.log(`Avatar aligned: ${img.alt}, scale=${scale.toFixed(2)}, origin=${originX.toFixed(0)}% ${originY.toFixed(0)}%`);
     } catch (e) {
         // CORS or other error — apply fallback zoom
         console.warn('Smart avatar alignment failed:', e);
