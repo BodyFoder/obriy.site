@@ -130,7 +130,7 @@ async function fetchServerStatus() {
                 if (data.online === 0) {
                     text.innerHTML = `<span style="color: var(--vp-c-brand);">Online</span>`;
                 } else {
-                    text.innerHTML = `Online: <span style="color: var(--vp-c-brand);">${data.online}</span> / ${data.maxPlayers}`;
+                    text.innerHTML = `Online: <span style="color: var(--vp-c-brand);">${data.online}</span> / ${data.maxPlayers} <span style="font-size: 0.7em; opacity: 0.6;">▾</span>`;
                 }
             } else {
                 dot.classList.add('offline');
