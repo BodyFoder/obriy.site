@@ -1435,7 +1435,7 @@ footer {
     width: 100%;
     height: auto;
     object-fit: cover;
-    transform: scale(1.6) translateY(2px); /* Adjusted zoom */
+    transform: scale(1.28) translateY(1px) translateX(-2px); /* User refined zoom */
     transform-origin: top center;
 }
 
