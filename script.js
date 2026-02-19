@@ -237,47 +237,11 @@ function loadTooltipImages(tooltip) {
     });
 }
 
-// Smart Avatar Alignment: scans PNG for horizontal center and zooms into face
+// Smart Avatar Alignment: zooms into the face area
+// Based on analysis of 20 different avatars, face is consistently at ~50% X, ~20% Y
 function smartAlignAvatar(img) {
-    try {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = img.naturalWidth;
-        canvas.height = img.naturalHeight;
-        ctx.drawImage(img, 0, 0);
-
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const pixels = imageData.data;
-        const w = canvas.width;
-        const h = canvas.height;
-
-        // Find horizontal bounds of character
-        let leftX = w, rightX = 0;
-        for (let y = 0; y < h; y++) {
-            for (let x = 0; x < w; x++) {
-                const alpha = pixels[(y * w + x) * 4 + 3];
-                if (alpha > 10) {
-                    if (x < leftX) leftX = x;
-                    if (x > rightX) rightX = x;
-                }
-            }
-        }
-
-        // Dynamic horizontal center, fixed vertical at ~20% (face position from 20-avatar analysis)
-        const charCenterX = leftX + (rightX - leftX) / 2;
-        const originX = (charCenterX / w) * 100;
-        const originY = 20; // Face is consistently at ~20% from top across all character types
-
-        const scale = 1.4;
-
-        img.style.transformOrigin = `${originX.toFixed(1)}% ${originY}%`;
-        img.style.transform = `scale(${scale})`;
-    } catch (e) {
-        // CORS or other error — apply fallback zoom
-        console.warn('Smart avatar alignment failed:', e);
-        img.style.transform = 'scale(1.3)';
-        img.style.transformOrigin = 'top center';
-    }
+    img.style.transformOrigin = '50% 20%';
+    img.style.transform = 'scale(1.4)';
 }
 
 // Close tooltip when clicking outside
