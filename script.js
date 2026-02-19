@@ -295,14 +295,14 @@ function smartAlignAvatar(img) {
         const charCenterX = leftX + (rightX - leftX) / 2;
 
         // Scale: fixed comfortable zoom
-        const scale = 1.35;
+        const scale = 1.4;
 
         // Use transform-origin to zoom into the face center
         const originX = (charCenterX / w) * 100;
         const originY = (faceCenterY / h) * 100;
 
         img.style.transformOrigin = `${originX.toFixed(1)}% ${originY.toFixed(1)}%`;
-        img.style.transform = `scale(${scale}) translateX(-3px)`;
+        img.style.transform = `scale(${scale})`;
     } catch (e) {
         // CORS or other error — apply fallback zoom
         console.warn('Smart avatar alignment failed:', e);
