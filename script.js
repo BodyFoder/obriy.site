@@ -237,7 +237,7 @@ function loadTooltipImages(tooltip) {
     });
 }
 
-// Smart Avatar Alignment: scans PNG for non-transparent pixels and zooms into face
+// Smart Avatar Alignment: scans PNG for horizontal center and zooms into face
 function smartAlignAvatar(img) {
     try {
         const canvas = document.createElement('canvas');
@@ -251,59 +251,26 @@ function smartAlignAvatar(img) {
         const w = canvas.width;
         const h = canvas.height;
 
-        // Build per-row pixel density (count of non-transparent pixels)
-        const rowDensity = new Array(h).fill(0);
+        // Find horizontal bounds of character
         let leftX = w, rightX = 0;
-
         for (let y = 0; y < h; y++) {
             for (let x = 0; x < w; x++) {
                 const alpha = pixels[(y * w + x) * 4 + 3];
                 if (alpha > 10) {
-                    rowDensity[y]++;
                     if (x < leftX) leftX = x;
                     if (x > rightX) rightX = x;
                 }
             }
         }
 
-        // Find the densest row (widest — typically shoulders/chest)
-        let maxDensity = 0;
-        let maxDensityRow = 0;
-        for (let y = 0; y < h; y++) {
-            if (rowDensity[y] > maxDensity) {
-                maxDensity = rowDensity[y];
-                maxDensityRow = y;
-            }
-        }
-
-        if (maxDensity === 0) return;
-
-        // Scan upward from densest row to find where the head truly starts
-        // (where density drops below 30% of max — filters out thin ears/hats)
-        const densityThreshold = maxDensity * 0.30;
-        let headStartY = maxDensityRow;
-        for (let y = maxDensityRow; y >= 0; y--) {
-            if (rowDensity[y] >= densityThreshold) {
-                headStartY = y;
-            } else {
-                break;
-            }
-        }
-
-        // Face center: between head start and densest row, slightly lower to avoid top clip
-        const faceCenterY = headStartY + (maxDensityRow - headStartY) * 0.45;
+        // Dynamic horizontal center, fixed vertical at ~20% (face position from 20-avatar analysis)
         const charCenterX = leftX + (rightX - leftX) / 2;
+        const originX = (charCenterX / w) * 100;
+        const originY = 20; // Face is consistently at ~20% from top across all character types
 
-        // Scale: fixed comfortable zoom
         const scale = 1.4;
 
-        // Use transform-origin to zoom into the face center
-        const originX = (charCenterX / w) * 100;
-        const originY = (faceCenterY / h) * 100;
-
-        console.log(`Avatar: ${img.alt}, headStartY=${headStartY}, maxDensityRow=${maxDensityRow}, origin=${originX.toFixed(0)}% ${originY.toFixed(0)}%`);
-
-        img.style.transformOrigin = `${originX.toFixed(1)}% ${originY.toFixed(1)}%`;
+        img.style.transformOrigin = `${originX.toFixed(1)}% ${originY}%`;
         img.style.transform = `scale(${scale})`;
     } catch (e) {
         // CORS or other error — apply fallback zoom
