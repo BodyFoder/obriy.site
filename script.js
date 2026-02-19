@@ -290,8 +290,8 @@ function smartAlignAvatar(img) {
             }
         }
 
-        // Face center: midpoint between head start and densest row
-        const faceCenterY = headStartY + (maxDensityRow - headStartY) * 0.35;
+        // Face center: between head start and densest row, slightly lower to avoid top clip
+        const faceCenterY = headStartY + (maxDensityRow - headStartY) * 0.45;
         const charCenterX = leftX + (rightX - leftX) / 2;
 
         // Scale: fixed comfortable zoom
@@ -300,6 +300,8 @@ function smartAlignAvatar(img) {
         // Use transform-origin to zoom into the face center
         const originX = (charCenterX / w) * 100;
         const originY = (faceCenterY / h) * 100;
+
+        console.log(`Avatar: ${img.alt}, headStartY=${headStartY}, maxDensityRow=${maxDensityRow}, origin=${originX.toFixed(0)}% ${originY.toFixed(0)}%`);
 
         img.style.transformOrigin = `${originX.toFixed(1)}% ${originY.toFixed(1)}%`;
         img.style.transform = `scale(${scale})`;
