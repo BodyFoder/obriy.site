@@ -237,11 +237,71 @@ function loadTooltipImages(tooltip) {
     });
 }
 
-// Smart Avatar Alignment: zooms into the face area
-// Based on analysis of 20 different avatars, face is consistently at ~50% X, ~20% Y
+// Smart Avatar Alignment: scans head region for per-character centering
 function smartAlignAvatar(img) {
-    img.style.transformOrigin = '50% 20%';
-    img.style.transform = 'scale(1.4)';
+    try {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        ctx.drawImage(img, 0, 0);
+
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const pixels = imageData.data;
+        const w = canvas.width;
+        const h = canvas.height;
+
+        // Step 1: Find character's top Y (first non-transparent row)
+        let topY = h;
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                if (pixels[(y * w + x) * 4 + 3] > 10) {
+                    topY = y;
+                    break;
+                }
+            }
+            if (topY < h) break;
+        }
+
+        // Step 2: Scan face region (12%-38% of image) for horizontal center
+        // This avoids arms/held items that shift the body center
+        const faceStartY = Math.round(h * 0.12);
+        const faceEndY = Math.round(h * 0.38);
+        let faceLeftX = w, faceRightX = 0;
+
+        for (let y = faceStartY; y < faceEndY; y++) {
+            for (let x = 0; x < w; x++) {
+                if (pixels[(y * w + x) * 4 + 3] > 10) {
+                    if (x < faceLeftX) faceLeftX = x;
+                    if (x > faceRightX) faceRightX = x;
+                }
+            }
+        }
+
+        // Fallback if face region is empty
+        if (faceLeftX >= faceRightX) {
+            faceLeftX = 0;
+            faceRightX = w;
+        }
+
+        const faceCenterX = faceLeftX + (faceRightX - faceLeftX) / 2;
+
+        // Step 3: Calculate head center Y based on character top position
+        // Tall characters (topY ~0%) → headY ~15%
+        // Short characters (topY ~20%) → headY ~28%
+        const headCenterY = topY + (h * 0.15);
+
+        // Convert to percentages
+        const originX = (faceCenterX / w) * 100;
+        const originY = (headCenterY / h) * 100;
+
+        img.style.transformOrigin = `${originX.toFixed(1)}% ${originY.toFixed(1)}%`;
+        img.style.transform = 'scale(1.4)';
+    } catch (e) {
+        // CORS or other error — apply fallback
+        img.style.transformOrigin = '50% 20%';
+        img.style.transform = 'scale(1.4)';
+    }
 }
 
 // Close tooltip when clicking outside
