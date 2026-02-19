@@ -248,56 +248,61 @@ function smartAlignAvatar(img) {
 
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const pixels = imageData.data;
+        const w = canvas.width;
+        const h = canvas.height;
 
-        let topY = canvas.height;
-        let bottomY = 0;
-        let leftX = canvas.width;
-        let rightX = 0;
+        // Build per-row pixel density (count of non-transparent pixels)
+        const rowDensity = new Array(h).fill(0);
+        let leftX = w, rightX = 0;
 
-        // Find bounding box of non-transparent pixels
-        for (let y = 0; y < canvas.height; y++) {
-            for (let x = 0; x < canvas.width; x++) {
-                const alpha = pixels[(y * canvas.width + x) * 4 + 3];
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                const alpha = pixels[(y * w + x) * 4 + 3];
                 if (alpha > 10) {
-                    if (y < topY) topY = y;
-                    if (y > bottomY) bottomY = y;
+                    rowDensity[y]++;
                     if (x < leftX) leftX = x;
                     if (x > rightX) rightX = x;
                 }
             }
         }
 
-        if (topY >= bottomY) return;
+        // Find the densest row (widest — typically shoulders/chest)
+        let maxDensity = 0;
+        let maxDensityRow = 0;
+        for (let y = 0; y < h; y++) {
+            if (rowDensity[y] > maxDensity) {
+                maxDensity = rowDensity[y];
+                maxDensityRow = y;
+            }
+        }
 
-        const charHeight = bottomY - topY;
-        const charWidth = rightX - leftX;
-        const charCenterX = leftX + charWidth / 2;
+        if (maxDensity === 0) return;
 
-        // Head area: top ~35% of character
-        const headTop = topY;
-        const headBottom = topY + charHeight * 0.35;
-        const headHeight = headBottom - headTop;
-        const headCenterY = headTop + headHeight / 2;
+        // Scan upward from densest row to find where the head truly starts
+        // (where density drops below 30% of max — filters out thin ears/hats)
+        const densityThreshold = maxDensity * 0.30;
+        let headStartY = maxDensityRow;
+        for (let y = maxDensityRow; y >= 0; y--) {
+            if (rowDensity[y] >= densityThreshold) {
+                headStartY = y;
+            } else {
+                break;
+            }
+        }
 
-        // Calculate scale: container is 40px, we want the head (~35% of char) to fill it
-        const container = img.parentElement;
-        const containerSize = container.offsetWidth; // 40px square
-        
-        // Scale so head fills ~45% of container
-        const targetHeadSize = containerSize * 0.45;
-        const currentHeadDisplaySize = headHeight * (containerSize / canvas.width);
-        const zoomScale = targetHeadSize / currentHeadDisplaySize;
-        
-        // Clamp scale to reasonable range
-        const scale = Math.min(Math.max(zoomScale, 1.2), 1.5);
+        // Face center: midpoint between head start and densest row
+        const faceCenterY = headStartY + (maxDensityRow - headStartY) * 0.35;
+        const charCenterX = leftX + (rightX - leftX) / 2;
 
-        // Use transform-origin to zoom into the head center
-        // Convert head center coordinates to percentages of the image
-        const originX = (charCenterX / canvas.width) * 100;
-        const originY = (headCenterY / canvas.height) * 100;
+        // Scale: fixed comfortable zoom
+        const scale = 1.35;
+
+        // Use transform-origin to zoom into the face center
+        const originX = (charCenterX / w) * 100;
+        const originY = (faceCenterY / h) * 100;
 
         img.style.transformOrigin = `${originX.toFixed(1)}% ${originY.toFixed(1)}%`;
-        img.style.transform = `scale(${scale.toFixed(2)}) translateX(-3px)`;
+        img.style.transform = `scale(${scale}) translateX(-3px)`;
     } catch (e) {
         // CORS or other error — apply fallback zoom
         console.warn('Smart avatar alignment failed:', e);
