@@ -1,1 +1,1 @@
-{"hostname":"auto:0","serverName":"Hytale Server","online":4,"maxPlayers":20,"motd":"","uptime":2765,"version":"1.0","worlds":[{"name":"default","tps":30.0,"online":4,"players":["Dmytryk","Bodyy","Udo_Hex","Axen_05"]}]}
+{"hostname":"auto:0","serverName":"Hytale Server","online":4,"maxPlayers":20,"motd":"","uptime":2825,"version":"1.0","worlds":[{"name":"default","tps":30.0,"online":3,"players":["Bodyy","Udo_Hex","Axen_05"]},{"name":"instance-Forgotten_Temple-4bcfd882-e629-4a3d-b463-23b55a7bd25f","tps":30.0,"online":1,"players":["Dmytryk"]}]}
