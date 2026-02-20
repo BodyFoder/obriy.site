@@ -542,7 +542,7 @@ async function loadDonations() {
         if (voting) {
             const monicoreEl = document.getElementById('monicore-stats');
             if (monicoreEl && voting.monicore && voting.monicore.rating) {
-                monicoreEl.innerHTML = `<span class="vote-stat-item"><i class="fas fa-star" style="color:#ffb300;"></i> ${voting.monicore.rating}</span><span class="vote-stat-item"><i class="fas fa-vote-yea" style="color:var(--vp-c-brand);"></i> ${voting.monicore.votes}</span>`;
+                monicoreEl.innerHTML = `<span class="vote-stat-item"><i class="fas fa-star" style="color:#ffb300;"></i> ${voting.monicore.rating}</span><span class="vote-stat-item"><i class="fas fa-heart" style="color:#ff4d4d;"></i> ${voting.monicore.votes}</span>`;
             }
             
             const hytaleRatingEl = document.getElementById('hytalerating-stats');
@@ -557,7 +557,7 @@ async function loadDonations() {
 
             const topGamesEl = document.getElementById('topgames-stats');
             if (topGamesEl && voting.topgames && voting.topgames.rank) {
-                topGamesEl.innerHTML = `<span class="vote-stat-item"><i class="fas fa-trophy" style="color:#ffb300;"></i> #${voting.topgames.rank}</span><span class="vote-stat-item"><i class="fas fa-vote-yea" style="color:var(--vp-c-brand);"></i> ${voting.topgames.votes}</span>`;
+                topGamesEl.innerHTML = `<span class="vote-stat-item"><i class="fas fa-trophy" style="color:#ffb300;"></i> #${voting.topgames.rank}</span><span class="vote-stat-item"><i class="fas fa-heart" style="color:#ff4d4d;"></i> ${voting.topgames.votes}</span>`;
             }
         }
 
