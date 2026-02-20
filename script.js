@@ -217,10 +217,17 @@ async function fetchServerStatus() {
         statusWidgets.forEach(widget => {
             const dot = widget.querySelector('.status-dot');
             const text = widget.querySelector('.status-text');
-            dot.classList.add('offline');
+            
             dot.classList.remove('online');
-            // If error, show Offline instead of Loading
-            if (text) text.textContent = 'Offline';
+            
+            if (!navigator.onLine) {
+                dot.classList.remove('offline');
+                if (text) text.textContent = 'Loading...';
+            } else {
+                dot.classList.add('offline');
+                // If error, show Offline instead of Loading
+                if (text) text.textContent = 'Offline';
+            }
         });
     }
 }
