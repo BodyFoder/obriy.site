@@ -962,21 +962,22 @@
                 newsData.forEach(article => {
                     const articleUrl = `https://obriyhytale.pp.ua/article?id=${article.id}`;
                     if (!existingLocs.includes(articleUrl)) {
-                        // Create new <url> node
+                        // Create new <url> node with proper namespace
                         const currentIsoDate = new Date().toISOString().split('T')[0];
+                        const ns = "http://www.sitemaps.org/schemas/sitemap/0.9";
                         
-                        const urlNode = xmlDoc.createElement("url");
+                        const urlNode = xmlDoc.createElementNS(ns, "url");
                         
-                        const locNode = xmlDoc.createElement("loc");
+                        const locNode = xmlDoc.createElementNS(ns, "loc");
                         locNode.textContent = articleUrl;
                         
-                        const lastmodNode = xmlDoc.createElement("lastmod");
+                        const lastmodNode = xmlDoc.createElementNS(ns, "lastmod");
                         lastmodNode.textContent = currentIsoDate;
                         
-                        const freqNode = xmlDoc.createElement("changefreq");
+                        const freqNode = xmlDoc.createElementNS(ns, "changefreq");
                         freqNode.textContent = "monthly";
                         
-                        const prioNode = xmlDoc.createElement("priority");
+                        const prioNode = xmlDoc.createElementNS(ns, "priority");
                         prioNode.textContent = "0.6";
                         
                         urlNode.appendChild(locNode);
