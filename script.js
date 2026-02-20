@@ -350,7 +350,7 @@ async function loadNews() {
                     <h3>${newsItem.title}</h3>
                     <p style="margin-bottom: 16px;">${newsItem.summary || (stripHtml(newsItem.fullContent || '').substring(0, 300) + '...')}</p>
                     <div class="news-card-footer" style="display: flex; justify-content: space-between; align-items: center;">
-                        <a href="article.html?id=${newsItem.id}" class="read-more">Читати далі <i class="fas fa-arrow-right"></i></a>
+                        <a href="/article?id=${newsItem.id}" class="read-more">Читати далі <i class="fas fa-arrow-right"></i></a>
                         <span class="view-count" data-slug="${newsItem.id}"><i class="far fa-eye"></i> <span>—</span></span>
                     </div>
                 </div>
@@ -478,7 +478,7 @@ function loadFullArticle(newsData) {
         container.innerHTML = `
             <div class="full-article"> <!-- WRAPPER ADDED FOR STYLING -->
                 <div class="article-header" style="margin-bottom: 32px; ${headerStyle}">
-                     <a href="news.html" class="back-link"><i class="fas fa-arrow-left"></i> До списку новин</a>
+                     <a href="/news" class="back-link"><i class="fas fa-arrow-left"></i> До списку новин</a>
                      <h1 style="font-size: 36px; margin-top:16px; margin-bottom:16px;">${article.title}</h1>
                      <div class="news-meta" style="margin-bottom: 16px; color: var(--vp-c-text-2);">
                         <span><i class="far fa-calendar-alt"></i> ${article.date}</span>

@@ -1399,12 +1399,21 @@ footer {
 }
 
 .player-list-grid::-webkit-scrollbar {
-    width: 4px;
+    width: 6px;
+}
+
+.player-list-grid::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
 }
 
 .player-list-grid::-webkit-scrollbar-thumb {
-    background: var(--vp-c-border);
-    border-radius: 4px;
+    background: var(--vp-c-brand);
+    border-radius: 6px;
+}
+
+.player-list-grid::-webkit-scrollbar-thumb:hover {
+    background: var(--vp-c-brand-dark, #ffb300);
 }
 
 .player-item {
