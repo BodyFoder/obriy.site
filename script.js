@@ -466,6 +466,31 @@ function loadFullArticle(newsData) {
     if (article) {
         document.title = `${article.title} - ОБРІЙ`;
 
+        // Update SEO Meta Tags for dynamic indexing/sharing
+        const setMeta = (selector, attr, value) => {
+            let el = document.querySelector(selector);
+            if (!el) {
+                el = document.createElement('meta');
+                if (selector.includes('property=')) el.setAttribute('property', selector.match(/property="([^"]+)"/)[1]);
+                if (selector.includes('name=')) el.setAttribute('name', selector.match(/name="([^"]+)"/)[1]);
+                document.head.appendChild(el);
+            }
+            el.setAttribute(attr, value);
+        };
+
+        const safeSummary = article.summary ? article.summary.replace(/<[^>]*>?/gm, '').trim() : '';
+        const url = window.location.href;
+        const imageUrl = article.image.startsWith('http') ? article.image : window.location.origin + '/' + article.image;
+
+        setMeta('meta[name="description"]', 'content', safeSummary);
+        setMeta('meta[property="og:title"]', 'content', article.title);
+        setMeta('meta[property="og:description"]', 'content', safeSummary);
+        setMeta('meta[property="og:image"]', 'content', imageUrl);
+        setMeta('meta[property="og:url"]', 'content', url);
+        setMeta('meta[property="twitter:title"]', 'content', article.title);
+        setMeta('meta[property="twitter:description"]', 'content', safeSummary);
+        setMeta('meta[property="twitter:image"]', 'content', imageUrl);
+
         // Track view
         trackArticleView(article.id);
 

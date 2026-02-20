@@ -914,11 +914,114 @@
                 if (!res.ok) throw new Error(await res.text());
                 const json = await res.json();
 
-                if (currentTab === 'news') newsSha = json.content.sha;
-                else patronsSha = json.content.sha;
+                if (currentTab === 'news') {
+                    newsSha = json.content.sha;
+                    // Auto-update sitemap for SEO when saving news
+                    await pushSitemapToGitHub();
+                } else {
+                    patronsSha = json.content.sha;
+                }
 
                 status.innerText = `✅ ${file} збережено! (Зачекайте 1-2 хв для оновлення сайту)`;
             } catch (e) { status.innerText = `Error: ${e.message}`; }
+        }
+
+        // --- SITEMAP AUTO-UPDATER ---
+        async function pushSitemapToGitHub() {
+            const pass = localStorage.getItem('admin_pass');
+            try {
+                // 1. Fetch current sitemap.xml
+                const res = await fetch(`${WORKER_URL}?path=sitemap.xml`, {
+                    headers: { 'x-admin-password': pass }
+                });
+                
+                if (!res.ok) {
+                    console.log("no sitemap found, creating new");
+                }
+                
+                let sitemapContent = '';
+                let sitemapSha = null;
+                
+                if (res.ok) {
+                    const json = await res.json();
+                    sitemapSha = json.sha;
+                    sitemapContent = decodeURIComponent(escape(window.atob(json.content)));
+                } else {
+                    sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n</urlset>`;
+                }
+                
+                // 2. Parse and append missing 
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(sitemapContent, "text/xml");
+                const urlset = xmlDoc.getElementsByTagName("urlset")[0];
+                
+                // Get all current locations
+                const existingLocs = Array.from(xmlDoc.getElementsByTagName("loc")).map(n => n.textContent);
+                let added = 0;
+                
+                newsData.forEach(article => {
+                    const articleUrl = `https://obriyhytale.pp.ua/article?id=${article.id}`;
+                    if (!existingLocs.includes(articleUrl)) {
+                        // Create new <url> node
+                        const currentIsoDate = new Date().toISOString().split('T')[0];
+                        
+                        const urlNode = xmlDoc.createElement("url");
+                        
+                        const locNode = xmlDoc.createElement("loc");
+                        locNode.textContent = articleUrl;
+                        
+                        const lastmodNode = xmlDoc.createElement("lastmod");
+                        lastmodNode.textContent = currentIsoDate;
+                        
+                        const freqNode = xmlDoc.createElement("changefreq");
+                        freqNode.textContent = "monthly";
+                        
+                        const prioNode = xmlDoc.createElement("priority");
+                        prioNode.textContent = "0.6";
+                        
+                        urlNode.appendChild(locNode);
+                        urlNode.appendChild(lastmodNode);
+                        urlNode.appendChild(freqNode);
+                        urlNode.appendChild(prioNode);
+                        
+                        urlset.appendChild(urlNode);
+                        added++;
+                    }
+                });
+                
+                if (added === 0) {
+                    console.log("Sitemap up to date! No new articles.");
+                    return; // No need to push
+                }
+                
+                // 3. Serialize back to text
+                const serializer = new XMLSerializer();
+                let newSitemapText = serializer.serializeToString(xmlDoc);
+                // Fix pretty printing missing after xml builder
+                newSitemapText = newSitemapText.replace(/><url>/g, '>\n  <url>').replace(/<\/urlset>/, '\n</urlset>');
+                
+                // 4. Push to Git
+                const contentBase64 = window.btoa(unescape(encodeURIComponent(newSitemapText)));
+                
+                const pushReq = await fetch(`${WORKER_URL}?path=sitemap.xml`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'x-admin-password': pass },
+                    body: JSON.stringify({
+                        message: `Auto-update sitemap.xml with ${added} new articles`,
+                        content: contentBase64,
+                        sha: sitemapSha
+                    })
+                });
+                
+                if (pushReq.ok) {
+                    console.log(`✅ Sitemap updated with ${added} urls!`);
+                } else {
+                    console.error("Failed to commit sitemap", await pushReq.text());
+                }
+                
+            } catch(e) {
+                console.error("Sitemap update error:", e);
+            }
         }
 
         // NEWS CRUD
