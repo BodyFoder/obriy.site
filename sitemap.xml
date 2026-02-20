@@ -7,19 +7,19 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://obriyhytale.pp.ua/news.html</loc>
+    <loc>https://obriyhytale.pp.ua/news</loc>
     <lastmod>2026-02-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://obriyhytale.pp.ua/donate.html</loc>
+    <loc>https://obriyhytale.pp.ua/donate</loc>
     <lastmod>2026-02-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://obriyhytale.pp.ua/map.html</loc>
+    <loc>https://obriyhytale.pp.ua/map</loc>
     <lastmod>2026-02-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
