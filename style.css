@@ -1469,3 +1469,22 @@ footer {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(2px); }
 }
+
+/* --- Voting Stats --- */
+.vote-stats {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.vote-stat-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2px 8px;
+    border-radius: 12px;
+    color: var(--vp-c-text-2);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}

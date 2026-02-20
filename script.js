@@ -526,6 +526,7 @@ async function loadDonations() {
         
         const donations = data.list ? (data.list.content || []) : (data.content || []);
         const stats = data.stats || null;
+        const voting = data.voting || null;
 
         // Оновлюємо статистику
         if (stats) {
@@ -535,6 +536,29 @@ async function loadDonations() {
              // Fallback якщо немає статистики
              if (totalAmountEl) totalAmountEl.textContent = '---';
              if (totalCountEl) totalCountEl.textContent = '---';
+        }
+
+        // Оновлюємо бейджі голосувань
+        if (voting) {
+            const monicoreEl = document.getElementById('monicore-stats');
+            if (monicoreEl && voting.monicore && voting.monicore.rating) {
+                monicoreEl.innerHTML = `<span class="vote-stat-item"><i class="fas fa-star" style="color:#ffb300;"></i> ${voting.monicore.rating}</span><span class="vote-stat-item"><i class="fas fa-vote-yea" style="color:var(--vp-c-brand);"></i> ${voting.monicore.votes}</span>`;
+            }
+            
+            const hytaleRatingEl = document.getElementById('hytalerating-stats');
+            if (hytaleRatingEl && voting.hytalerating && voting.hytalerating.rank) {
+                hytaleRatingEl.innerHTML = `<span class="vote-stat-item"><i class="fas fa-trophy" style="color:#ffb300;"></i> #${voting.hytalerating.rank}</span><span class="vote-stat-item"><i class="fas fa-heart" style="color:#ff4d4d;"></i> ${voting.hytalerating.likes}</span>`;
+            }
+
+            const orbisEl = document.getElementById('orbis-stats');
+            if (orbisEl && voting.orbis && voting.orbis.rank) {
+                orbisEl.innerHTML = `<span class="vote-stat-item"><i class="fas fa-trophy" style="color:#ffb300;"></i> #${voting.orbis.rank}</span><span class="vote-stat-item"><i class="fas fa-heart" style="color:#ff4d4d;"></i> ${voting.orbis.likes}</span>`;
+            }
+
+            const topGamesEl = document.getElementById('topgames-stats');
+            if (topGamesEl && voting.topgames && voting.topgames.rank) {
+                topGamesEl.innerHTML = `<span class="vote-stat-item"><i class="fas fa-trophy" style="color:#ffb300;"></i> #${voting.topgames.rank}</span><span class="vote-stat-item"><i class="fas fa-vote-yea" style="color:var(--vp-c-brand);"></i> ${voting.topgames.votes}</span>`;
+            }
         }
 
         grid.innerHTML = '';
