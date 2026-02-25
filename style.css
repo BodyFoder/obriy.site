@@ -1442,9 +1442,9 @@ footer {
 
 .player-avatar img {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
     display: block;
-    /* Transform handled dynamically by smartAlignAvatar() in JS */
 }
 
 .player-item span {
