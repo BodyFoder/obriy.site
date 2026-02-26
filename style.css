@@ -1497,3 +1497,169 @@ footer {
     align-items: center;
     gap: 6px;
 }
+
+/* ===========================================================
+   PEPELAND HERO LAYOUT
+   Ported from test-pepeland.css — new home page design
+   =========================================================== */
+
+.pepeland-layout-hero {
+    min-height: 100vh;
+    padding-top: calc(var(--vp-nav-height) + 8vh);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    position: relative;
+    z-index: 1;
+    background: transparent !important;
+}
+
+.pepeland-hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    padding-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.pepeland-hero-content > * {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.pepeland-hero-content h1 {
+    line-height: 1.1;
+}
+
+.pepeland-season-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    padding: 4px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--vp-c-text-2);
+}
+
+.pepeland-season-badge .badge-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--vp-c-brand);
+    display: inline-block;
+}
+
+.pepeland-hero-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 0;
+}
+
+.pepeland-hero-note {
+    font-size: 13px;
+    color: var(--vp-c-text-2);
+    margin-top: 0;
+    opacity: 0.8;
+}
+
+.pepeland-hero-image-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    margin-top: -110px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.pepeland-hero-image-wrapper img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    object-position: center bottom;
+    mask-image: linear-gradient(to top, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
+    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
+    opacity: 0.95;
+}
+
+.pepeland-building-credit {
+    text-align: center;
+    margin-top: -30px;
+    padding-bottom: 20px;
+    z-index: 2;
+    pointer-events: auto;
+}
+
+.pepeland-building-credit h3 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--vp-c-text-1);
+}
+
+.pepeland-building-credit p {
+    font-size: 16px;
+    color: var(--vp-c-text-2);
+}
+
+.pepeland-solid-section {
+    background-color: var(--vp-c-bg);
+    position: relative;
+    z-index: 5;
+    padding-top: 60px;
+    padding-bottom: 80px;
+    border-top: 1px solid var(--vp-c-border);
+}
+
+.content-block {
+    margin-bottom: 60px;
+}
+
+.content-block:last-child {
+    margin-bottom: 0;
+}
+
+.pepeland-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+@media (max-width: 960px) {
+    .pepeland-info-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+}
+
+/* Starfield canvas confined to hero:
+   main gradient = transparent over hero, solid below.
+   --hero-height is set by JS after page load. */
+main {
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(
+        to bottom,
+        transparent var(--hero-height, 140vh),
+        var(--vp-c-bg) var(--hero-height, 140vh)
+    );
+}
+
+footer {
+    position: relative;
+    z-index: 6;
+    background-color: var(--vp-c-bg);
+}

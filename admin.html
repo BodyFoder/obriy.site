@@ -424,6 +424,7 @@
                 <button class="tab-btn active" onclick="switchTab('news')">Новини</button>
                 <button class="tab-btn" onclick="switchTab('patrons')">Меценати (Донати)</button>
                 <button class="tab-btn" onclick="switchTab('gallery')">Галерея</button>
+                <button class="tab-btn" onclick="switchTab('buildings')">Фото будівель</button>
             </div>
 
             <!-- Global Actions -->
@@ -556,6 +557,50 @@
                 </div>
             </div>
 
+            <!-- BUILDINGS SECTION -->
+            <div id="buildingsSection" class="section-content">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                    <!-- LEFT: Form -->
+                    <div>
+                        <h2 style="margin-bottom: 24px;">Додати / Редагувати фото</h2>
+                        <input type="hidden" id="bIndex" value="-1">
+                        <div class="form-group">
+                            <label>URL зображення (відносно кореня сайту)</label>
+                            <input type="text" id="bImageUrl" placeholder="assets/images/photo_hero/my-building.webp" oninput="updateBuildingPreview()">
+                        </div>
+                        <div class="form-group">
+                            <label>Попередній перегляд</label>
+                            <div style="width:100%; height:180px; border-radius:8px; overflow:hidden; background:var(--vp-c-bg-alt); border:1px solid var(--vp-c-border); display:flex; align-items:center; justify-content:center;">
+                                <img id="bPreviewImg" src="" alt="Preview" style="max-width:100%; max-height:100%; object-fit:contain; display:none;">
+                                <span id="bPreviewEmpty" style="color:var(--vp-c-text-3); font-size:13px;">Введіть URL вище</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Назва будівлі</label>
+                            <input type="text" id="bTitle" placeholder="Наприклад: Головний спавн">
+                        </div>
+                        <div class="form-group">
+                            <label>Автор / Підпис</label>
+                            <input type="text" id="bAuthor" placeholder="ОБРІЙ">
+                        </div>
+                        <div style="display: flex; gap: 12px; margin-top: 8px;">
+                            <button onclick="saveLocalBuilding()" class="btn btn-primary" style="flex:1;">Зберегти локально</button>
+                            <button onclick="clearBuildingForm()" class="btn btn-outline">Очистити</button>
+                        </div>
+                        <p style="font-size:12px; color:var(--vp-c-text-2); margin-top:12px; line-height:1.6;">
+                            <i class="fas fa-info-circle"></i> Завантажте зображення через <b>Галерею</b> у теку <code>assets/images/photo_hero</code>, потім зкопіюйте посилання сюди.
+                            <br>Після збереження локально натисніть <b>"Зберегти поточну вкладку"</b> вгорі.
+                        </p>
+                    </div>
+                    <!-- RIGHT: List -->
+                    <div>
+                        <h2 style="margin-bottom: 8px;">Список фото будівель</h2>
+                        <p style="font-size:13px; color:var(--vp-c-text-2); margin-bottom:16px;">Якщо фото більше 1 &mdash; на сайті вони ротуються кожні 10 секунд.</p>
+                        <div id="buildingsList" style="display:flex; flex-direction:column; gap:12px;"></div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -563,8 +608,10 @@
         // STATE
         let newsData = [];
         let patronsData = [];
+        let buildingsData = [];
         let newsSha = null;
         let patronsSha = null;
+        let buildingsSha = null;
         let currentTab = 'news';
         let uploadTarget = 'cover';
         let quill; // Quill instance
@@ -667,23 +714,15 @@
              currentTab = tab;
              document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
              document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
-
-             // Find button text to set active? Or rely on onclick
-             // Actually, we need to find the specific button index or ID.
-             // Simplest way: loop and match text or index.
-             // But simpler: just add IDs to buttons in HTML upgrade above?
-             // Or easier: pass 'this' (event.target) to function? No, we call it manually too.
-             // Let's rely on text textContent mapping or just:
-             const index = ['news', 'patrons', 'gallery'].indexOf(tab);
+             const index = ['news', 'patrons', 'gallery', 'buildings'].indexOf(tab);
              if (index !== -1) {
                  document.querySelectorAll('.tab-btn')[index].classList.add('active');
              }
-
              document.getElementById(tab + 'Section').classList.add('active');
-
              if (tab === 'news' && newsData.length === 0) loadTabFile('news.json');
              if (tab === 'patrons' && patronsData.length === 0) loadTabFile('patrons.json');
              if (tab === 'gallery') loadGallery();
+             if (tab === 'buildings') loadTabFile('buildings.json');
         }
 
         // GALLERY LOGIC
@@ -848,55 +887,55 @@
 
         // API
         async function loadFromGitHub() {
-            const file = currentTab === 'news' ? 'news.json' : 'patrons.json';
+            const fileMap = { news: 'news.json', patrons: 'patrons.json', buildings: 'buildings.json' };
+            const file = fileMap[currentTab];
+            if (!file) return; // gallery tab has its own loader
             const status = document.getElementById('statusMsg');
             status.innerText = `Завантаження ${file}...`;
-
             const pass = localStorage.getItem('admin_pass');
-
             try {
                 const res = await fetch(`${WORKER_URL}?path=${file}`, {
                     headers: { 'x-admin-password': pass }
                 });
-
                 if (!res.ok) throw new Error(await res.text());
                 const json = await res.json(); 
-                
-                // Decode content
                 const content = decodeURIComponent(escape(window.atob(json.content)));
-                
                 if (currentTab === 'news') {
                     newsData = JSON.parse(content);
                     newsSha = json.sha;
                     renderNews();
-                } else {
+                } else if (currentTab === 'patrons') {
                     patronsData = JSON.parse(content);
                     patronsSha = json.sha;
                     renderPatrons();
+                } else if (currentTab === 'buildings') {
+                    buildingsData = JSON.parse(content);
+                    buildingsSha = json.sha;
+                    renderBuildings();
                 }
                 status.innerText = `✅ ${file} завантажено`;
             } catch (e) {
                 console.error(e);
                 status.innerText = `❌ Помилка: ${e.message}`;
-                // If 404/Empty, init empty
                 if (currentTab === 'news' && !newsData.length) newsData = [];
                 if (currentTab === 'patrons' && !patronsData.length) patronsData = [];
+                if (currentTab === 'buildings' && !buildingsData.length) buildingsData = [];
             }
         }
 
         async function pushToGitHub() {
-            const file = currentTab === 'news' ? 'news.json' : 'patrons.json';
-            const data = currentTab === 'news' ? newsData : patronsData;
-            const sha = currentTab === 'news' ? newsSha : patronsSha;
-
+            const fileMap = { news: 'news.json', patrons: 'patrons.json', buildings: 'buildings.json' };
+            const dataMap = { news: newsData, patrons: patronsData, buildings: buildingsData };
+            const shaMap = { news: newsSha, patrons: patronsSha, buildings: buildingsSha };
+            const file = fileMap[currentTab];
+            if (!file) return;
+            const data = dataMap[currentTab];
+            const sha = shaMap[currentTab];
             const status = document.getElementById('statusMsg');
             status.innerText = `Збереження ${file}...`;
-
             const pass = localStorage.getItem('admin_pass');
-
             const contentStr = JSON.stringify(data, null, 4);
             const contentBase64 = window.btoa(unescape(encodeURIComponent(contentStr)));
-
             try {
                 const res = await fetch(`${WORKER_URL}?path=${file}`, {
                     method: 'PUT',
@@ -910,18 +949,16 @@
                         sha: sha
                     })
                 });
-
                 if (!res.ok) throw new Error(await res.text());
                 const json = await res.json();
-
                 if (currentTab === 'news') {
                     newsSha = json.content.sha;
-                    // Auto-update sitemap for SEO when saving news
                     await pushSitemapToGitHub();
-                } else {
+                } else if (currentTab === 'patrons') {
                     patronsSha = json.content.sha;
+                } else if (currentTab === 'buildings') {
+                    buildingsSha = json.content.sha;
                 }
-
                 status.innerText = `✅ ${file} збережено! (Зачекайте 1-2 хв для оновлення сайту)`;
             } catch (e) { status.innerText = `Error: ${e.message}`; }
         }
@@ -1665,6 +1702,86 @@
         function delPatron(i) { patronsData.splice(i, 1); renderPatrons(); }
         function clearPatronForm() { document.getElementById('pName').value = ''; document.getElementById('pAmount').value = ''; document.getElementById('pMessage').value = ''; document.getElementById('pIndex').value = '-1'; }
         async function loadTabFile(f) { loadFromGitHub(); }
+
+        // --- BUILDINGS CRUD ---
+        function renderBuildings() {
+            const list = document.getElementById('buildingsList');
+            if (!buildingsData.length) {
+                list.innerHTML = '<p style="color:var(--vp-c-text-3); font-size:14px;">\u0421\u043f\u0438\u0441\u043e\u043a \u043f\u043e\u0440\u043e\u0436\u043d\u0456\u0439. \u0414\u043e\u0434\u0430\u0439\u0442\u0435 \u043f\u0435\u0440\u0448\u0435 \u0444\u043e\u0442\u043e.</p>';
+                return;
+            }
+            list.innerHTML = buildingsData.map((b, i) => `
+                <div class="list-item" style="flex-direction:column; align-items:flex-start; gap:10px;">
+                    <div style="display:flex; gap:12px; align-items:center; width:100%;">
+                        <img src="${b.imageUrl}" alt="" style="width:72px; height:48px; object-fit:cover; border-radius:6px; border:1px solid var(--vp-c-border);" onerror="this.src='assets/images/logo_new.png'">
+                        <div style="flex:1; min-width:0;">
+                            <div style="font-weight:700; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${b.title || '\u0411\u0435\u0437 \u043d\u0430\u0437\u0432\u0438'}</div>
+                            <div style="font-size:12px; color:var(--vp-c-text-2);">${b.author || ''}</div>
+                        </div>
+                        <div style="display:flex; gap:8px; flex-shrink:0;">
+                            <button onclick="editBuilding(${i})" class="btn btn-outline" style="padding:6px 12px; font-size:13px;">\u0420\u0435\u0434\u0430\u0433\u0443\u0432\u0430\u0442\u0438</button>
+                            <button onclick="deleteBuilding(${i})" class="btn btn-outline" style="padding:6px 12px; font-size:13px; border-color:#ff4d4d33; color:#ff4d4d;">\u0412\u0438\u0434\u0430\u043b\u0438\u0442\u0438</button>
+                        </div>
+                    </div>
+                    <div style="font-size:12px; color:var(--vp-c-text-3); word-break:break-all;">${b.imageUrl}</div>
+                </div>
+            `).join('');
+        }
+
+        function saveLocalBuilding() {
+            const url = document.getElementById('bImageUrl').value.trim();
+            const title = document.getElementById('bTitle').value.trim();
+            const author = document.getElementById('bAuthor').value.trim();
+            if (!url) { alert('\u0412\u0432\u0435\u0434\u0456\u0442\u044c URL \u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u043d\u044f'); return; }
+            const idx = parseInt(document.getElementById('bIndex').value);
+            const obj = { id: 'building_' + Date.now(), imageUrl: url, title, author };
+            if (idx >= 0) {
+                buildingsData[idx] = { ...buildingsData[idx], ...obj };
+            } else {
+                buildingsData.push(obj);
+            }
+            renderBuildings();
+            clearBuildingForm();
+        }
+
+        function editBuilding(i) {
+            const b = buildingsData[i];
+            document.getElementById('bImageUrl').value = b.imageUrl;
+            document.getElementById('bTitle').value = b.title || '';
+            document.getElementById('bAuthor').value = b.author || '';
+            document.getElementById('bIndex').value = i;
+            updateBuildingPreview();
+        }
+
+        function deleteBuilding(i) {
+            if (!confirm('\u0412\u0438\u0434\u0430\u043b\u0438\u0442\u0438 \u0446\u0435 \u0444\u043e\u0442\u043e?')) return;
+            buildingsData.splice(i, 1);
+            renderBuildings();
+        }
+
+        function clearBuildingForm() {
+            document.getElementById('bImageUrl').value = '';
+            document.getElementById('bTitle').value = '';
+            document.getElementById('bAuthor').value = '';
+            document.getElementById('bIndex').value = '-1';
+            document.getElementById('bPreviewImg').style.display = 'none';
+            document.getElementById('bPreviewEmpty').style.display = 'block';
+        }
+
+        function updateBuildingPreview() {
+            const url = document.getElementById('bImageUrl').value.trim();
+            const img = document.getElementById('bPreviewImg');
+            const empty = document.getElementById('bPreviewEmpty');
+            if (url) {
+                img.src = url;
+                img.style.display = 'block';
+                empty.style.display = 'none';
+            } else {
+                img.style.display = 'none';
+                empty.style.display = 'block';
+            }
+        }
+
 
         // --- DRAG AND DROP IMAGE LOGIC ---
         document.addEventListener('DOMContentLoaded', () => {

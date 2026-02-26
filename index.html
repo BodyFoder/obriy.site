@@ -58,22 +58,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=1.8">
-    
-    <!-- SEO & Open Graph -->
-    <meta name="description" content="ОБРІЙ — це перший український сервер Hytale. Долучайся до спільноти, слідкуй за новинами та готуйся до нових пригод!">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://obriyhytale.pp.ua/">
-    <meta property="og:title" content="ОБРІЙ - український сервер Hytale">
-    <meta property="og:description" content="Перший український сервер Hytale. Долучайся до спільноти!">
-    <meta property="og:image" content="https://obriyhytale.pp.ua/assets/images/logo_new.png">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://obriyhytale.pp.ua/">
-    <meta property="twitter:title" content="ОБРІЙ - український сервер Hytale">
-    <meta property="twitter:description" content="Перший український сервер Hytale. Долучайся до спільноти!">
-    <meta property="twitter:image" content="https://obriyhytale.pp.ua/assets/images/logo_new.png">
+    <link rel="stylesheet" href="style.css?v=1.9">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
@@ -102,94 +87,107 @@
         </div>
     </header>
 
-    <main>
-        <!-- Hero Section -->
-        <section class="hero animate">
-            <div class="hero-content">
+    <main style="padding-top: 0;">
+        <!-- Hero Section — Pepeland Layout -->
+        <section class="pepeland-layout-hero animate">
+            <div class="pepeland-hero-content hero-content">
+                <div class="pepeland-season-badge">
+                    <span class="badge-dot"></span>
+                    1 Сезон
+                </div>
                 <h1>Твій простір свободи.<br>Твій <span style="color: var(--vp-c-brand)">ОБРІЙ</span>.</h1>
-                <p>Український сервер Hytale (Хайтейл). Без приватів, без донату на переваги, тільки довіра.
-                </p>
+                <p>Український сервер Hytale (Хайтейл). Без приватів, без донату на переваги, тільки довіра.</p>
 
-                <div class="hero-actions">
-                    <a href="#start" class="btn btn-primary">Почати гру</a>
+                <div class="pepeland-hero-actions">
+                    <a href="#guide" class="btn btn-primary">Почати гру</a>
                     <a href="https://discord.gg/MFsDjDY6nN" target="_blank" class="btn btn-outline">Discord</a>
+                </div>
+
+                <div class="pepeland-hero-note">
+                    Для гри на сервері потрібна ліцензія Hytale. Версія гри release.
+                </div>
+            </div>
+
+            <div class="pepeland-hero-image-wrapper">
+                <img id="heroBuilding" src="assets/images/photo_hero/Gemini_Generated_Image_amx318amx318amx3-Photoroom.webp" alt="Hytale Building" style="opacity:0;">
+                <div class="pepeland-building-credit">
+                    <h3 id="creditTitle">Головний спавн</h3>
+                    <p id="creditAuthor">ОБРІЙ</p>
                 </div>
             </div>
         </section>
 
-        <!-- Guide Section (Features + Flow) -->
-        <section class="guide-section animate" id="guide">
+        <!-- Solid Background Section containing all content blocks -->
+        <section class="pepeland-solid-section animate" id="guide">
             <div class="container">
-                <!-- Features Grid -->
-                <div class="info-grid">
-                    <div class="guide-card">
-                        <div class="guide-icon"><i class="fas fa-shield-alt"></i></div>
-                        <h3>Whitelist Only</h3>
-                        <p>Ми будуємо спільноту на довірі. Вхід тільки для перевірених гравців через Discord.</p>
-                    </div>
-                    <div class="guide-card">
-                        <div class="guide-icon"><i class="fas fa-handshake"></i></div>
-                        <h3>Trust-based</h3>
-                        <p>Жодних приватів та клеймів. Твоя територія — це твоя совість і повага інших.</p>
-                    </div>
-                    <div class="guide-card">
-                        <div class="guide-icon"><i class="fas fa-globe-europe"></i></div>
-                        <h3>Ukrainian Soul</h3>
-                        <p>100% україномовний простір для своїх. Створюємо атмосферу разом.</p>
-                    </div>
-                </div>
 
-                <!-- Divider / Title -->
-                <div class="section-divider" id="start">
-                    <h2>Як почати?</h2>
-                </div>
-
-                <!-- Steps Grid -->
-                <!-- Steps Grid -->
-                <!-- Steps Grid -->
-                <div class="info-grid">
-                    <div class="guide-card">
-                        <div class="guide-step-number">Крок 1</div>
-                        <h3>Ліцензія</h3>
-                        <p>Придбай гру та завантаж клієнт.</p>
-                        <div
-                            style="display: flex; gap: 8px; justify-content: center; margin-top: 12px; flex-wrap: wrap;">
-                            <a href="https://store.hytale.com/" target="_blank"
-                                class="btn btn-outline btn-sm">Купити</a>
-                            <a href="https://hytale.com/download" target="_blank"
-                                class="btn btn-primary btn-sm">Скачати</a>
+                <!-- Блок: Features -->
+                <div class="content-block">
+                    <div class="section-divider" style="margin-top:0; margin-bottom:40px;">
+                        <h2>Чому ОБРІЙ?</h2>
+                    </div>
+                    <div class="pepeland-info-grid">
+                        <div class="guide-card">
+                            <div class="guide-icon"><i class="fas fa-shield-alt"></i></div>
+                            <h3>Whitelist Only</h3>
+                            <p>Будуємо спільноту на довірі. Вхід тільки для перевірених гравців через Discord.</p>
                         </div>
-                    </div>
-                    <div class="guide-card">
-                        <div class="guide-step-number">Крок 2</div>
-                        <h3>Модерація</h3>
-                        <p>Долучись в Discord, подай заявку, щоб потрапити у Whitelist.</p>
-                        <a href="https://discord.gg/MFsDjDY6nN" target="_blank" class="btn-link"
-                            style="margin-top: 8px; display: inline-block;">Наш Discord &rarr;</a>
-                    </div>
-                    <div class="guide-card">
-                        <div class="guide-step-number">Крок 3</div>
-                        <h3>Заходь на сервер</h3>
-                        <p>Скопіюй IP та починай гру!</p>
-                        <div class="server-ip-copy" data-ip="play.obriyhytale.pp.ua" onclick="copyIp(this)">
-                            <i class="fas fa-network-wired"></i>
-                            <span class="ip-text">play.obriyhytale.pp.ua</span>
-                            <span class="copy-hint"><i class="fas fa-copy"></i></span>
+                        <div class="guide-card">
+                            <div class="guide-icon"><i class="fas fa-handshake"></i></div>
+                            <h3>Trust-based</h3>
+                            <p>Жодних приватів та клеймів. Твоя територія — це твоя совість і повага інших.</p>
+                        </div>
+                        <div class="guide-card">
+                            <div class="guide-icon"><i class="fas fa-globe-europe"></i></div>
+                            <h3>Ukrainian Soul</h3>
+                            <p>100% україномовний простір для своїх. Створюємо атмосферу разом.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Latest News Section -->
+                <!-- Блок: Як потрапити на сервер? -->
+                <div class="content-block">
+                    <div class="section-divider" id="start">
+                        <h2>Як потрапити на сервер?</h2>
+                    </div>
+                    <div class="pepeland-info-grid">
+                        <div class="guide-card">
+                            <div class="guide-step-number">Крок 1</div>
+                            <h3>Ліцензія</h3>
+                            <p>Придбай гру та завантаж клієнт.</p>
+                            <div style="display:flex;gap:8px;justify-content:center;margin-top:auto;flex-wrap:wrap;">
+                                <a href="https://store.hytale.com/" target="_blank" class="btn btn-outline" style="padding:8px 16px;font-size:14px;">Купити</a>
+                                <a href="https://hytale.com/download" target="_blank" class="btn btn-primary" style="padding:8px 16px;font-size:14px;">Скачати</a>
+                            </div>
+                        </div>
+                        <div class="guide-card">
+                            <div class="guide-step-number">Крок 2</div>
+                            <h3>Модерація</h3>
+                            <p>Долучись в Discord, подай заявку, щоб потрапити у Whitelist.</p>
+                            <a href="https://discord.gg/MFsDjDY6nN" target="_blank" class="btn-link" style="margin-top:8px;display:inline-block;">Наш Discord &rarr;</a>
+                        </div>
+                        <div class="guide-card">
+                            <div class="guide-step-number">Крок 3</div>
+                            <h3>Заходь на сервер</h3>
+                            <p>Скопіюй IP та починай гру!</p>
+                            <div class="server-ip-copy" data-ip="play.obriyhytale.pp.ua" onclick="copyIp(this)">
+                                <i class="fas fa-network-wired"></i>
+                                <span class="ip-text">play.obriyhytale.pp.ua</span>
+                                <span class="copy-hint"><i class="fas fa-copy"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Останні Новини -->
                 <section class="latest-news-section animate" style="margin-top: 80px;">
-                    <h2 style="text-align: center; margin-bottom: 40px; font-size: 32px; font-weight: 800;">Останні
-                        Новини</h2>
-                    <div id="home-news-grid" class="home-news-grid">
-                        <!-- Dynamic News Items -->
-                    </div>
-                    <div style="text-align: center; margin-top: 32px;">
+                    <h2 style="text-align:center;margin-bottom:40px;font-size:32px;font-weight:800;">Останні Новини</h2>
+                    <div id="home-news-grid" class="home-news-grid"></div>
+                    <div style="text-align:center;margin-top:32px;">
                         <a href="/news" class="btn btn-outline">Більше у новинах</a>
                     </div>
                 </section>
+
             </div>
         </section>
     </main>
@@ -200,7 +198,73 @@
         </div>
     </footer>
 
-    <script src="script.js?v=1.8"></script>
+    <script>
+        function copyIp(element) {
+            const ip = element.getAttribute('data-ip');
+            navigator.clipboard.writeText(ip);
+            const textSpan = element.querySelector('.ip-text');
+            const originalText = textSpan.innerText;
+            textSpan.innerText = 'Скопійовано!';
+            setTimeout(() => { textSpan.innerText = originalText; }, 2000);
+        }
+
+        // Confine starfield canvas to hero: measure hero height → set CSS var --hero-height
+        function updateHeroHeight() {
+            const hero = document.querySelector('.pepeland-layout-hero');
+            if (hero) {
+                const h = hero.getBoundingClientRect().height;
+                document.documentElement.style.setProperty('--hero-height', h + 'px');
+            }
+        }
+        window.addEventListener('load', updateHeroHeight);
+        window.addEventListener('resize', updateHeroHeight);
+
+        // Building photo rotator — loads buildings.json, cycles images every 10s
+        (async function initBuildingRotator() {
+            const heroImg = document.getElementById('heroBuilding');
+            const creditTitle = document.getElementById('creditTitle');
+            const creditAuthor = document.getElementById('creditAuthor');
+
+            const fallback = [{
+                imageUrl: 'assets/images/photo_hero/Gemini_Generated_Image_amx318amx318amx3-Photoroom.webp',
+                title: 'Головний спавн',
+                author: 'ОБРІЙ'
+            }];
+
+            let buildings = fallback;
+            try {
+                const res = await fetch('buildings.json?t=' + Date.now());
+                if (res.ok) {
+                    const data = await res.json();
+                    if (Array.isArray(data) && data.length > 0) buildings = data;
+                }
+            } catch (e) {
+                console.warn('buildings.json not loaded, using fallback', e);
+            }
+
+            function showBuilding(idx) {
+                const b = buildings[idx % buildings.length];
+                heroImg.style.transition = 'opacity 0.6s ease';
+                heroImg.style.opacity = '0';
+                setTimeout(() => {
+                    heroImg.src = b.imageUrl;
+                    if (creditTitle) creditTitle.textContent = b.title || '';
+                    if (creditAuthor) creditAuthor.textContent = b.author || '';
+                    heroImg.style.opacity = '0.95';
+                }, 600);
+            }
+
+            showBuilding(0);
+            if (buildings.length > 1) {
+                let current = 0;
+                setInterval(() => {
+                    current = (current + 1) % buildings.length;
+                    showBuilding(current);
+                }, 10000);
+            }
+        })();
+    </script>
+    <script src="script.js?v=1.9"></script>
     <!-- Cloudflare Web Analytics -->
     <script defer src='https://static.cloudflareinsights.com/beacon.min.js'
         data-cf-beacon='{"token": "9cac6707b13f4481a4ed3b83d3ede706"}'></script><!-- End Cloudflare Web Analytics -->
