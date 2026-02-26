@@ -124,23 +124,12 @@
             </div>
 
             <div class="pepeland-hero-image-wrapper">
-                <!-- Skeleton shown while the building image loads -->
-                <div id="buildingSkeleton" style="
-                    display: none;
-                    position: absolute;
-                    bottom: 60px;
-                    left: 50%; transform: translateX(-50%);
-                    width: 80%; max-width: 700px; height: 420px;
-                    border-radius: 16px;
-                    background: linear-gradient(90deg,
-                        rgba(255,255,255,0.04) 25%,
-                        rgba(255,255,255,0.09) 50%,
-                        rgba(255,255,255,0.04) 75%);
-                    background-size: 200% 100%;
-                    animation: shimmer 1.4s infinite;
-                "></div>
+                <!-- Spinner loader shown while the building image loads -->
+                <div id="buildingSkeleton" class="building-loader">
+                    <div class="building-loader-spinner"></div>
+                </div>
                 <img id="heroBuilding" src="assets/images/photo_hero/Gemini_Generated_Image_amx318amx318amx3-Photoroom.webp" alt="Hytale Building" style="opacity:0;">
-                <div class="pepeland-building-credit">
+                <div class="pepeland-building-credit" id="buildingCredit" style="opacity:0; transition: opacity 0.5s ease;">
                     <h3 id="creditTitle">Головний спавн</h3>
                     <p id="creditAuthor">ОБРІЙ</p>
                 </div>
@@ -275,29 +264,33 @@
             function showBuilding(idx) {
                 const b = buildings[idx % buildings.length];
                 const skeleton = document.getElementById('buildingSkeleton');
+                const credit = document.getElementById('buildingCredit');
 
-                // Fade out current image
-                heroImg.style.transition = 'opacity 0.6s ease';
+                // Fade out current image AND credit
+                heroImg.style.transition = 'opacity 0.4s ease';
                 heroImg.style.opacity = '0';
+                if (credit) credit.style.opacity = '0';
 
                 setTimeout(() => {
-                    if (skeleton) skeleton.style.display = 'block';  // show loader
+                    if (skeleton) skeleton.style.display = 'flex'; // show spinner
                     heroImg.src = b.imageUrl;
+                    // Update text while hidden
                     if (creditTitle) creditTitle.textContent = b.title || '';
                     if (creditAuthor) creditAuthor.textContent = b.author || '';
 
                     heroImg.onload = () => {
-                        if (skeleton) skeleton.style.display = 'none'; // hide loader
+                        if (skeleton) skeleton.style.display = 'none';
                         heroImg.style.opacity = '0.95';
-                        // Recalculate hero height now that image is rendered
+                        if (credit) credit.style.opacity = '1';
                         updateHeroHeight();
                     };
                     heroImg.onerror = () => {
                         if (skeleton) skeleton.style.display = 'none';
                         heroImg.style.opacity = '0.95';
+                        if (credit) credit.style.opacity = '1';
                         updateHeroHeight();
                     };
-                }, 600);
+                }, 450);
             }
 
             showBuilding(0);
