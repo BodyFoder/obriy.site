@@ -1663,3 +1663,9 @@ footer {
     z-index: 6;
     background-color: var(--vp-c-bg);
 }
+
+/* Skeleton shimmer for building image loading */
+@keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
