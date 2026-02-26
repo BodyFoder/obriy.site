@@ -558,23 +558,38 @@
             </div>
 
             <!-- BUILDINGS SECTION -->
-            <div id="buildingsSection" class="section-content">
+             <div id="buildingsSection" class="section-content">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
                     <!-- LEFT: Form -->
                     <div>
                         <h2 style="margin-bottom: 24px;">Додати / Редагувати фото</h2>
                         <input type="hidden" id="bIndex" value="-1">
+                        <input type="hidden" id="bImageUrl" value="">
+
+                        <!-- Drag & Drop Upload Zone -->
                         <div class="form-group">
-                            <label>URL зображення (відносно кореня сайту)</label>
-                            <input type="text" id="bImageUrl" placeholder="assets/images/photo_hero/my-building.webp" oninput="updateBuildingPreview()">
-                        </div>
-                        <div class="form-group">
-                            <label>Попередній перегляд</label>
-                            <div style="width:100%; height:180px; border-radius:8px; overflow:hidden; background:var(--vp-c-bg-alt); border:1px solid var(--vp-c-border); display:flex; align-items:center; justify-content:center;">
-                                <img id="bPreviewImg" src="" alt="Preview" style="max-width:100%; max-height:100%; object-fit:contain; display:none;">
-                                <span id="bPreviewEmpty" style="color:var(--vp-c-text-3); font-size:13px;">Введіть URL вище</span>
+                            <label>Фото будівлі</label>
+                            <div id="bDropZone"
+                                 onclick="document.getElementById('bFileInput').click()"
+                                 ondragover="event.preventDefault(); this.style.borderColor='var(--vp-c-brand)';"
+                                 ondragleave="this.style.borderColor='var(--vp-c-border)';"
+                                 ondrop="handleBuildingDrop(event)"
+                                 style="width:100%; height:200px; border:2px dashed var(--vp-c-border); border-radius:10px;
+                                        background:var(--vp-c-bg-alt); display:flex; flex-direction:column;
+                                        align-items:center; justify-content:center; cursor:pointer;
+                                        transition:border-color 0.2s; position:relative; overflow:hidden;">
+                                <img id="bPreviewImg" src="" alt="Preview"
+                                     style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:none;">
+                                <div id="bDropLabel" style="text-align:center; pointer-events:none; z-index:1;">
+                                    <i class="fas fa-cloud-upload-alt" style="font-size:32px; color:var(--vp-c-brand); margin-bottom:8px;"></i>
+                                    <div style="font-size:14px; font-weight:600;">Перетягніть фото або натисніть</div>
+                                    <div id="bPreviewEmpty" style="font-size:12px; color:var(--vp-c-text-2); margin-top:4px;">PNG, JPG, WEBP</div>
+                                </div>
                             </div>
+                            <input type="file" id="bFileInput" style="display:none;" accept="image/*" onchange="uploadBuildingFile(this.files[0])">
+                            <div id="bUploadStatus" style="font-size:12px; color:var(--vp-c-text-2); margin-top:6px;"></div>
                         </div>
+
                         <div class="form-group">
                             <label>Назва будівлі</label>
                             <input type="text" id="bTitle" placeholder="Наприклад: Головний спавн">
@@ -588,8 +603,7 @@
                             <button onclick="clearBuildingForm()" class="btn btn-outline">Очистити</button>
                         </div>
                         <p style="font-size:12px; color:var(--vp-c-text-2); margin-top:12px; line-height:1.6;">
-                            <i class="fas fa-info-circle"></i> Завантажте зображення через <b>Галерею</b> у теку <code>assets/images/photo_hero</code>, потім зкопіюйте посилання сюди.
-                            <br>Після збереження локально натисніть <b>"Зберегти поточну вкладку"</b> вгорі.
+                            <i class="fas fa-info-circle"></i> Після збереження локально натисніть <b>"Зберегти поточну вкладку"</b> вгорі.
                         </p>
                     </div>
                     <!-- RIGHT: List -->
@@ -1704,6 +1718,36 @@
         async function loadTabFile(f) { loadFromGitHub(); }
 
         // --- BUILDINGS CRUD ---
+        // Upload a building image file using the existing performUpload() worker
+        async function uploadBuildingFile(file) {
+            if (!file) return;
+            const status = document.getElementById('bUploadStatus');
+            const dropZone = document.getElementById('bDropZone');
+            status.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Завантаження...';
+            dropZone.style.borderColor = 'var(--vp-c-brand)';
+            try {
+                const url = await performUpload(file);
+                document.getElementById('bImageUrl').value = url;
+                const img = document.getElementById('bPreviewImg');
+                img.src = url;
+                img.style.display = 'block';
+                document.getElementById('bDropLabel').style.display = 'none';
+                status.innerHTML = '✅ Завантажено!';
+                dropZone.style.borderColor = 'var(--vp-c-brand)';
+            } catch (e) {
+                status.innerHTML = '❌ ' + e.message;
+                dropZone.style.borderColor = '#ff4d4d';
+            }
+            document.getElementById('bFileInput').value = '';
+        }
+
+        function handleBuildingDrop(e) {
+            e.preventDefault();
+            document.getElementById('bDropZone').style.borderColor = 'var(--vp-c-border)';
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) uploadBuildingFile(file);
+        }
+
         function renderBuildings() {
             const list = document.getElementById('buildingsList');
             if (!buildingsData.length) {
@@ -1732,7 +1776,7 @@
             const url = document.getElementById('bImageUrl').value.trim();
             const title = document.getElementById('bTitle').value.trim();
             const author = document.getElementById('bAuthor').value.trim();
-            if (!url) { alert('\u0412\u0432\u0435\u0434\u0456\u0442\u044c URL \u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u043d\u044f'); return; }
+            if (!url) { alert('Спочатку завантажте фото будівлі'); return; }
             const idx = parseInt(document.getElementById('bIndex').value);
             const obj = { id: 'building_' + Date.now(), imageUrl: url, title, author };
             if (idx >= 0) {
@@ -1750,11 +1794,17 @@
             document.getElementById('bTitle').value = b.title || '';
             document.getElementById('bAuthor').value = b.author || '';
             document.getElementById('bIndex').value = i;
-            updateBuildingPreview();
+            // Show image in the drop zone
+            if (b.imageUrl) {
+                const img = document.getElementById('bPreviewImg');
+                img.src = b.imageUrl;
+                img.style.display = 'block';
+                document.getElementById('bDropLabel').style.display = 'none';
+            }
         }
 
         function deleteBuilding(i) {
-            if (!confirm('\u0412\u0438\u0434\u0430\u043b\u0438\u0442\u0438 \u0446\u0435 \u0444\u043e\u0442\u043e?')) return;
+            if (!confirm('Видалити це фото?')) return;
             buildingsData.splice(i, 1);
             renderBuildings();
         }
@@ -1765,23 +1815,23 @@
             document.getElementById('bAuthor').value = '';
             document.getElementById('bIndex').value = '-1';
             document.getElementById('bPreviewImg').style.display = 'none';
-            document.getElementById('bPreviewEmpty').style.display = 'block';
+            document.getElementById('bDropLabel').style.display = 'flex';
+            document.getElementById('bUploadStatus').innerHTML = '';
+            document.getElementById('bDropZone').style.borderColor = 'var(--vp-c-border)';
         }
 
         function updateBuildingPreview() {
             const url = document.getElementById('bImageUrl').value.trim();
             const img = document.getElementById('bPreviewImg');
-            const empty = document.getElementById('bPreviewEmpty');
             if (url) {
                 img.src = url;
                 img.style.display = 'block';
-                empty.style.display = 'none';
+                document.getElementById('bDropLabel').style.display = 'none';
             } else {
                 img.style.display = 'none';
-                empty.style.display = 'block';
+                document.getElementById('bDropLabel').style.display = 'flex';
             }
         }
-
 
         // --- DRAG AND DROP IMAGE LOGIC ---
         document.addEventListener('DOMContentLoaded', () => {
