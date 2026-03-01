@@ -255,7 +255,14 @@
                 const res = await fetch('buildings.json?t=' + Date.now());
                 if (res.ok) {
                     const data = await res.json();
-                    if (Array.isArray(data) && data.length > 0) buildings = data;
+                    if (Array.isArray(data) && data.length > 0) {
+                        // Перемішуємо масив (Fisher-Yates) для випадкового показу
+                        for (let i = data.length - 1; i > 0; i--) {
+                            const j = Math.floor(Math.random() * (i + 1));
+                            [data[i], data[j]] = [data[j], data[i]];
+                        }
+                        buildings = data;
+                    }
                 }
             } catch (e) {
                 console.warn('buildings.json not loaded, using fallback', e);
