@@ -1,1 +1,1 @@
-{"hostname":"auto:0","serverName":"Hytale Server","online":1,"maxPlayers":20,"motd":"","version":"1.0","worlds":[{"name":"default","tps":0.0,"online":1,"players":["SacredCape889"]}]}
+{"hostname":"auto:0","serverName":"Hytale Server","online":1,"maxPlayers":20,"motd":"","version":"1.0","worlds":[{"name":"default","tps":0.0,"online":0,"players":[]},{"name":"instance-Portals_Hedera-cc3ea152-0301-45d9-accd-e362bd0d1424","tps":0.0,"online":1,"players":["SacredCape889"]}]}
