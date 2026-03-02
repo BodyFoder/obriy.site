@@ -1,1 +1,1 @@
-{"hostname":"auto:0","serverName":"Hytale Server","online":1,"maxPlayers":20,"motd":"","version":"1.0","worlds":[{"name":"default","tps":0.0,"online":1,"players":["GATTACACA"]}]}
+{"hostname":"auto:0","serverName":"Hytale Server","online":1,"maxPlayers":20,"motd":"","version":"1.0","worlds":[{"name":"default","tps":0.0,"online":0,"players":[]},{"name":"instance-Forgotten_Temple-b709fe1c-3c73-4eeb-b08e-dbe6a41783d4","tps":0.0,"online":1,"players":["GATTACACA"]}]}
