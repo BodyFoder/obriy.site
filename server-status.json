@@ -1,1 +1,1 @@
-{"hostname":"auto:0","serverName":"Hytale Server","online":1,"maxPlayers":20,"motd":"","version":"1.0","worlds":[{"name":"default","tps":0.0,"online":0,"players":[]},{"name":"instance-Portals_Taiga-d89af71d-3348-4078-80d5-538c17ac890a","tps":0.0,"online":1,"players":["Bodyy"]}]}
+{"hostname":"auto:0","serverName":"Hytale Server","online":1,"maxPlayers":20,"motd":"","version":"1.0","worlds":[{"name":"default","tps":0.0,"online":1,"players":["Bodyy"]}]}
