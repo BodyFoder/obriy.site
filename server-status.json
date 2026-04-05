@@ -1,1 +1,1 @@
-{"hostname":"auto:0","serverName":"Hytale Server","online":2,"maxPlayers":20,"motd":"","version":"1.0","worlds":[{"name":"default","tps":0.0,"online":2,"players":["TamaktiJun","anatasiia_a"]}]}
+{"hostname":"auto:0","serverName":"Hytale Server","online":2,"maxPlayers":20,"motd":"","version":"1.0","worlds":[{"name":"default","tps":0.0,"online":1,"players":["TamaktiJun"]},{"name":"instance-Forgotten_Temple-01baf600-6924-4bd9-ae3e-2f7155433d05","tps":0.0,"online":1,"players":["anatasiia_a"]}]}
