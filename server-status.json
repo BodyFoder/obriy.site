@@ -1,1 +1,1 @@
-{"hostname":"auto:0","serverName":"Hytale Server","online":2,"maxPlayers":20,"motd":"","version":"1.0","worlds":[{"name":"instance-Portals_Taiga-08a1a3b8-e50b-42e4-bd9e-a154f4b033dc","tps":0.0,"online":1,"players":["TamaktiJun"]},{"name":"default","tps":0.0,"online":1,"players":["CES_UA"]}]}
+{"hostname":"auto:0","serverName":"Hytale Server","online":3,"maxPlayers":20,"motd":"","version":"1.0","worlds":[{"name":"default","tps":0.0,"online":3,"players":["CES_UA","JesterKvester","TamaktiJun"]}]}
