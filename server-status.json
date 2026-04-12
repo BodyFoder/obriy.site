@@ -1,1 +1,1 @@
-{"hostname":"auto:0","serverName":"Hytale Server","online":1,"maxPlayers":20,"motd":"","version":"1.0","worlds":[{"name":"default","tps":0.0,"online":1,"players":["IntiRex"]}]}
+{"hostname":"auto:0","serverName":"Hytale Server","online":2,"maxPlayers":20,"motd":"","version":"1.0","worlds":[{"name":"default","tps":0.0,"online":1,"players":["IntiRex"]},{"name":"instance-Portals_Taiga-730d38a8-353c-4895-9154-f64d2d6ef6a4","tps":0.0,"online":1,"players":["SaskeUchiha26"]}]}
