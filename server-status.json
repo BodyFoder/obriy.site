@@ -1,1 +1,1 @@
-{"hostname":"auto:0","serverName":"Hytale Server","online":1,"maxPlayers":20,"motd":"","version":"1.0","worlds":[{"name":"default","tps":0.0,"online":1,"players":["TamaktiJun"]}]}
+{"hostname":"auto:0","serverName":"Hytale Server","online":1,"maxPlayers":20,"motd":"","version":"1.0","worlds":[{"name":"instance-Portals_Hedera-91fc236e-d031-4dc1-82e2-afc503aeba7c","tps":0.0,"online":1,"players":["TamaktiJun"]},{"name":"default","tps":0.0,"online":0,"players":[]}]}
