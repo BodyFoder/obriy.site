@@ -1,1 +1,1 @@
-{"hostname":"auto:0","serverName":"Hytale Server","online":1,"maxPlayers":20,"motd":"","version":"1.0","worlds":[{"name":"default","tps":0.0,"online":1,"players":["TamaktiJun"]}]}
+{"hostname":"auto:0","serverName":"Hytale Server","online":1,"maxPlayers":20,"motd":"","version":"1.0","worlds":[{"name":"default","tps":0.0,"online":0,"players":[]},{"name":"instance-Portals_Oasis-f4653ca4-3575-40de-b095-9f70e0303a22","tps":0.0,"online":1,"players":["TamaktiJun"]}]}
