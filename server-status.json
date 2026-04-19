@@ -1,1 +1,1 @@
-{"hostname":"auto:0","serverName":"Hytale Server","online":2,"maxPlayers":20,"motd":"","version":"1.0","worlds":[{"name":"default","tps":0.0,"online":1,"players":["Torgrimar"]},{"name":"instance-Forgotten_Temple-d3913eb8-ad60-4dc0-9924-1ba6100e13b7","tps":0.0,"online":1,"players":["IntiRex"]}]}
+{"hostname":"auto:0","serverName":"Hytale Server","online":2,"maxPlayers":20,"motd":"","version":"1.0","worlds":[{"name":"default","tps":0.0,"online":2,"players":["IntiRex","Torgrimar"]}]}
