@@ -1,1 +1,1 @@
-{"hostname":"auto:0","serverName":"Hytale Server","online":1,"maxPlayers":20,"motd":"","version":"1.0","worlds":[{"name":"default","tps":0.0,"online":1,"players":["IntiRex"]}]}
+{"hostname":"auto:0","serverName":"Hytale Server","online":1,"maxPlayers":20,"motd":"","version":"1.0","worlds":[{"name":"default","tps":0.0,"online":0,"players":[]},{"name":"instance-Portals_Hedera-47675384-480d-41ed-a616-a3c09e78358c","tps":0.0,"online":1,"players":["IntiRex"]}]}
