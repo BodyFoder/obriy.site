@@ -46,5 +46,17 @@
         "tags": [
             "Оновлення"
         ]
+    },
+    {
+        "id": "post-1779837567857",
+        "title": "Оновлення до версії 0.5.1",
+        "date": "27.05.2026",
+        "image": "https://raw.githubusercontent.com/BodyFoder/obriy.site/main/assets/images/uploads/1779837488025_tg_image_2952950641.webp",
+        "accentColor": "",
+        "summary": "Сервер оновленно до версії Hytale 0.5.1(Hytale update 5).\nВсі моди успішно було перенесено на нову версію.\nГарної гри!\n\nПосилання на патчноут - https://hytale.com/news/2026/5/update-5-patch-notes\n...",
+        "fullContent": "<p>Сервер оновленно до версії Hytale 0.5.1(Hytale update 5).</p><p>Всі моди успішно було перенесено на нову версію.</p><p>Гарної гри!</p><p><br></p><p>Посилання на патчноут - <a href=\"https://hytale.com/news/2026/5/update-5-patch-notes\" target=\"_blank\">https://hytale.com/news/2026/5/update-5-patch-notes</a></p>",
+        "tags": [
+            "оновлення"
+        ]
     }
 ]
